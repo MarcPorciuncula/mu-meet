@@ -17,18 +17,79 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
+    <button v-on:click="login()">Log in with google</button>
+    <p v-if="user">Logged in</p>
+    <button v-on:click="doit">Do it</button>
   </div>
 </template>
 
 <script>
+import * as firebase from 'firebase';
+
+import getGoogle from '../gapi';
+
 export default {
   name: 'hello',
-  data () {
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  }
-}
+      msg: 'Welcome to Your Vue.js App',
+      user: null,
+    };
+  },
+  async created() {
+    this.auth = firebase.auth();
+    this.loginProvider = new firebase.auth.GoogleAuthProvider();
+    this.loginProvider.addScope('https://www.googleapis.com/auth/calendar');
+    this.auth.onAuthStateChanged(user => this.handleAuthStateChanged(user));
+
+    const google = await getGoogle();
+    console.log(
+      'listener',
+      google.auth2.getAuthInstance().isSignedIn.listen(res => {
+        console.log('signed in', res);
+        console.log(
+          google.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+            .id_token,
+        );
+        // this.loginProvider.credential()
+      }),
+    );
+    console.log(google.auth2.getAuthInstance().isSignedIn.get());
+  },
+  methods: {
+    async login() {
+      const google = await getGoogle();
+      google.auth2.getAuthInstance().signIn();
+      // try {
+      //   const user = await this.auth.signInWithPopup(this.loginProvider);
+      //   this.handleAuthStateChanged(user.user);
+      // } catch (err) {
+      //   console.error(err);
+      // }
+    },
+    handleAuthStateChanged(user) {
+      if (user) {
+        // console.log(getAuth().checkSessionState());
+        this.user = {};
+      } else {
+        this.user = null;
+      }
+    },
+    async doit() {
+      const google = await getGoogle();
+      // google.auth2.getAuthInstance().signOut();
+      const result = await google.client.calendar.events.list({
+        calendarId: 'primary',
+        timeMin: new Date().toISOString(),
+        showDeleted: false,
+        singleEvents: true,
+        maxResults: 10,
+        orderBy: 'startTime',
+      });
+      console.log(JSON.parse(result.body));
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
