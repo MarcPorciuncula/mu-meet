@@ -1,8 +1,10 @@
 import * as firebase from 'firebase';
 import shortid from 'shortid';
 import R from 'ramda';
-import startOfWeek from 'date-fns/start_of_week';
-import endOfWeek from 'date-fns/end_of_week';
+import getStartOfWeek from 'date-fns/start_of_week';
+import getEndOfWeek from 'date-fns/end_of_week';
+import parseDate from 'date-fns/parse';
+import { getFreeHalfHourIntervals } from '../../scheduler';
 import getGoogle from '@/gapi';
 
 export default {
@@ -20,7 +22,7 @@ export default {
         state.isInSession = false;
       }
     },
-    updateEvents(state, data) {
+    updateAllEvents(state, data) {
       state.events = data;
     },
   },
@@ -71,8 +73,8 @@ export default {
         calendarIds.map(id =>
           google.client.calendar.events.list({
             calendarId: id,
-            timeMin: startOfWeek(new Date()).toISOString(),
-            timeMax: endOfWeek(new Date()).toISOString(),
+            timeMin: getStartOfWeek(new Date()).toISOString(),
+            timeMax: getEndOfWeek(new Date()).toISOString(),
             orderBy: 'startTime',
             showDeleted: false,
             singleEvents: true,
@@ -87,6 +89,30 @@ export default {
       database
         .ref(`/sessions/${state.id}/users/${rootState.auth.user.uid}/events`)
         .set(events);
+    },
+    async getAllEvents({ commit, state }) {
+      const database = firebase.database();
+      const users = (await database
+        .ref(`/sessions/${state.id}/users`)
+        .once('value')).val();
+
+      console.log(users);
+
+      const events = R.compose(
+        R.map(event => ({
+          start: parseDate(event.start.dateTime),
+          end: parseDate(event.end.dateTime),
+        })),
+        R.filter(R.identity),
+        R.flatten,
+        R.map(user => user.events),
+        R.map(R.defaultTo({ events: [] })),
+        R.values,
+      )(users);
+
+      commit('updateAllEvents', events);
+
+      console.log(getFreeHalfHourIntervals(events));
     },
   },
 };
