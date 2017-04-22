@@ -39,54 +39,54 @@ export default {
     },
     async signIn({ commit }) {
       const google = await getGoogle();
+      const database = firebase.database();
 
-      const listener = google.auth2
-        .getAuthInstance()
-        .isSignedIn.listen(async isSignedIn => {
-          if (!isSignedIn) {
-            return;
-          }
-          console.log('Signed in to google');
-          const credential = firebase.auth.GoogleAuthProvider.credential(
-            google.auth2.getAuthInstance().currentUser.get().getAuthResponse()
-              .id_token,
-          );
-          const user = await firebase.auth().signInWithCredential(credential);
-          console.log('Signed in to firebase');
-          commit(
-            'updateSigninStatus',
-            R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
-          );
-          listener.remove();
-        });
-      google.auth2.getAuthInstance().signIn();
+      return new Promise(resolve => {
+        const listener = google.auth2
+          .getAuthInstance()
+          .isSignedIn.listen(async isSignedIn => {
+            if (!isSignedIn) {
+              return;
+            }
+            console.log('Signed in to google');
+            const credential = firebase.auth.GoogleAuthProvider.credential(
+              google.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+                .id_token,
+            );
+            const user = await firebase.auth().signInWithCredential(credential);
+            console.log('Signed in to firebase');
+            commit(
+              'updateSigninStatus',
+              R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
+            );
+            database
+              .ref(`/users/${user.uid}`)
+              .set(R.pick(['email', 'displayName', 'photoURL', 'uid'], user));
+            listener.remove();
+            resolve();
+          });
+        google.auth2.getAuthInstance().signIn();
+      });
     },
     async signOut({ commit }) {
       const google = await getGoogle();
 
-      const listener = google.auth2
-        .getAuthInstance()
-        .isSignedIn.listen(async isSignedIn => {
-          if (isSignedIn) {
-            return;
-          }
+      return new Promise(resolve => {
+        const listener = google.auth2
+          .getAuthInstance()
+          .isSignedIn.listen(async isSignedIn => {
+            if (isSignedIn) {
+              return;
+            }
 
-          await firebase.auth().signOut();
-          commit('updateSigninStatus', null);
-          listener.remove();
-        });
+            await firebase.auth().signOut();
+            commit('updateSigninStatus', null);
+            listener.remove();
+            resolve();
+          });
 
-      google.auth2.getAuthInstance().signOut();
+        google.auth2.getAuthInstance().signOut();
+      });
     },
   },
 };
-
-// function listen(fn) {
-//   return new Promise(resolve => {
-//     let listener;
-//     listener = fn((...result) => {
-//       resolve(...result);
-//       listener.remove();
-//     });
-//   });
-// }
