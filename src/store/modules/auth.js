@@ -5,6 +5,7 @@ import getGoogle from '@/gapi';
 export default {
   state: {
     isSignedIn: null,
+    isSigningIn: false,
     user: {},
   },
   mutations: {
@@ -16,6 +17,9 @@ export default {
         state.user = {};
         state.isSignedIn = false;
       }
+    },
+    updateSigningInStatus(state, isSigningIn) {
+      state.isSigningIn = isSigningIn;
     },
   },
   actions: {
@@ -41,6 +45,8 @@ export default {
       const google = await getGoogle();
       const database = firebase.database();
 
+      commit('updateSigningInStatus', true);
+
       return new Promise(resolve => {
         const listener = google.auth2
           .getAuthInstance()
@@ -55,14 +61,15 @@ export default {
             );
             const user = await firebase.auth().signInWithCredential(credential);
             console.log('Signed in to firebase');
-            commit(
-              'updateSigninStatus',
-              R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
-            );
             database
               .ref(`/users/${user.uid}`)
               .set(R.pick(['email', 'displayName', 'photoURL', 'uid'], user));
             listener.remove();
+            commit(
+              'updateSigninStatus',
+              R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
+            );
+            commit('updateSigningInStatus', true);
             resolve();
           });
         google.auth2.getAuthInstance().signIn();

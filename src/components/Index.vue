@@ -6,16 +6,16 @@
    </div>
    <div class='container-fuild center'>
      <p class='subtitle'>
-     a simple tool for scheduling group meetings.
+       a simple tool for scheduling group meetings.
      </p>
    </div>
    <div class='container-fuild center'>
      <p class='pre-footer'>
        made with ♥ for UniHack Mini '17
      </p>
-     <p>
-       sign in with Google to continue
-     </p>
+     <ui-button v-on:click="login()" :loading="isSigningIn">
+       Sign In with Google
+     </ui-button>
    </div>
   <!-- fixed footer -->
   <p class='fixed-footer'>
@@ -24,6 +24,33 @@
  </div>
 </template>
 
+<script>
+export default {
+  created() {
+    this.$store.dispatch('refreshSignInStatus');
+  },
+  computed: {
+    isSigningIn() {
+      return this.$store.state.auth.isSigningIn;
+    },
+    isSignedIn() {
+      return this.$store.state.auth.isSignedIn;
+    },
+  },
+  methods: {
+    login() {
+      this.$store.dispatch('signIn');
+    },
+  },
+  watch: {
+    isSignedIn(isSignedIn) {
+      if (isSignedIn) {
+        this.$router.push('/start');
+      }
+    },
+  },
+};
+</script>
 
 
 <style scoped>

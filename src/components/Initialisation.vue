@@ -6,10 +6,10 @@
     <!--Insert button "CREATE SESSION" here -->
     <div class="altcenter">
       <div class="sessionButton">
-        <ui-button :raised="true">Create Session</ui-button>
+        <ui-button :raised="true" v-on:click="createSession()">Create Session</ui-button>
       </div>
       <div class="sessionCode">
-        <ui-textbox :value="value" :floating-label="true" label="Already have a session code?"></ui-textbox>
+        <ui-textbox v-model="sessionIdInput" :floating-label="true" label="Already have a session code?"></ui-textbox>
       </div>
     </div>
 
@@ -27,8 +27,28 @@ export default {
   },
   data() {
     return {
-      value: '',
+      sessionIdInput: '',
     };
+  },
+  computed: {
+    isInSession() {
+      return this.$store.state.session.isInSession;
+    },
+  },
+  methods: {
+    createSession() {
+      this.$store.dispatch('createSession');
+    },
+    joinSession() {
+      this.$store.dispatch('joinSession', this.sessionIdInput); // TODO failure state
+    },
+  },
+  watch: {
+    isInSession(isInSession) {
+      if (isInSession) {
+        this.$router.push(`/room?id=${this.$store.state.session.id}`);
+      }
+    },
   },
 };
 </script>
