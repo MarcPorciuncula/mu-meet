@@ -4,7 +4,14 @@ import R from 'ramda';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
 import parseDate from 'date-fns/parse';
-import { getFreeHalfHourIntervals } from '../../scheduler';
+import isSaturday from 'date-fns/is_saturday';
+import isSunday from 'date-fns/is_sunday';
+import {
+  getFreeHalfHourIntervals,
+  restrictHours,
+  groupIntervals,
+  sortByDistanceFrom1PM,
+} from '@/scheduler';
 import getGoogle from '@/gapi';
 
 export default {
@@ -112,7 +119,31 @@ export default {
 
       commit('updateAllEvents', events);
 
-      console.log(getFreeHalfHourIntervals(events));
+      let freeIntervals = R.compose(
+        R.sort((a, b) => sortByDistanceFrom1PM(a.start, b.start)),
+        arr => {
+          console.log(arr);
+          return arr;
+        },
+        groupIntervals,
+        R.filter(R.complement(isSaturday)),
+        R.filter(R.complement(isSunday)),
+        R.filter(restrictHours(8, 21.5)),
+        getFreeHalfHourIntervals,
+      )(events);
+
+      database.ref(`/sessions/${state.id}/meetings`).set(
+        freeIntervals.map(({ start, duration }) => ({
+          start: start.toISOString(),
+          duration,
+        })),
+      );
+      console.log(
+        freeIntervals.map(({ start, duration }) => ({
+          start: start.toISOString(),
+          duration,
+        })),
+      );
     },
   },
 };
