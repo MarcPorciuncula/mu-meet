@@ -29,7 +29,7 @@ export default {
   align-items: center;
 }
 .host {
-  font-size: 120%;
+  font-size: 20px;
   margin: 0px;
   color: #90A4AE;
 }
