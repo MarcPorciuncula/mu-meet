@@ -1,6 +1,6 @@
 <template>
   <!-- main content -->
-  <div class='body'>
+  <div class='body bg'>
    <div class='container-fluid title center'>
    <h1>MUmeet</h1>
    </div>
@@ -11,7 +11,7 @@
    </div>
    <div class='container-fuild center'>
      <p class='pre-footer'>
-       made with ♥ for UniHack Mini '17
+       made with <span style='color:#c0392b'>♥</span> for UniHack Mini '17
      </p>
      <ui-button v-on:click="login()" :loading="isSigningIn">
        Sign In with Google
