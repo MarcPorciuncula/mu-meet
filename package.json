@@ -12,6 +12,7 @@
     "deploy": "surge -p dist -d https://mumeet.surge.sh"
   },
   "dependencies": {
+    "awaiting": "^2.2.0",
     "date-fns": "^1.28.3",
     "firebase": "^3.8.0",
     "keen-ui": "^1.0.0",

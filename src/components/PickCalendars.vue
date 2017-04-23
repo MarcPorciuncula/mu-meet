@@ -1,34 +1,26 @@
 <template>
-  <div>
-    <full-header></full-header>
-    <div>
-      <p class='center head'>please select the calendars you wish to schedule around</p>
-      <ul class="calendar-list">
-        <li
-          v-for="calendar of calendars"
-          :class="['calendar', { 'calendar--selected': selected.includes(calendar.id) }]"
-          :style="`background-color: ${calendar.backgroundColor}; color: ${calendar.foregroundColor}`"
-          v-on:click="toggleSelectCalendar(calendar.id)"
-        >
-          {{ calendar.summary }}
-        </li>
-      </ul>
-      <ui-button v-on:click="confirm()">
-        Confirm
-      </ui-button>
-      <p class='center' style='font-size:16px; margin-top:0px;'>make sure your uni schedule is synced with one of these!</p>
-      <p class='help center'><a href="https://my.monash.edu.au/news-and-events/calendar-feeds/direct.html">I haven't synced my calendar yet, help!</a></p>
-    </div>
+  <div class="center">
+    <p class='center head'>please select the calendars you wish to schedule around</p>
+    <ul class="calendar-list">
+      <li
+        v-for="calendar of calendars"
+        :class="['calendar', { 'calendar--selected': selected.includes(calendar.id) }]"
+        :style="`background-color: ${calendar.backgroundColor}; color: ${calendar.foregroundColor}`"
+        v-on:click="toggleSelectCalendar(calendar.id)"
+      >
+        {{ calendar.summary }}
+      </li>
+    </ul>
+    <ui-button v-on:click="confirm()" :disabled="selected.length === 0" :loading="loading">
+      Confirm
+    </ui-button>
+    <p class='center' style='font-size:16px; margin-top:0px;'>make sure your uni schedule is synced with one of these!</p>
+    <p class='help center'><a href="https://my.monash.edu.au/news-and-events/calendar-feeds/direct.html">I haven't synced my calendar yet, help!</a></p>
   </div>
 </template>
 
 <script>
-import FullHeader from './FullHeader';
-
 export default {
-  components: {
-    FullHeader,
-  },
   data() {
     return {
       selected: [],
@@ -54,15 +46,14 @@ export default {
     },
     async confirm() {
       this.loading = true;
-      await this.$store.dispatch('loadCalendarEvents');
+      await this.$store.dispatch('loadCalendarEvents', this.selected);
       this.loading = false;
-      // TODO move on
     },
   },
 };
 </script>
 
-<style scoped>
+<style>
 .center {
   display: flex;
   -webkit-align-items: center;
@@ -87,17 +78,17 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
   padding: 10px;
+  max-width: 400px;
 }
 
 .calendar {
   list-style: none;
   margin: 5px;
-  width: 400px;
   padding: 10px;
   border-radius: 3px;
   transition: box-shadow 0.2s ease;
+  width: 100%;
 }
 
 .calendar--selected {

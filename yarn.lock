@@ -187,6 +187,10 @@ autosize@^3.0.20:
   version "3.0.20"
   resolved "https://registry.yarnpkg.com/autosize/-/autosize-3.0.20.tgz#e343ea7c5603834738169420f0349dc953e62a9e"
 
+awaiting@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/awaiting/-/awaiting-2.2.0.tgz#2e8777625b272536e28f6ec435ce90a8def3310a"
+
 aws-sign2@~0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.6.0.tgz#14342dd38dbcc94d0e5b87d763cd63612c0e794f"

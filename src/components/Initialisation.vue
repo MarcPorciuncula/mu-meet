@@ -10,10 +10,11 @@
       </div>
       <div class="sessionCode">
         <ui-textbox v-model="sessionIdInput" :floating-label="true" label="Already have a session code?"></ui-textbox>
+        <ui-button v-on:click="joinSession()">Join</ui-button>
       </div>
     </div>
 
-    <fixed-footer></fixed-footer>
+    <div v-on:click="signout()"><fixed-footer></fixed-footer></div>
   </div>
 </template>
 
@@ -30,6 +31,9 @@ export default {
       sessionIdInput: '',
     };
   },
+  created() {
+    this.$store.dispatch('refreshSessionStatus');
+  },
   computed: {
     isInSession() {
       return this.$store.state.session.isInSession;
@@ -41,6 +45,10 @@ export default {
     },
     joinSession() {
       this.$store.dispatch('joinSession', this.sessionIdInput); // TODO failure state
+    },
+    signout() {
+      this.$store.dispatch('signOut');
+      this.$router.push('/');
     },
   },
   watch: {

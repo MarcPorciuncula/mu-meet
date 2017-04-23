@@ -45,7 +45,11 @@ export default {
   watch: {
     isSignedIn(isSignedIn) {
       if (isSignedIn) {
-        this.$router.push('/start');
+        if (this.$route.query.id) {
+          this.$router.push(`/room?id=${this.$route.query.id}`);
+        } else {
+          this.$router.push('/start');
+        }
       }
     },
   },
