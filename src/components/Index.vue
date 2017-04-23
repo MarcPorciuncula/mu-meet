@@ -62,7 +62,7 @@ export default {
 
 h1 {
   font-size:50px;
-  margin-bottom:10px;
+  margin-bottom:5px;
 }
 .center {
   display: flex;
@@ -74,15 +74,18 @@ h1 {
 }
 .title {
   padding-top: 20vh;
+  margin-bottom: 10px;
 }
 .subtitle {
   font-size: 25px;
   max-width: 500px;
+  margin-top: 0px;
   text-align: center;
 }
 .pre-footer {
   padding-top: 5vh;
   padding-bottom: 5vh;
+  font-size: 15px;
 }
 
 .fixed-footer {
@@ -97,7 +100,8 @@ h1 {
   right: 0;
   margin-bottom:0;
   font-family: Bitter,Georgia;
-  font-size: 80%
+  font-size: 12px;
+  color: white;
 }
 
 </style>
