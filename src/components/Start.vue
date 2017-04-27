@@ -31,6 +31,10 @@
       <div v-if="isInSession">
         <p>The current invite code is {{ sessionId }}</p>
       </div>
+      <hr/>
+      <div>
+        <button v-on:click="calculate()">Find free times</button>
+      </div>
     </template>
   </div>
 </template>
@@ -87,6 +91,9 @@ export default {
     },
     listEvents() {
       this.$store.dispatch('loadCalendarEvents', this.selectedCalendars);
+    },
+    calculate() {
+      this.$store.dispatch('getAllEvents');
     },
   },
 };

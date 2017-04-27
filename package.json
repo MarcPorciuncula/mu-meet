@@ -8,11 +8,14 @@
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
-    "lint": "eslint --ext .js,.vue src"
+    "lint": "eslint --ext .js,.vue src",
+    "deploy": "surge -p dist -d https://mumeet.surge.sh"
   },
   "dependencies": {
+    "awaiting": "^2.2.0",
     "date-fns": "^1.28.3",
     "firebase": "^3.8.0",
+    "keen-ui": "^1.0.0",
     "ramda": "^0.23.0",
     "shortid": "^2.2.8",
     "vue": "^2.2.6",
