@@ -4,8 +4,8 @@ import Vue from 'vue';
 import router from './router';
 import store from './store';
 import KeenUI from 'keen-ui';
-import './index.css';
-import 'keen-ui/dist/keen-ui.css';
+import './index.scss';
+// import 'keen-ui/dist/keen-ui.css';
 import './firebase.config.js';
 
 Vue.config.productionTip = false;

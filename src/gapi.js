@@ -1,7 +1,14 @@
 /* global gapi */
 
 const client = Promise.resolve()
-  .then(() => new Promise(resolve => gapi.load('client:auth2', resolve)))
+  .then(() => {
+    if (typeof gapi === 'undefined') {
+      throw new Error('Could not load Google API Script');
+    }
+  })
+  .then(
+    () => new Promise(resolve => gapi.load('client:auth2:signin2', resolve)),
+  )
   .then(() =>
     gapi.client.init({
       scope: 'https://www.googleapis.com/auth/calendar',

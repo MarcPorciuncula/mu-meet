@@ -1,0 +1,31 @@
+$min-rem-size: 10;
+$max-rem-size: 14;
+$min-screen-size: 400;
+$max-screen-size: 800;
+
+:root {
+  font-size: calc( #{$min-rem-size}px + (#{$max-rem-size} - #{$min-rem-size}) * (100vw - #{$min-screen-size}px) / (#{$max-screen-size} - #{$min-screen-size}) );
+  --type-color: #4F4F4F;
+}
+
+@media (min-width: #{$max-screen-size}px) {
+  :root {
+    font-size: #{$max-rem-size}px;
+  }
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.6em;
+  color: var(--type-color);
+  margin: 0;
+  padding: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}

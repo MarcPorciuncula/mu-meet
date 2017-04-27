@@ -2,98 +2,127 @@ import * as firebase from 'firebase';
 import R from 'ramda';
 import getGoogle from '@/gapi';
 
+export const PENDING_SIGN_IN = 'PENDING_SIGN_IN';
+export const PENDING_REFRESH = 'PENDING_REFRESH';
+export const PENDING_SIGN_OUT = 'PENDING_SIGN_OUT';
+
 export default {
   state: {
+    pending: false,
     isSignedIn: null,
-    isSigningIn: false,
     user: {},
   },
   mutations: {
-    updateSigninStatus(state, data) {
-      if (data) {
-        Object.assign(state.user, data);
-        state.isSignedIn = true;
-      } else {
+    updateAuthUser(state, data) {
+      if (data === null) {
         state.user = {};
-        state.isSignedIn = false;
+      } else {
+        Object.assign(state.user, data);
       }
     },
-    updateSigningInStatus(state, isSigningIn) {
-      state.isSigningIn = isSigningIn;
+    updateAuthStatus(state, { isSignedIn, pending }) {
+      Object.assign(state, {
+        isSignedIn,
+        pending,
+      });
     },
   },
   actions: {
-    async refreshSignInStatus({ commit }) {
+    async refreshAuthStatus({ commit, state }) {
+      commit('updateAuthStatus', {
+        isSignedIn: false,
+        pending: PENDING_REFRESH,
+      });
+
       const google = await getGoogle();
 
-      console.log('Refreshing signin status');
+      const googleIsSignedIn = google.auth2.getAuthInstance().isSignedIn.get();
+      const firebaseUser = firebase.auth().currentUser;
 
-      const isSignedIn = google.auth2.getAuthInstance().isSignedIn.get();
-      const user = firebase.auth().currentUser;
-      if (isSignedIn && user) {
-        console.log('Currently signed in');
+      let isSignedIn = true;
+      // TODO handle when they are out of sync
+      if (!googleIsSignedIn) {
+        isSignedIn = false;
+      }
+      if (!firebaseUser) {
+        isSignedIn = false;
+      }
+
+      if (isSignedIn) {
+        commit('updateAuthStatus', {
+          isSignedIn: true,
+          pending: false,
+        });
         commit(
-          'updateSigninStatus',
-          R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
+          'updateAuthUser',
+          R.pick(['email', 'displayName', 'photoURL', 'uid'], firebaseUser),
         );
       } else {
-        console.log('Not currently signed in');
-        commit('updateSigninStatus', null);
+        commit('updateAuthStatus', {
+          isSignedIn: false,
+          pending: false,
+        });
+        commit('updateAuthUser', null);
       }
     },
-    async signIn({ commit }) {
+    async handleGoogleSignin({ commit, state }) {
       const google = await getGoogle();
-      const database = firebase.database();
-
-      commit('updateSigningInStatus', true);
-
-      return new Promise(resolve => {
-        const listener = google.auth2
-          .getAuthInstance()
-          .isSignedIn.listen(async isSignedIn => {
-            if (!isSignedIn) {
-              return;
-            }
-            console.log('Signed in to google');
-            const credential = firebase.auth.GoogleAuthProvider.credential(
-              google.auth2.getAuthInstance().currentUser.get().getAuthResponse()
-                .id_token,
-            );
-            const user = await firebase.auth().signInWithCredential(credential);
-            console.log('Signed in to firebase');
-            database
-              .ref(`/users/${user.uid}`)
-              .set(R.pick(['email', 'displayName', 'photoURL', 'uid'], user));
-            listener.remove();
-            commit(
-              'updateSigninStatus',
-              R.pick(['email', 'displayName', 'photoURL', 'uid'], user),
-            );
-            commit('updateSigningInStatus', true);
-            resolve();
-          });
-        google.auth2.getAuthInstance().signIn();
+      const {
+        id_token,
+      } = google.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+      await firebase.auth().signInWithCredential(credential);
+      commit('updateAuthStatus', {
+        isSignedIn: true,
+        pending: false,
       });
+      commit(
+        'updateAuthUser',
+        R.pick(
+          ['email', 'displayName', 'photoURL', 'uid'],
+          firebase.auth().currentUser,
+        ),
+      );
+      // Update user info in the database
+      // TODO this should be done in a cloud function
+      await firebase.database().ref(`/users/${state.user.uid}`).set(state.user);
     },
-    async signOut({ commit }) {
+    async signOut({ commit, state }) {
+      commit('updateAuthStatus', {
+        isSignedIn: state.isSignedIn,
+        pending: PENDING_SIGN_OUT,
+      });
       const google = await getGoogle();
 
-      return new Promise(resolve => {
-        const listener = google.auth2
-          .getAuthInstance()
-          .isSignedIn.listen(async isSignedIn => {
-            if (isSignedIn) {
-              return;
-            }
+      await listenUntil(
+        google.getAuthInstance().isSignedIn.listen,
+        isSignedIn => {
+          return !isSignedIn;
+        },
+      );
 
-            await firebase.auth().signOut();
-            commit('updateSigninStatus', null);
-            listener.remove();
-            resolve();
-          });
-
-        google.auth2.getAuthInstance().signOut();
+      await Promise.all([
+        firebase.auth().signOut(),
+        google.auth2.getAuthInstance.signOut(),
+      ]);
+      commit('updateAuthStatus', {
+        isSignedIn: false,
+        pending: false,
       });
+      commit('updateAuthUser', null);
     },
   },
 };
+
+function listenUntil(listen, callback) {
+  return new Promise(resolve => {
+    const dispose = listen((...args) => {
+      Promise.resolve(callback(...args)).then(stop => {
+        if (stop) {
+          resolve();
+          dispose();
+        }
+      });
+    });
+  });
+}
