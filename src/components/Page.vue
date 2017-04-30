@@ -3,7 +3,14 @@
     <div class="background-gradient"></div>
     <div class="background-image"></div>
     <div class="header-bar">
-      <mumeet-logo></mumeet-logo>
+      <router-link to="/">
+        <mumeet-logo></mumeet-logo>
+      </router-link>
+      <template v-if="isSignedIn">
+        <span class="username">Hi, {{ user.displayName.split(' ')[0] }}</span>
+        <!-- FIXME can't access the photo :c -->
+        <!-- <img :src="user.photoURL"/> -->
+      </template>
     </div>
     <div class="content">
       <slot></slot>
@@ -12,12 +19,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import MumeetLogo from './MumeetLogo';
 
 export default {
   components: {
     MumeetLogo,
   },
+  computed: mapState({
+    isSignedIn: state => state.auth.isSignedIn,
+    user: state => state.auth.user,
+  }),
 };
 </script>
 
@@ -52,13 +64,22 @@ export default {
 .content {
   padding: 2rem;
   color: var(--type-color);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .header-bar {
   font-size: 2.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .content {
   font-size: 2.4rem;
+}
+
+.username {
+  font-size: 1.6rem;
 }
 </style>

@@ -1,12 +1,13 @@
 <template>
-  <div :id="id" style="font-size: 1.8rem">
+  <div :id="id" style="font-size: 1.8rem" v-on:click="$emit('click', $event)">
     <button ref="button" :class="['signin-button', { 'signin-button--hidden': hidden }]" v-on:click="signin()">Sign In With Google</button>
   </div>
 </template>
 
 <script>
 import shortid from 'shortid';
-import getGoogle from '@/gapi';
+import getGoogle, { SCOPE } from '@/gapi';
+import PENDING_SIGN_IN from '@/store/modules/auth';
 
 export default {
   data() {
@@ -24,23 +25,31 @@ export default {
       this.hidden = false;
       return;
     }
-    // TODO connect
-    console.log(this.$refs.button, this.$refs.button.clientHeight);
+    if (!this.$refs.button) {
+      return;
+    }
     google.signin2.render(this.id, {
-      scope: '',
+      scope: SCOPE,
       height: this.$refs.button.clientHeight,
       width: this.$refs.button.clientWidth,
       longtitle: true,
-      onsuccess: x => x,
-      onfailure: x => x,
+      onsuccess: () => {
+        this.$store.dispatch('handleGoogleSignin');
+      },
+      // TODO handle gracefully
+      onfailure: x => console.error('Failed to log in'),
     });
   },
   methods: {
     async signin() {
       const google = await getGoogle();
-      // TODO connect
-      if (google) {
-      }
+      this.$store.commit('updateAuthStatus', {
+        pending: PENDING_SIGN_IN,
+      });
+      await google.auth2.getAuthInstance().signIn({
+        scope: SCOPE,
+      });
+      await this.$store.dispatch('handleGoogleSignin');
     },
   },
 };

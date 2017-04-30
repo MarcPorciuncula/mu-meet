@@ -2,7 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 import calendar from './modules/calendar';
-import session from './modules/session';
+import scheduling from './modules/scheduling';
+import users from './modules/users';
 
 Vue.use(Vuex);
 
@@ -10,7 +11,16 @@ const store = new Vuex.Store({
   modules: {
     auth,
     calendar,
-    session,
+    scheduling,
+    users,
+  },
+  state: {
+    routePending: false,
+  },
+  mutations: {
+    updateRoutePending(state, status) {
+      state.routePending = status;
+    },
   },
 });
 

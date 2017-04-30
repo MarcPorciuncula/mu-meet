@@ -10,21 +10,27 @@ export default {
   state: {
     pending: false,
     isSignedIn: null,
-    user: {},
+    // TODO delegate to the users module
+    user: {
+      email: null,
+      displayName: null,
+      photoURL: null,
+      uid: null,
+    },
   },
   mutations: {
     updateAuthUser(state, data) {
       if (data === null) {
         state.user = {};
       } else {
-        Object.assign(state.user, data);
+        Object.assign(
+          state.user,
+          R.pick(['email', 'displayName', 'photoURL', 'uid'], data),
+        );
       }
     },
-    updateAuthStatus(state, { isSignedIn, pending }) {
-      Object.assign(state, {
-        isSignedIn,
-        pending,
-      });
+    updateAuthStatus(state, data) {
+      Object.assign(state, R.pick(['pending', 'isSignedIn'], data));
     },
   },
   actions: {
@@ -94,16 +100,9 @@ export default {
       });
       const google = await getGoogle();
 
-      await listenUntil(
-        google.getAuthInstance().isSignedIn.listen,
-        isSignedIn => {
-          return !isSignedIn;
-        },
-      );
-
       await Promise.all([
         firebase.auth().signOut(),
-        google.auth2.getAuthInstance.signOut(),
+        google.auth2.getAuthInstance().signOut(),
       ]);
       commit('updateAuthStatus', {
         isSignedIn: false,
@@ -113,16 +112,3 @@ export default {
     },
   },
 };
-
-function listenUntil(listen, callback) {
-  return new Promise(resolve => {
-    const dispose = listen((...args) => {
-      Promise.resolve(callback(...args)).then(stop => {
-        if (stop) {
-          resolve();
-          dispose();
-        }
-      });
-    });
-  });
-}

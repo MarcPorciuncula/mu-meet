@@ -1,5 +1,7 @@
 /* global gapi */
 
+export const SCOPE = 'https://www.googleapis.com/auth/calendar';
+
 const client = Promise.resolve()
   .then(() => {
     if (typeof gapi === 'undefined') {
@@ -11,7 +13,7 @@ const client = Promise.resolve()
   )
   .then(() =>
     gapi.client.init({
-      scope: 'https://www.googleapis.com/auth/calendar',
+      scope: SCOPE,
       clientId: '569083161786-h71j7a2haos4d1ohu6t8hru61ffv4s56.apps.googleusercontent.com',
       discoveryDocs: [
         'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',

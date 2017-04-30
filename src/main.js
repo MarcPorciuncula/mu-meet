@@ -3,21 +3,21 @@
 import Vue from 'vue';
 import router from './router';
 import store from './store';
-import KeenUI from 'keen-ui';
-import './index.scss';
-// import 'keen-ui/dist/keen-ui.css';
+import Wrapper from './components/Wrapper';
 import './firebase.config.js';
+import './index.scss';
 
 Vue.config.productionTip = false;
-
-Vue.use(KeenUI);
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   store,
   router,
-  template: '<router-view></router-view>',
+  template: '<Wrapper/>',
+  components: {
+    Wrapper,
+  },
 });
 
 if (process.env.NODE_ENV !== 'production') {

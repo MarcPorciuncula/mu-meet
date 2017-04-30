@@ -19,7 +19,7 @@
             calendars with <mumeet-logo></mumeet-logo>
           </p>
           <p>
-            <user-action v-on:click="goToSignIn()">Get Started</user-action>
+            <router-link to="/login"><user-action>Get Started</user-action></router-link>
           </p>
         </div>
       </div>

@@ -16,15 +16,39 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Page from './Page';
 import MumeetLogo from './MumeetLogo';
 import GoogleSignInButton from './GoogleSignInButton';
+import store from '@/store';
 
 export default {
   components: {
     Page,
     MumeetLogo,
     GoogleSignInButton,
+  },
+  async beforeRouteEnter(to, from, next) {
+    if (store.state.auth.isSignedIn === null) {
+      await store.dispatch('refreshAuthStatus');
+    }
+    if (store.state.auth.isSignedIn) {
+      next({ path: '/calendars', query: to.query });
+    }
+    next();
+  },
+  computed: mapState({
+    isSignedIn: state => state.auth.isSignedIn,
+  }),
+  watch: {
+    isSignedIn(isSignedIn) {
+      if (isSignedIn) {
+        this.$router.push({
+          path: '/calendars',
+          query: this.$route.query,
+        });
+      }
+    },
   },
 };
 </script>
