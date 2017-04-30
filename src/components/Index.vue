@@ -3,9 +3,10 @@
     <welcome-splash></welcome-splash>
     <div class="footer">
       <p>
-        Design and development by<br/> <b>Marc Porciuncula</b> and <b>Kalana Vithana</b><br/>
+        Design and development by<br/> <a class="author-link" href="https://github.com/MarcoThePoro">Marc Porciuncula</a> and <a class="author-link">Kalana Vithana</a><br/>
         Second runner up in <b>Unihack Mini 2017</b><br/>
-        Made with &lt;3 in Melbourne Australia
+        Made with &lt;3 in Melbourne Australia<br/>
+        <a href="https://github.com/MarcoThePoro/mu-meet">View source on GitHub</a>
       </p>
     </div>
   </div>
@@ -31,8 +32,9 @@ export default {
   text-align: center;
   font-weight: 300;
 
-  b {
-    font-weight: 500;
-  }
+}
+
+.author-link, b {
+  font-weight: 500;
 }
 </style>
