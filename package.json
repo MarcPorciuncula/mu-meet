@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "awaiting": "^2.2.0",
+    "babel-plugin-ramda": "^1.2.0",
     "date-fns": "^1.28.3",
     "firebase": "^3.8.0",
     "invariant": "^2.2.2",
