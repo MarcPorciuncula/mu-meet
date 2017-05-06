@@ -1,0 +1,30 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "build": "rollup -c",
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "^1.1.0",
+    "babelrc-rollup": "^3.0.0",
+    "body-parser": "^1.17.1",
+    "compose-middleware": "^2.2.0",
+    "cors": "^2.8.3",
+    "date-fns": "^1.28.4",
+    "firebase-admin": "^4.2.1",
+    "firebase-functions": "^0.5.5",
+    "ramda": "^0.23.0",
+    "shortid": "^2.2.8"
+  },
+  "private": true,
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.4.0",
+    "firebase-tools": "^3.6.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  }
+}

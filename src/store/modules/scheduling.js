@@ -1,8 +1,5 @@
 import * as firebase from 'firebase';
-import shortid from 'shortid';
 import R from 'ramda';
-import getStartOfWeek from 'date-fns/start_of_week';
-import getEndOfWeek from 'date-fns/end_of_week';
 import parseDate from 'date-fns/parse';
 import getDay from 'date-fns/get_day';
 import {
@@ -12,6 +9,7 @@ import {
   sortByDistanceFrom1PM,
 } from '@/scheduler';
 import invariant from 'invariant';
+import axios from 'axios';
 
 export const PHASE_LOBBY = 'PHASE_LOBBY';
 export const PHASE_CONFIGURE = 'PHASE_CONFIGURE';
@@ -200,44 +198,14 @@ async function createSchedulingSession({ commit, state, rootState }) {
     rootState.auth.isSignedIn,
     'Must be signed in to call createSchedulingSession',
   );
-  const database = firebase.database();
-
-  // TODO move this to a cloud function
-
-  const sessionId = shortid.generate();
-  await database.ref(`/sessions/${sessionId}`).set({
-    host: rootState.auth.user.uid,
-    phase: PHASE_LOBBY,
-    users: {
-      [rootState.auth.user.uid]: {
-        ready: false,
-      },
-    },
-    config: {
-      minDuration: 1,
-      // TODO make this configurable
-      searchFromDate: getStartOfWeek(new Date()).toISOString(),
-      searchToDate: getEndOfWeek(new Date()).toISOString(),
-      searchFromHour: 9,
-      searchToHour: 18,
-      days: {
-        sunday: false,
-        monday: true,
-        tuesday: true,
-        wednesday: true,
-        thursday: true,
-        friday: true,
-        saturday: false,
-      },
-    },
-    result: {
-      pending: false,
-      meetings: [],
+  const res = await axios({
+    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/createSession',
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${rootState.auth.user.token}`,
     },
   });
-  await database
-    .ref(`/users/${rootState.auth.user.uid}/currentSession`)
-    .set(sessionId);
+  console.log('Cloud function response', res);
 }
 
 async function joinSchedulingSession({ commit, state, rootState }, sessionId) {

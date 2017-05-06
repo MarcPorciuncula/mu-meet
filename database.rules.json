@@ -1,0 +1,30 @@
+{
+  "rules": {
+
+    "users": {
+      "$uid": {
+        "currentSession": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "email": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "photoURL": {
+          ".read": "auth !== null",
+          ".write": "$uid === auth.uid"
+        },
+        "selectedCalendars": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "previousSessions": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
+      }
+    }
+
+  }
+}

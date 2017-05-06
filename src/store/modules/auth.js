@@ -16,6 +16,7 @@ export default {
       displayName: null,
       photoURL: null,
       uid: null,
+      token: null,
     },
   },
   mutations: {
@@ -25,7 +26,7 @@ export default {
       } else {
         Object.assign(
           state.user,
-          R.pick(['email', 'displayName', 'photoURL', 'uid'], data),
+          R.pick(['email', 'displayName', 'photoURL', 'uid', 'token'], data),
         );
       }
     },
@@ -61,7 +62,10 @@ export default {
         });
         commit(
           'updateAuthUser',
-          R.pick(['email', 'displayName', 'photoURL', 'uid'], firebaseUser),
+          Object.assign(
+            { token: await firebaseUser.getToken(true) },
+            R.pick(['email', 'displayName', 'photoURL', 'uid'], firebaseUser),
+          ),
         );
       } else {
         commit('updateAuthStatus', {
@@ -82,16 +86,26 @@ export default {
         isSignedIn: true,
         pending: false,
       });
+      const currentUser = firebase.auth().currentUser;
       commit(
         'updateAuthUser',
-        R.pick(
-          ['email', 'displayName', 'photoURL', 'uid'],
-          firebase.auth().currentUser,
+        Object.assign(
+          { token: await currentUser.getToken(true) },
+          R.pick(
+            ['email', 'displayName', 'photoURL', 'uid'],
+            firebase.auth().currentUser,
+          ),
         ),
       );
       // Update user info in the database
       // TODO this should be done in a cloud function
-      await firebase.database().ref(`/users/${state.user.uid}`).set(state.user);
+      await Promise.all(
+        ['email', 'displayName', 'photoURL', 'uid'].map(prop =>
+          firebase.database
+            .ref(`/users/${state.user.uid}/${prop}`)
+            .set(state.user[prop]),
+        ),
+      );
     },
     async signOut({ commit, state }) {
       commit('updateAuthStatus', {
