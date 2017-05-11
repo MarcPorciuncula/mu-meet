@@ -54,7 +54,7 @@ async function signIn({ commit, state }) {
     .getAuthInstance()
     .grantOfflineAccess({ scope: SCOPE });
   const { data } = await axios({
-    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/claimAuthCode',
+    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/getGoogleOAuth2Authorization',
     method: 'post',
     data: { code },
   });
@@ -62,7 +62,7 @@ async function signIn({ commit, state }) {
   await firebase.auth().signInWithCredential(credential);
   const firebaseToken = await firebase.auth().currentUser.getToken(true);
   await axios({
-    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/linkGoogleCredentials',
+    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/linkGoogleOAuthToFirebaseUser',
     method: 'post',
     data: { credential_link_code: data.credential_link_code },
     headers: {

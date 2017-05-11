@@ -4,4 +4,7 @@ import * as admin from 'firebase-admin';
 admin.initializeApp(functions.config().firebase);
 
 export { createSession } from './sessions';
-export { claimAuthCode, linkGoogleCredentials } from './auth';
+export {
+  getGoogleOAuth2Authorization,
+  linkGoogleOAuthToFirebaseUser,
+} from './auth';

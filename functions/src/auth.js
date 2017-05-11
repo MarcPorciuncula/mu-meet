@@ -2,11 +2,18 @@ import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import shortid from 'shortid';
 import { compose } from 'compose-middleware';
-import request from 'request-promise-native';
 import bodyParser from 'body-parser';
+import google from 'googleapis';
 import cors from './cors';
 import credentials from './credentials';
+import a from 'awaiting';
 
+/**
+ * Validates and decodes Firebase ID token and places it on `res.locals.idToken`
+ * @param  {ExpressRequest} req
+ * @param  {ExpressResponse} res
+ * @param  {Function} next
+ */
 export async function validateFirebaseIdToken(req, res, next) {
   console.log('Check request is authorized with Firebase ID Token');
 
@@ -38,90 +45,89 @@ export async function validateFirebaseIdToken(req, res, next) {
   next();
 }
 
-// Takes a Google OAuth2 authorization code, and claims it for the access and refresh tokens.
-// Returns a google id_token which can be used to sign in with firebase, and a link code
-// Once signed in, the user must link their account back to their credentials
-export const claimAuthCode = functions.https.onRequest(
-  compose([
-    cors,
-    bodyParser.json(),
-    async (req, res) => {
-      const code = req.body.code;
-      try {
-        console.log(`Obtaining auth tokens from auth code.`);
-        const response = await request({
-          uri: 'https://www.googleapis.com/oauth2/v4/token',
-          method: 'POST',
-          form: {
-            code,
-            client_id: credentials.web.client_id,
-            client_secret: credentials.web.client_secret,
-            redirect_uri: credentials.web.redirect_uris[0],
-            grant_type: 'authorization_code',
-          },
-        }).then(JSON.parse);
-        const credentialLinkCode = shortid.generate();
-        await admin
-          .database()
-          .ref(`/google-credentials/${credentialLinkCode}`)
-          .set(response);
-        console.log(
-          `Auth tokens obtained for user with id token ${response.id_token}.`,
-        );
-        res.setHeader('Content-Type', 'application/json');
-        res.send(
-          200,
-          JSON.stringify({
-            id_token: response.id_token,
-            credential_link_code: credentialLinkCode,
-          }),
-        );
-      } catch (err) {
-        console.error('Error obtaining tokens', err);
-        res.send(504, 'Internal Server Error');
-        return;
-      }
-    },
-  ]),
+/**
+ * Gets Google API OAuth2 tokens and stores them in the database, sends id_token for Firebase authentication, and credential_link_code to claim the tokens.
+ * @param  {ExpressRequest} req
+ * @param  {string} req.body.code An OAuth2 authorization code
+ * @param  {ExpressResponse} res
+ */
+async function _getGoogleOAuth2Authorization(req, res) {
+  const database = admin.database();
+  const { code } = req.body;
+
+  const oauth2Client = new google.auth.OAuth2(
+    credentials.web.client_id,
+    credentials.web.client_secret,
+    credentials.web.redirect_uris[0],
+  );
+
+  console.log('Obtain OAuth2 tokens from authorization code', code);
+  const tokens = await a.callback(
+    oauth2Client.getToken.bind(oauth2Client),
+    code,
+  );
+
+  const credentialLinkCode = shortid.generate();
+  console.log('Store against link code', credentialLinkCode);
+  await database.ref(`/google-credentials/${credentialLinkCode}`).set(tokens);
+
+  console.log('Success');
+  res.setHeader('Content-Type', 'application/json');
+  res.send(
+    200,
+    JSON.stringify({
+      id_token: tokens.id_token,
+      credential_link_code: credentialLinkCode,
+    }),
+  );
+}
+
+export const getGoogleOAuth2Authorization = functions.https.onRequest(
+  compose([cors, bodyParser.json(), _getGoogleOAuth2Authorization]),
 );
 
-// Takes a link code previously issued to the user from claimAuthCode, and links
-// the Googla OAuth2 credentials to their firebase account.
-export const linkGoogleCredentials = functions.https.onRequest(
+/**
+ * Moves Google API OAuth tokens from intermediate storage to the user's record in the database
+ * @param  {ExpressRequest} req
+ * @param  {string} req.body.credential_link_code A code issued by getGoogleOAuth2Authorization
+ * @param  {ExpressResponse} res
+ * @param  {string} res.locals.idToken.uid The user's firebase uid
+ */
+async function _linkGoogleOAuthToFirebaseUser(req, res) {
+  const database = admin.database();
+  const { uid } = res.locals.idToken;
+  const { credential_link_code: credentialLinkCode } = req.body;
+
+  console.log(
+    `Link Google OAuth2 credentials ${credentialLinkCode} to user ${uid}`,
+  );
+  const snapshot = await database
+    .ref(`/google-credentials/${credentialLinkCode}`)
+    .once('value');
+  const tokens = snapshot.val();
+
+  if (!tokens) {
+    console.error(
+      `There are no credentials associated with link code ${credentialLinkCode}`,
+    );
+    res.send(401, 'Unauthorized');
+    return;
+  }
+
+  await database
+    .ref(`/users/${uid}/tokens`)
+    .transaction(x => Object.assign(x || {}, tokens));
+  await database.ref(`/google-credentials/${credentialLinkCode}`).set(null);
+
+  console.log('Success');
+  res.send(200, 'Success');
+}
+
+export const linkGoogleOAuthToFirebaseUser = functions.https.onRequest(
   compose([
     cors,
     validateFirebaseIdToken,
     bodyParser.json(),
-    async (req, res) => {
-      const { uid } = res.locals.idToken;
-      const { credential_link_code: credentialLinkCode } = req.body;
-      console.log(
-        `Linking account ${uid} with google credentials with link code ${credentialLinkCode}`,
-      );
-      const snapshot = await admin
-        .database()
-        .ref(`/google-credentials/${credentialLinkCode}`)
-        .once('value');
-      const credential = snapshot.val();
-      console.log(credential);
-      if (!credential) {
-        console.error(
-          `There were no credentials with credential link code ${credentialLinkCode}`,
-        );
-        res.send(401, 'Unauthorized');
-        return;
-      }
-      await admin
-        .database()
-        .ref(`/users/${uid}/tokens`)
-        .transaction(value => Object.assign(value || {}, credential));
-      await admin
-        .database()
-        .ref(`/google-credentials/${credentialLinkCode}`)
-        .set(null);
-      console.log('Success');
-      res.send(200, 'Success');
-      return;
-    },
+    _linkGoogleOAuthToFirebaseUser,
   ]),
 );

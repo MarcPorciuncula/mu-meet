@@ -12,13 +12,16 @@ export default {
   entry: 'src/index.js',
   format: 'cjs',
   dest: 'index.js',
-  external: Object.keys(pkg.dependencies),
+  external: Object.keys(pkg.dependencies).filter(dep => dep !== 'awaiting'),
   plugins: [
     resolve({ main: true }),
     commonjs({
       include: 'node_modules/**',
     }),
     json(),
-    babel({ exclude: 'node_modules/**' }),
+    babel({
+      // awaiting is made for node 7.x and must be transpiled to run on 6.x
+      exclude: 'node_modules/!(awaiting)/**/*.*',
+    }),
   ],
 };
