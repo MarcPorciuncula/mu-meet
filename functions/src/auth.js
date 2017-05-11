@@ -120,7 +120,7 @@ async function _linkGoogleOAuthToFirebaseUser(req, res) {
   await database.ref(`/google-credentials/${credentialLinkCode}`).set(null);
 
   console.log('Success');
-  res.send(200, 'Success');
+  res.send(200, 'OK');
 }
 
 export const linkGoogleOAuthToFirebaseUser = functions.https.onRequest(

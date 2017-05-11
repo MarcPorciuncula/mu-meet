@@ -8,3 +8,4 @@ export {
   getGoogleOAuth2Authorization,
   linkGoogleOAuthToFirebaseUser,
 } from './auth';
+export { getCalendars } from './calendar';

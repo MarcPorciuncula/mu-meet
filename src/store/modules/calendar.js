@@ -3,6 +3,7 @@ import getGoogle from '@/gapi';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
 import invariant from 'invariant';
+import axios from 'axios';
 import R from 'ramda';
 
 export default {
@@ -39,10 +40,20 @@ async function fetchCalendars({ commit, rootState }) {
   if (!rootState.auth.isSignedIn) {
     throw new Error('Cannot fetch calendars when not logged in');
   }
-  const google = await getGoogle();
-  const response = await google.client.calendar.calendarList.list();
-  const body = JSON.parse(response.body);
-  commit('updateCalendars', body.items);
+  const firebaseToken = await firebase.auth().currentUser.getToken(true);
+  await axios({
+    method: 'post',
+    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/getCalendars',
+    headers: {
+      Authorization: `Bearer ${firebaseToken}`,
+    },
+  });
+  const calendarsSnapshot = await firebase
+    .database()
+    .ref(`/users/${rootState.auth.user.uid}/calendars`)
+    .once('value');
+  const calendars = calendarsSnapshot.val();
+  commit('updateCalendars', calendars);
 
   const database = firebase.database();
   const snapshot = await database
