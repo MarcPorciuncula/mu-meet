@@ -15,3 +15,16 @@ yarn dev
 yarn build
 ```
 This project was bootstrapped with the Vue Webpack template. For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+## Deploy
+
+```bash
+# install surge globally
+npm install -g surge
+
+# login to surge
+surge login
+
+# deploy
+yarn deploy
+```
