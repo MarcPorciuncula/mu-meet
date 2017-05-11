@@ -22,9 +22,16 @@
         "previousSessions": {
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
+        },
+        "tokens": {
+          ".read": "false",
+          ".write": "false"
         }
       }
+    },
+    "google-credentials": {
+      ".read": false,
+      ".write": false
     }
-
   }
 }

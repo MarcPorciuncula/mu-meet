@@ -4,7 +4,7 @@ import { validateFirebaseIdToken } from './auth';
 import shortid from 'shortid';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
-import cors from 'cors';
+import cors from './cors';
 import { compose } from 'compose-middleware';
 // import R from 'ramda';
 
@@ -38,7 +38,7 @@ const DEFAULT_SESSION_STATE = {
 
 export const createSession = functions.https.onRequest(
   compose([
-    cors({ origin: true }),
+    cors,
     validateFirebaseIdToken,
     async (req, res) => {
       const { uid } = res.locals.idToken;

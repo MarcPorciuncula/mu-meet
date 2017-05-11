@@ -10,7 +10,7 @@
       all set?
     </p>
     <p class="signin-button-wrapper">
-      <google-sign-in-button></google-sign-in-button>
+      <button v-on:click="signIn()" class="md-raised">Sign in with Google</button>
     </p>
   </page>
 </template>
@@ -19,14 +19,12 @@
 import { mapState } from 'vuex';
 import Page from './Page';
 import MumeetLogo from './MumeetLogo';
-import GoogleSignInButton from './GoogleSignInButton';
 import store from '@/store';
 
 export default {
   components: {
     Page,
     MumeetLogo,
-    GoogleSignInButton,
   },
   async beforeRouteEnter(to, from, next) {
     if (store.state.auth.isSignedIn === null) {
@@ -48,6 +46,11 @@ export default {
           query: this.$route.query,
         });
       }
+    },
+  },
+  methods: {
+    signIn() {
+      this.$store.dispatch('signIn');
     },
   },
 };

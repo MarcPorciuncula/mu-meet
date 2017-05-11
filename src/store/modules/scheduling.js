@@ -198,11 +198,12 @@ async function createSchedulingSession({ commit, state, rootState }) {
     rootState.auth.isSignedIn,
     'Must be signed in to call createSchedulingSession',
   );
+  const firebaseToken = await firebase.auth().currentUser.getToken(true);
   const res = await axios({
     url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/createSession',
     method: 'post',
     headers: {
-      Authorization: `Bearer ${rootState.auth.user.token}`,
+      Authorization: `Bearer ${firebaseToken}`,
     },
   });
   console.log('Cloud function response', res);

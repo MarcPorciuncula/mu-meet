@@ -14,7 +14,10 @@
     "date-fns": "^1.28.4",
     "firebase-admin": "^4.2.1",
     "firebase-functions": "^0.5.5",
+    "googleapis": "^19.0.0",
     "ramda": "^0.23.0",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
     "shortid": "^2.2.8"
   },
   "private": true,
@@ -25,6 +28,7 @@
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-json": "^2.1.1",
     "rollup-plugin-node-resolve": "^3.0.0"
   }
 }
