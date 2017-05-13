@@ -7,12 +7,8 @@
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
         },
-        "email": {
-          ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
-        },
-        "photoURL": {
-          ".read": "auth !== null",
+        "profile": {
+          ".read": "true",
           ".write": "$uid === auth.uid"
         },
         "selectedCalendars": {
@@ -22,6 +18,10 @@
         "previousSessions": {
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
+        },
+        "calendars": {
+          ".read": "$uid === auth.uid",
+          ".write": "false"
         },
         "tokens": {
           ".read": "false",

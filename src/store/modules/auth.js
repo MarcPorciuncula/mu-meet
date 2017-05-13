@@ -73,6 +73,7 @@ async function signIn({ commit, state }) {
     pending: false,
     isSignedIn: true,
   });
+  commit('updateAuthUser', firebase.auth().currentUser);
 }
 
 async function refreshAuthStatus({ commit, state }) {
