@@ -46,6 +46,61 @@ export async function validateFirebaseIdToken(req, res, next) {
 }
 
 /**
+ * Places a Google OAuth2 client onto locals.oAuth2Client, using the user's credentials from the database
+ * @param  {ExpressRequest} req
+ * @param  {ExpressResponse} res
+ * @param  {string} res.locals.idToken.uid The user's firebase uid
+ */
+export async function withOAuth2Client(req, res, next) {
+  const database = admin.database();
+  const { uid } = res.locals.idToken;
+
+  console.log('Retrieve Google credentials from database');
+
+  let tokens;
+  const tokensRef = database.ref(`/users/${uid}/tokens`);
+  await a.single([
+    new Promise(resolve => {
+      const handler = snapshot => {
+        tokens = snapshot.val();
+        if (tokens) {
+          tokensRef.off('value', handler);
+          resolve();
+        }
+      };
+      tokensRef.on('value', handler);
+    }),
+    a.delay(10e3),
+  ]);
+
+  if (!tokens) {
+    console.error(
+      `Could not retrieve Google Credentials for user ${uid} (timed out)`,
+    );
+    res.send(403, 'Unauthorized');
+    return;
+  }
+
+  const oAuth2Client = new google.auth.OAuth2(
+    credentials.web.client_id,
+    credentials.web.client_secret,
+    credentials.web.redirect_uris[0],
+  );
+  oAuth2Client.setCredentials(tokens);
+
+  Object.assign(res.locals, { oAuth2Client });
+
+  res.on('finish', async () => {
+    await tokensRef.transaction(x =>
+      Object.assign(x || {}, oAuth2Client.credentials),
+    );
+    console.log(`Updated credentials for user ${uid}`);
+  });
+
+  next();
+}
+
+/**
  * Gets Google API OAuth2 tokens and stores them in the database, sends id_token for Firebase authentication, and credential_link_code to claim the tokens.
  * @param  {ExpressRequest} req
  * @param  {string} req.body.code An OAuth2 authorization code

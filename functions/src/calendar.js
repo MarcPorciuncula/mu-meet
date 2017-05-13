@@ -3,9 +3,8 @@ import * as admin from 'firebase-admin';
 import google from 'googleapis';
 import { compose } from 'compose-middleware';
 import a from 'awaiting';
-import credentials from './credentials';
 import cors from './cors';
-import { validateFirebaseIdToken } from './auth';
+import { validateFirebaseIdToken, withOAuth2Client } from './auth';
 
 /**
  * Fetches the current Firebase User's calendar list and places it under their user entry in the database
@@ -16,19 +15,11 @@ import { validateFirebaseIdToken } from './auth';
 async function _getCalendars(req, res) {
   const database = admin.database();
   const { uid } = res.locals.idToken;
-
-  const snapshot = await database.ref(`/users/${uid}/tokens`).once('value');
-  const tokens = snapshot.val();
-  const oauth2Client = new google.auth.OAuth2(
-    credentials.web.client_id,
-    credentials.web.client_secret,
-    credentials.web.redirect_uris[0],
-  );
-  oauth2Client.setCredentials(tokens);
+  const { oAuth2Client } = res.locals;
 
   const calendar = google.calendar({
     version: 'v3',
-    auth: oauth2Client,
+    auth: oAuth2Client,
   });
   const data = await a.callback(calendar.calendarList.list.bind(calendar));
 
@@ -37,5 +28,5 @@ async function _getCalendars(req, res) {
 }
 
 export const getCalendars = functions.https.onRequest(
-  compose([cors, validateFirebaseIdToken, _getCalendars]),
+  compose([cors, validateFirebaseIdToken, withOAuth2Client, _getCalendars]),
 );
