@@ -1,7 +1,7 @@
 import * as firebase from 'firebase';
 import R from 'ramda';
 import getGoogle, { SCOPE } from '@/gapi';
-import axios from 'axios';
+import { functions } from '@/functions';
 
 export const PENDING_SIGN_IN = 'PENDING_SIGN_IN';
 export const PENDING_REFRESH = 'PENDING_REFRESH';
@@ -53,21 +53,13 @@ async function signIn({ commit, state }) {
   const { code } = await google.auth2
     .getAuthInstance()
     .grantOfflineAccess({ scope: SCOPE });
-  const { data } = await axios({
-    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/getGoogleOAuth2Authorization',
-    method: 'post',
+  const { data } = await functions('getGoogleOAuth2Authorization', {
     data: { code },
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(data.id_token);
   await firebase.auth().signInWithCredential(credential);
-  const firebaseToken = await firebase.auth().currentUser.getToken(true);
-  await axios({
-    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/linkGoogleOAuthToFirebaseUser',
-    method: 'post',
+  await functions('linkGoogleOAuthToFirebaseUser', {
     data: { credential_link_code: data.credential_link_code },
-    headers: {
-      Authorization: `Bearer ${firebaseToken}`,
-    },
   });
   commit('updateAuthStatus', {
     pending: false,
@@ -95,12 +87,8 @@ async function signOut({ commit, state }) {
     isSignedIn: state.isSignedIn,
     pending: PENDING_SIGN_OUT,
   });
-  const google = await getGoogle();
 
-  await Promise.all([
-    firebase.auth().signOut(),
-    google.auth2.getAuthInstance().signOut(),
-  ]);
+  await firebase.auth().signOut();
   commit('updateAuthStatus', {
     isSignedIn: false,
     pending: false,
