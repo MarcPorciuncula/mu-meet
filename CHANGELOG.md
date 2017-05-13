@@ -1,3 +1,8 @@
+## 0.0.2 (May 12, 2017)
+
+Semver is confusing :)
+* Changed version to pre 1.x to reflect instability.
+
 ## 1.0.1 (April 30, 2017)
 
 * Added link to GitHub project and Marc's GitHub profile.
