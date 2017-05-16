@@ -7,12 +7,12 @@
     <p class="subtitle">
       Host:
     </p>
-    <div class="user">{{ host.displayName }}</div>
+    <div class="user">{{ host.profile.name }}</div>
     <p class="subtitle">
       Members:
     </p>
     <div v-for="user of members" class="user">
-      {{ user.displayName }}
+      {{ user.profile.name }}
     </div>
     <template v-if="isHost">
       <p>
@@ -36,6 +36,7 @@ import Page from './Page';
 import UserAction from './UserAction';
 import { PHASE_LOBBY } from '@/store/modules/scheduling';
 import store from '@/store';
+import a from 'awaiting';
 
 Vue.use(MdCore);
 Vue.use(MdInputContainer);
@@ -49,9 +50,10 @@ export default {
     if (store.state.scheduling.session.phase !== PHASE_LOBBY) {
       next({ path: '/session' });
     } else {
-      await store.dispatch(
-        'fetchUsers',
-        Object.keys(store.state.scheduling.session.users),
+      await a.list(
+        Object.keys(store.state.scheduling.session.users).map(uid =>
+          store.dispatch('ensureUserProfile', uid),
+        ),
       );
       next();
     }

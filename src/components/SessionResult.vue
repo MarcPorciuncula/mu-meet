@@ -46,7 +46,7 @@ export default {
     };
   },
   async beforeRouteEnter(to, from, next) {
-    const { uid } = store.state.auth.user;
+    const { uid } = store.state.auth;
     const { pending } = store.state.scheduling.session.result;
     const { ready } = store.state.scheduling.session.users[uid];
     if (pending && !ready) {
@@ -57,7 +57,7 @@ export default {
   },
   computed: mapState({
     pending: state => state.scheduling.session.result.pending,
-    ready: state => state.scheduling.session.users[state.auth.user.uid].ready,
+    ready: state => state.scheduling.session.users[state.auth.uid].ready,
     meetings: state =>
       R.defaultTo(
         [],

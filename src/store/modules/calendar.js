@@ -43,14 +43,14 @@ async function fetchCalendars({ commit, rootState }) {
   await functions('getCalendars');
   const calendarsSnapshot = await firebase
     .database()
-    .ref(`/users/${rootState.auth.user.uid}/calendars`)
+    .ref(`/users/${rootState.auth.uid}/calendars`)
     .once('value');
   const calendars = calendarsSnapshot.val();
   commit('updateCalendars', calendars);
 
   const database = firebase.database();
   const snapshot = await database
-    .ref(`/users/${rootState.auth.user.uid}/selectedCalendars`)
+    .ref(`/users/${rootState.auth.uid}/selectedCalendars`)
     .once('value');
   const selectedCalendars = snapshot.val();
   if (selectedCalendars) {
@@ -75,7 +75,7 @@ async function uploadSelectedCalendars({ commit, rootState }, selected) {
     R.map(([id, isSelected]) => [btoa(id), isSelected]),
     R.toPairs,
   )(selected);
-  const userRef = database.ref(`/users/${rootState.auth.user.uid}`);
+  const userRef = database.ref(`/users/${rootState.auth.uid}`);
   userRef.child('selectedCalendars').set(encoded);
 }
 

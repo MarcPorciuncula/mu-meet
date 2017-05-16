@@ -23,6 +23,12 @@ const router = new VueRouter({
       path: '/login',
       name: 'SignIn',
       component: SignIn,
+      async beforeEnter(to, from, next) {
+        if (store.state.auth.isSignedIn === null) {
+          await store.dispatch('refreshAuthStatus');
+        }
+        next();
+      },
     },
     {
       path: '/calendars',
@@ -70,6 +76,7 @@ router.beforeEach(async (to, from, next) => {
       next({ path: '/login', query: { redirect: to.fullPath } });
       return;
     } else {
+      store.dispatch('ensureUserProfile', store.state.auth.uid);
       store.dispatch('fetchCalendars');
     }
   }

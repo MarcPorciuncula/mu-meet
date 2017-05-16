@@ -119,7 +119,7 @@ async function refreshSchedulingSessionStatus({ commit, rootState }) {
     isInSession: false,
     sessionPending: true,
   });
-  const uid = rootState.auth.user.uid;
+  const uid = rootState.auth.uid;
   const database = firebase.database();
   const snapshot = await database
     .ref(`/users/${uid}/currentSession`)
@@ -178,7 +178,7 @@ async function subscribeSchedulingSessionStatus({ commit, state, rootState }) {
         'updateSchedulingSession',
         Object.assign(
           {
-            isHost: sessionData && sessionData.host === rootState.auth.user.uid,
+            isHost: sessionData && sessionData.host === rootState.auth.uid,
           },
           R.pick(SUBSCRIBED_SESSION_FIELDS, sessionData),
         ),
@@ -228,9 +228,9 @@ async function joinSchedulingSession({ commit, state, rootState }, sessionId) {
     throw new Error(`Session ${sessionId} does not exist`);
   }
 
-  await sessionRef.child(`users/${rootState.auth.user.uid}/ready`).set(false);
+  await sessionRef.child(`users/${rootState.auth.uid}/ready`).set(false);
   await database
-    .ref(`/users/${rootState.auth.user.uid}/currentSession`)
+    .ref(`/users/${rootState.auth.uid}/currentSession`)
     .set(sessionId);
 }
 
@@ -367,7 +367,7 @@ async function uploadEvents({ commit, rootState, state }) {
   );
 
   const database = firebase.database();
-  const uid = rootState.auth.user.uid;
+  const uid = rootState.auth.uid;
   const sessionRef = database.ref(`/sessions/${state.session.id}`);
   await sessionRef.child(`users/${uid}/events`).set(rootState.calendar.events);
   await sessionRef.child(`users/${uid}/ready`).set(true);

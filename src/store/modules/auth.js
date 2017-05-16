@@ -11,16 +11,10 @@ export default {
   state: {
     pending: false,
     isSignedIn: null,
-    // TODO delegate to the users module
-    user: {
-      email: null,
-      displayName: null,
-      photoURL: null,
       uid: null,
     },
   },
   mutations: {
-    updateAuthUser,
     updateAuthStatus,
   },
   actions: {
@@ -30,25 +24,15 @@ export default {
   },
 };
 
-function updateAuthUser(state, data) {
-  if (data === null) {
-    state.user = {};
-  } else {
-    Object.assign(
-      state.user,
-      R.pick(['email', 'displayName', 'photoURL', 'uid', 'token'], data),
-    );
-  }
-}
-
 function updateAuthStatus(state, data) {
-  Object.assign(state, R.pick(['pending', 'isSignedIn'], data));
+  Object.assign(state, R.pick(['pending', 'isSignedIn', 'uid'], data));
 }
 
 async function signIn({ commit, state }) {
   commit('updateAuthStatus', {
     pending: PENDING_SIGN_IN,
   });
+
   const google = await getGoogle();
   const { code } = await google.auth2
     .getAuthInstance()
@@ -61,11 +45,12 @@ async function signIn({ commit, state }) {
   await functions('linkGoogleOAuthToFirebaseUser', {
     data: { credential_link_code: data.credential_link_code },
   });
+
   commit('updateAuthStatus', {
     pending: false,
     isSignedIn: true,
+    uid: firebase.auth().currentUser.uid,
   });
-  commit('updateAuthUser', firebase.auth().currentUser);
 }
 
 async function refreshAuthStatus({ commit, state }) {
@@ -73,13 +58,19 @@ async function refreshAuthStatus({ commit, state }) {
     pending: PENDING_REFRESH,
   });
 
-  const user = firebase.auth().currentUser;
-  const isSignedIn = !!firebase.auth().currentUser;
-  commit('updateAuthStatus', {
-    isSignedIn,
-    pending: false,
+  await new Promise(resolve => {
+    const dispose = firebase.auth().onAuthStateChanged(user => {
+      const isSignedIn = !!user;
+
+      commit('updateAuthStatus', {
+        isSignedIn,
+        uid: user ? user.uid : null,
+        pending: false,
+      });
+      dispose();
+      resolve();
+    });
   });
-  commit('updateAuthUser', user);
 }
 
 async function signOut({ commit, state }) {
@@ -89,9 +80,10 @@ async function signOut({ commit, state }) {
   });
 
   await firebase.auth().signOut();
+
   commit('updateAuthStatus', {
     isSignedIn: false,
     pending: false,
+    uid: null,
   });
-  commit('updateAuthUser', null);
 }
