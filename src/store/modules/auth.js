@@ -11,8 +11,7 @@ export default {
   state: {
     pending: false,
     isSignedIn: null,
-      uid: null,
-    },
+    uid: null,
   },
   mutations: {
     updateAuthStatus,

@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { validateFirebaseIdToken } from './auth';
+import { validateFirebaseIdToken } from './auth/middleware';
 import shortid from 'shortid';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
@@ -58,7 +58,7 @@ export const createSession = functions.https.onRequest(
             users: {
               [uid]: { ready: false },
             },
-          }),
+          })
         ),
         database.ref(`/users/${uid}/currentSession`).set(id),
       ]);
@@ -66,5 +66,5 @@ export const createSession = functions.https.onRequest(
 
       res.status(201).send('Success');
     },
-  ]),
+  ])
 );

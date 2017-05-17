@@ -1,12 +1,9 @@
-import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
-import shortid from 'shortid';
-import { compose } from 'compose-middleware';
-import bodyParser from 'body-parser';
-import google from 'googleapis';
-import cors from './cors';
-import credentials from './credentials';
+import admin from 'firebase-admin';
 import a from 'awaiting';
+import credentials from '../credentials';
+import google from 'googleapis';
+import shortid from 'shortid';
+import { getOAuth2Client, GoogleOAuthError } from './google-oauth';
 
 /**
  * Validates and decodes Firebase ID token and places it on `res.locals.idToken`
@@ -24,7 +21,7 @@ export async function validateFirebaseIdToken(req, res, next) {
     console.error(
       'No Firebase ID token was passed as a Bearer token in the Authorization header.',
       'Make sure you authorize your request by providing the following HTTP header:',
-      'Authorization: Bearer <Firebase ID Token>',
+      'Authorization: Bearer <Firebase ID Token>'
     );
     res.status(403).send('Unauthorized');
     return;
@@ -46,54 +43,6 @@ export async function validateFirebaseIdToken(req, res, next) {
 }
 
 /**
- * Returns a new OAuth2Client for a given firebase user
- * @param  {string} uid firebase user uid
- * @return {OAuth2Client}
- */
-export async function getOAuth2Client(uid) {
-  const database = admin.database();
-
-  let tokens;
-  const tokensRef = database.ref(`/users/${uid}/tokens`);
-  await a.single([
-    new Promise(resolve => {
-      const handler = snapshot => {
-        tokens = snapshot.val();
-        if (tokens) {
-          tokensRef.off('value', handler);
-          resolve();
-        }
-      };
-      tokensRef.on('value', handler);
-    }),
-    a.delay(10e3),
-  ]);
-
-  if (!tokens) {
-    console.error(
-      `Could not retrieve Google Credentials for user ${uid} (timed out)`,
-    );
-    throw new Error('auth/no-credentials-found');
-  }
-
-  const oAuth2Client = new google.auth.OAuth2(
-    credentials.web.client_id,
-    credentials.web.client_secret,
-    credentials.web.redirect_uris[0],
-  );
-  oAuth2Client.setCredentials(tokens);
-
-  const save = async () => {
-    await tokensRef.transaction(x =>
-      Object.assign(x || {}, oAuth2Client.credentials),
-    );
-    console.log(`Updated credentials for user ${uid}`);
-  };
-
-  return { save, oAuth2Client };
-}
-
-/**
  * Places a Google OAuth2 client onto locals.oAuth2Client, using the user's credentials from the database
  * @param  {ExpressRequest} req
  * @param  {ExpressResponse} res
@@ -107,7 +56,7 @@ export async function withOAuth2Client(req, res, next) {
   try {
     ({ save, oAuth2Client } = await getOAuth2Client(uid));
   } catch (err) {
-    if (err.message.startsWith('auth/no-credentials-found')) {
+    if (err.code === GoogleOAuthError.codes.NO_CREDENTIALS_FOUND) {
       res.send(403, 'Unauthorized');
     }
   }
@@ -124,20 +73,20 @@ export async function withOAuth2Client(req, res, next) {
  * @param  {string} req.body.code An OAuth2 authorization code
  * @param  {ExpressResponse} res
  */
-async function _getGoogleOAuth2Authorization(req, res) {
+export async function getGoogleOAuth2Authorization(req, res) {
   const database = admin.database();
   const { code } = req.body;
 
   const oauth2Client = new google.auth.OAuth2(
     credentials.web.client_id,
     credentials.web.client_secret,
-    credentials.web.redirect_uris[0],
+    credentials.web.redirect_uris[0]
   );
 
   console.log('Obtain OAuth2 tokens from authorization code', code);
   const tokens = await a.callback(
     oauth2Client.getToken.bind(oauth2Client),
-    code,
+    code
   );
 
   const credentialLinkCode = shortid.generate();
@@ -151,13 +100,9 @@ async function _getGoogleOAuth2Authorization(req, res) {
     JSON.stringify({
       id_token: tokens.id_token,
       credential_link_code: credentialLinkCode,
-    }),
+    })
   );
 }
-
-export const getGoogleOAuth2Authorization = functions.https.onRequest(
-  compose([cors, bodyParser.json(), _getGoogleOAuth2Authorization]),
-);
 
 /**
  * Moves Google API OAuth tokens from intermediate storage to the user's record in the database
@@ -166,13 +111,13 @@ export const getGoogleOAuth2Authorization = functions.https.onRequest(
  * @param  {ExpressResponse} res
  * @param  {string} res.locals.idToken.uid The user's firebase uid
  */
-async function _linkGoogleOAuthToFirebaseUser(req, res) {
+export async function linkGoogleOAuthToFirebaseUser(req, res) {
   const database = admin.database();
   const { uid } = res.locals.idToken;
   const { credential_link_code: credentialLinkCode } = req.body;
 
   console.log(
-    `Link Google OAuth2 credentials ${credentialLinkCode} to user ${uid}`,
+    `Link Google OAuth2 credentials ${credentialLinkCode} to user ${uid}`
   );
   const snapshot = await database
     .ref(`/google-credentials/${credentialLinkCode}`)
@@ -181,7 +126,7 @@ async function _linkGoogleOAuthToFirebaseUser(req, res) {
 
   if (!tokens) {
     console.error(
-      `There are no credentials associated with link code ${credentialLinkCode}`,
+      `There are no credentials associated with link code ${credentialLinkCode}`
     );
     res.send(401, 'Unauthorized');
     return;
@@ -195,12 +140,3 @@ async function _linkGoogleOAuthToFirebaseUser(req, res) {
   console.log('Success');
   res.send(200, 'OK');
 }
-
-export const linkGoogleOAuthToFirebaseUser = functions.https.onRequest(
-  compose([
-    cors,
-    validateFirebaseIdToken,
-    bodyParser.json(),
-    _linkGoogleOAuthToFirebaseUser,
-  ]),
-);
