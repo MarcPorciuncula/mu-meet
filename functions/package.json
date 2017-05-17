@@ -3,11 +3,13 @@
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "build": "rollup -c",
-    "deploy": "firebase deploy --only functions"
+    "deploy": "firebase deploy --only functions",
+    "test": "cross-env NODE_ENV=test ava src/**/*.test.js"
   },
   "dependencies": {
     "@google-cloud/storage": "^1.1.0",
     "awaiting": "^2.2.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babelrc-rollup": "^3.0.0",
     "body-parser": "^1.17.1",
     "compose-middleware": "^2.2.0",
@@ -21,13 +23,21 @@
   },
   "private": true,
   "devDependencies": {
+    "ava": "^0.19.1",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.4.0",
+    "babel-register": "^6.24.1",
+    "cross-env": "^5.0.0",
     "firebase-tools": "^3.6.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-json": "^2.1.1",
     "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
   }
 }
