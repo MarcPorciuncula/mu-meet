@@ -46,16 +46,12 @@ export async function validateFirebaseIdToken(req, res, next) {
 }
 
 /**
- * Places a Google OAuth2 client onto locals.oAuth2Client, using the user's credentials from the database
- * @param  {ExpressRequest} req
- * @param  {ExpressResponse} res
- * @param  {string} res.locals.idToken.uid The user's firebase uid
+ * Returns a new OAuth2Client for a given firebase user
+ * @param  {string} uid firebase user uid
+ * @return {OAuth2Client}
  */
-export async function withOAuth2Client(req, res, next) {
+export async function getOAuth2Client(uid) {
   const database = admin.database();
-  const { uid } = res.locals.idToken;
-
-  console.log('Retrieve Google credentials from database');
 
   let tokens;
   const tokensRef = database.ref(`/users/${uid}/tokens`);
@@ -77,8 +73,7 @@ export async function withOAuth2Client(req, res, next) {
     console.error(
       `Could not retrieve Google Credentials for user ${uid} (timed out)`,
     );
-    res.send(403, 'Unauthorized');
-    return;
+    throw new Error('auth/no-credentials-found');
   }
 
   const oAuth2Client = new google.auth.OAuth2(
@@ -88,14 +83,37 @@ export async function withOAuth2Client(req, res, next) {
   );
   oAuth2Client.setCredentials(tokens);
 
-  Object.assign(res.locals, { oAuth2Client });
-
-  res.on('finish', async () => {
+  const save = async () => {
     await tokensRef.transaction(x =>
       Object.assign(x || {}, oAuth2Client.credentials),
     );
     console.log(`Updated credentials for user ${uid}`);
-  });
+  };
+
+  return { save, oAuth2Client };
+}
+
+/**
+ * Places a Google OAuth2 client onto locals.oAuth2Client, using the user's credentials from the database
+ * @param  {ExpressRequest} req
+ * @param  {ExpressResponse} res
+ * @param  {string} res.locals.idToken.uid The user's firebase uid
+ */
+export async function withOAuth2Client(req, res, next) {
+  const { uid } = res.locals.idToken;
+
+  let save;
+  let oAuth2Client;
+  try {
+    ({ save, oAuth2Client } = await getOAuth2Client(uid));
+  } catch (err) {
+    if (err.message.startsWith('auth/no-credentials-found')) {
+      res.send(403, 'Unauthorized');
+    }
+  }
+
+  Object.assign(res.locals, { oAuth2Client });
+  res.on('finish', save);
 
   next();
 }
