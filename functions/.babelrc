@@ -7,5 +7,21 @@
       "modules": false
     }]
   ],
-  "plugins": ["external-helpers"]
+  "env": {
+    "development": {
+      "plugins": ["external-helpers"]
+    },
+    "test": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "current",
+            "modules": true
+          }
+        }],
+        "@ava/transform-test-files"
+      ],
+      "plugins": ["transform-runtime"]
+    }
+  }
 }
