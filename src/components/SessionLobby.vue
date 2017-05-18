@@ -79,7 +79,9 @@ export default {
   }),
   watch: {
     userIds(userIds) {
-      this.$store.dispatch('fetchUsers', userIds);
+      userIds.forEach(id => {
+        this.$store.dispatch('ensureUserProfile', id);
+      });
     },
     phase(phase) {
       if (phase !== PHASE_LOBBY) {
