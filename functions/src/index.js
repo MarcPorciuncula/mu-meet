@@ -11,4 +11,4 @@ export {
   linkGoogleOAuthToFirebaseUser,
 } from './auth';
 export { getCalendars } from './calendar';
-export { onUserCreateStoreInfo } from './users';
+export { onUserCreateFetchProfile, onUserCreateFetchCalendars } from './users';
