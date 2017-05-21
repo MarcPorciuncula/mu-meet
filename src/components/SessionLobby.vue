@@ -1,9 +1,9 @@
 <template>
   <page>
     <p>your session code is <u>{{ sessionId }}</u><br/>invite your team members with this link:</p>
-    <md-input-container>
-      <md-input :value="`${origin}/session?id=${sessionId}`" />
-    </md-input-container>
+    <!-- FIXME vue-mdc does not have text field yet -->
+    <!-- <mdc-text-field :value="`${origin}/session?id=${sessionId}`" dense /> -->
+    <input type="text" :value="`${origin}/session?id=${sessionId}`" />
     <p class="subtitle">
       Host:
     </p>
@@ -30,16 +30,16 @@
 
 <script>
 import Vue from 'vue';
+import VueMDC from 'vue-mdc';
+import 'vue-mdc/dist/vue-mdc.css';
 import { mapState } from 'vuex';
-import { MdCore, MdInputContainer } from 'vue-material';
 import Page from './Page';
 import UserAction from './UserAction';
 import { PHASE_LOBBY } from '@/store/modules/scheduling';
 import store from '@/store';
 import a from 'awaiting';
 
-Vue.use(MdCore);
-Vue.use(MdInputContainer);
+Vue.use(VueMDC);
 
 export default {
   components: {

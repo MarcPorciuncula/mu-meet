@@ -4,12 +4,9 @@
       <p>is your team ready to begin?<br/>start a live scheduling session</p>
       <user-action v-on:click="create()">Create session</user-action>
       <p>already have a session?<br/>enter your session code</p>
-      <md-input-container>
-        <label for="session-code">
-          Session code
-        </label>
-        <md-input v-model="sessionId" />
-      </md-input-container>
+      <!-- FIXME vue-mdc does not have text field yet -->
+      <!-- <mdc-text-field v-model="sessionId" /> -->
+      <input type="text" v-model="sessionId" />
       <user-action v-on:click="join()">
         Join session
       </user-action>
@@ -19,14 +16,13 @@
 
 <script>
 import Vue from 'vue';
-import { MdCore, MdInputContainer } from 'vue-material';
-import 'vue-material/dist/components/MdInputContainer/index.css';
+import VueMDC from 'vue-mdc';
+import 'vue-mdc/dist/vue-mdc.css';
 import Page from './Page';
 import UserAction from './UserAction';
 import store from '@/store';
 
-Vue.use(MdCore);
-Vue.use(MdInputContainer);
+Vue.use(VueMDC);
 
 export default {
   components: {

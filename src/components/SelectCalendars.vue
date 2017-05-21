@@ -7,17 +7,18 @@
       which calendars would you like to schedule around?
     </p>
     <div class="calendar-select">
-      <md-checkbox
-        v-for="calendar of calendars"
-        class="md-primary calendar-select_checkbox"
-        v-model="selected[calendar.id]"
-        :id="`calendar_${calendar.id}`"
-        :key="calendar.id"
-        :name="calendar.id">
-        <span v-on:click="selected[calendar.id] = !selected[calendar.id]">
+      <div class="mdc-form-field" v-for="calendar of calendars" :key="calendar.id">
+        <mdc-checkbox
+          class="calendar-select_checkbox"
+          v-model="selected[calendar.id]"
+          :id="`calendar_${calendar.id}`"
+          :key="calendar.id"
+          :name="calendar.id"
+        />
+        <label :for="calendar.id">
           {{ calendar.summary }}
-        </span>
-      </md-checkbox>
+        </label>
+      </div>
     </div>
     <p>
       ready to begin?
@@ -30,16 +31,15 @@
 
 <script>
 import Vue from 'vue';
+import VueMDC from 'vue-mdc';
+import 'vue-mdc/dist/vue-mdc.css';
 import { mapState } from 'vuex';
-import { MdCore, MdCheckbox } from 'vue-material';
-import 'vue-material/dist/components/mdCheckbox/index.css';
 import Page from './Page';
 import MumeetLogo from './MumeetLogo';
 import UserAction from './UserAction';
 import store from '@/store';
 
-Vue.use(MdCore);
-Vue.use(MdCheckbox);
+Vue.use(VueMDC);
 
 export default {
   components: {
@@ -81,9 +81,5 @@ export default {
   flex-direction: column;
   color: black;
   font-size: 2rem;
-}
-
-.md-checkbox.calendar-select_checkbox {
-  margin: 1rem 0.5rem;
 }
 </style>
