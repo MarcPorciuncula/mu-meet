@@ -24,6 +24,10 @@ export async function fetchCalendarsIntoDatabase(event) {
   const database = admin.database();
   const { oAuth2Client, save } = await getOAuth2Client(event.data.uid);
 
+  console.log(
+    `User ${event.data.uid} created. Fetch calendars and place in database`,
+  );
+
   const calendars = await fetchCalendars(event.data.uid, oAuth2Client);
   await database.ref(`/users/${event.data.uid}/calendars`).set(calendars);
 
