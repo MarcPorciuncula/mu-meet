@@ -37,7 +37,7 @@ async function signIn({ commit, state }) {
     .getAuthInstance()
     .grantOfflineAccess({ scope: SCOPE });
   const { data } = await functions('getGoogleOAuth2Authorization', {
-    data: { code },
+    data: { code, redirect_uri: location.origin },
   });
   const credential = firebase.auth.GoogleAuthProvider.credential(data.id_token);
   await firebase.auth().signInWithCredential(credential);

@@ -21,7 +21,7 @@ export async function validateFirebaseIdToken(req, res, next) {
     console.error(
       'No Firebase ID token was passed as a Bearer token in the Authorization header.',
       'Make sure you authorize your request by providing the following HTTP header:',
-      'Authorization: Bearer <Firebase ID Token>'
+      'Authorization: Bearer <Firebase ID Token>',
     );
     res.status(403).send('Unauthorized');
     return;
@@ -75,23 +75,31 @@ export async function withOAuth2Client(req, res, next) {
  */
 export async function getGoogleOAuth2Authorization(req, res) {
   const database = admin.database();
-  const { code } = req.body;
+  const { code, redirect_uri: redirectUri } = req.body;
+
+  if (!credentials.web.redirect_uris.includes(redirectUri)) {
+    console.error(`Could not find a redirect_uri that matches ${redirectUri}`);
+  }
 
   const oauth2Client = new google.auth.OAuth2(
     credentials.web.client_id,
     credentials.web.client_secret,
-    credentials.web.redirect_uris[0]
+    redirectUri,
   );
 
   console.log('Obtain OAuth2 tokens from authorization code', code);
   const tokens = await a.callback(
     oauth2Client.getToken.bind(oauth2Client),
-    code
+    code,
   );
 
   const credentialLinkCode = shortid.generate();
   console.log('Store against link code', credentialLinkCode);
-  await database.ref(`/google-credentials/${credentialLinkCode}`).set(tokens);
+  await database.ref(`/google-credentials/${credentialLinkCode}`).set(
+    Object.assign(tokens, {
+      redirect_uri: redirectUri,
+    }),
+  );
 
   console.log('Success');
   res.setHeader('Content-Type', 'application/json');
@@ -100,7 +108,7 @@ export async function getGoogleOAuth2Authorization(req, res) {
     JSON.stringify({
       id_token: tokens.id_token,
       credential_link_code: credentialLinkCode,
-    })
+    }),
   );
 }
 
@@ -117,7 +125,7 @@ export async function linkGoogleOAuthToFirebaseUser(req, res) {
   const { credential_link_code: credentialLinkCode } = req.body;
 
   console.log(
-    `Link Google OAuth2 credentials ${credentialLinkCode} to user ${uid}`
+    `Link Google OAuth2 credentials ${credentialLinkCode} to user ${uid}`,
   );
   const snapshot = await database
     .ref(`/google-credentials/${credentialLinkCode}`)
@@ -126,7 +134,7 @@ export async function linkGoogleOAuthToFirebaseUser(req, res) {
 
   if (!tokens) {
     console.error(
-      `There are no credentials associated with link code ${credentialLinkCode}`
+      `There are no credentials associated with link code ${credentialLinkCode}`,
     );
     res.send(401, 'Unauthorized');
     return;
