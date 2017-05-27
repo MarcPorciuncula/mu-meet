@@ -19,6 +19,8 @@
     "firebase-functions": "^0.5.5",
     "googleapis": "^19.0.0",
     "ramda": "^0.23.0",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
     "shortid": "^2.2.8"
   },
   "private": true,

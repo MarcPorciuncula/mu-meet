@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import a from 'awaiting';
 import google from 'googleapis';
+import request from 'request-promise-native';
 import credentials from '../credentials';
 
 const GOOGLE_OAUTH_ERROR_CODES = {
@@ -76,4 +77,14 @@ export async function getOAuth2Client(uid) {
   };
 
   return { save, oAuth2Client };
+}
+
+export async function revoke(token) {
+  await request({
+    uri: 'https://accounts.google.com/o/oauth2/revoke',
+    method: 'post',
+    form: {
+      token,
+    },
+  });
 }
