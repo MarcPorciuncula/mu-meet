@@ -16,3 +16,28 @@ export async function fetchCalendars(uid, oAuth2Client) {
 
   return data.items;
 }
+
+export async function fetchEvents(uid, oAuth2Client, { from, to, calendarId }) {
+  const calendar = google.calendar({
+    version: 'v3',
+    auth: oAuth2Client,
+  });
+
+  console.log(
+    `Fetch user ${uid} events for calendar ${calendarId} from ${from} to ${to}`,
+  );
+
+  const { items: events } = await a.callback(
+    calendar.events.list.bind(calendar.events),
+    {
+      calendarId,
+      orderBy: 'startTime',
+      timeMin: from.toISOString(),
+      timeMax: to.toISOString(),
+      showDeleted: false,
+      singleEvents: true,
+    },
+  );
+
+  return events;
+}

@@ -30,7 +30,7 @@ import Page from './Page';
 import UserAction from './UserAction';
 import parseDate from 'date-fns/parse';
 import formatDate from 'date-fns/format';
-import addHours from 'date-fns/add_hours';
+import addMinutes from 'date-fns/add_minutes';
 import { PHASE_RESULT } from '@/store/modules/scheduling';
 import R from 'ramda';
 import store from '@/store';
@@ -78,10 +78,11 @@ export default {
   },
   methods: {
     format(meeting) {
+      // FIXME deal with if the meeting starts and ends on different days
       const startDate = formatDate(meeting.start, 'ddd. DD MMMM');
       const startTime = formatDate(meeting.start, 'h:mma');
       const endTime = formatDate(
-        addHours(meeting.start, meeting.duration),
+        addMinutes(meeting.start, meeting.duration),
         'h:mma',
       );
       return `${startDate}<br/>${startTime} to ${endTime}`;

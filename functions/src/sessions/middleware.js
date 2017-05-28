@@ -1,4 +1,9 @@
-import { SessionError, createSession as _createSession } from './sessions';
+import {
+  SessionError,
+  createSession as _createSession,
+  findMeetingTimes as _findMeetingTimes,
+} from './sessions';
+import * as admin from 'firebase-admin';
 
 export async function createSession(req, res) {
   const { uid } = res.locals.idToken;
@@ -15,5 +20,18 @@ export async function createSession(req, res) {
   }
 
   console.log(`Created session with host ${uid}`);
+  res.status(200).send('OK');
+}
+
+export async function findMeetingTimes(req, res) {
+  const { uid } = res.locals.idToken;
+  const database = admin.database();
+
+  const sessionId = await database
+    .ref(`/users/${uid}/current-session`)
+    .once('value')
+    .then(s => s.val());
+
+  await _findMeetingTimes(sessionId);
   res.status(200).send('OK');
 }

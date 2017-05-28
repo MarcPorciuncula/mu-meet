@@ -7,3 +7,7 @@ import { validateFirebaseIdToken } from '../auth/middleware';
 export const createSession = functions.https.onRequest(
   compose([cors, validateFirebaseIdToken, middleware.createSession]),
 );
+
+export const findMeetingTimes = functions.https.onRequest(
+  compose([cors, validateFirebaseIdToken, middleware.findMeetingTimes]),
+);

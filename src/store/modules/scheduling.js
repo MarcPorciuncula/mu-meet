@@ -1,15 +1,7 @@
 import * as firebase from 'firebase';
 import R from 'ramda';
-import parseDate from 'date-fns/parse';
-import getDay from 'date-fns/get_day';
-import {
-  getFreeHalfHourIntervals,
-  restrictHours,
-  groupIntervals,
-  sortByDistanceFrom1PM,
-} from '@/scheduler';
 import invariant from 'invariant';
-import axios from 'axios';
+import { functions } from '@/functions';
 
 export const PHASE_LOBBY = 'PHASE_LOBBY';
 export const PHASE_CONFIGURE = 'PHASE_CONFIGURE';
@@ -122,7 +114,7 @@ async function refreshSchedulingSessionStatus({ commit, rootState }) {
   const uid = rootState.auth.uid;
   const database = firebase.database();
   const snapshot = await database
-    .ref(`/users/${uid}/currentSession`)
+    .ref(`/users/${uid}/current-session`)
     .once('value');
   const sessionId = snapshot.val();
   if (sessionId) {
@@ -198,15 +190,7 @@ async function createSchedulingSession({ commit, state, rootState }) {
     rootState.auth.isSignedIn,
     'Must be signed in to call createSchedulingSession',
   );
-  const firebaseToken = await firebase.auth().currentUser.getToken(true);
-  const res = await axios({
-    url: 'https://us-central1-meetingsync-f62e3.cloudfunctions.net/createSession',
-    method: 'post',
-    headers: {
-      Authorization: `Bearer ${firebaseToken}`,
-    },
-  });
-  console.log('Cloud function response', res);
+  await functions('createSession');
 }
 
 async function joinSchedulingSession({ commit, state, rootState }, sessionId) {
@@ -230,7 +214,7 @@ async function joinSchedulingSession({ commit, state, rootState }, sessionId) {
 
   await sessionRef.child(`users/${rootState.auth.uid}/ready`).set(false);
   await database
-    .ref(`/users/${rootState.auth.uid}/currentSession`)
+    .ref(`/users/${rootState.auth.uid}/current-session`)
     .set(sessionId);
 }
 
@@ -268,69 +252,7 @@ async function advanceToResultPhase({ commit, state }) {
     'Must be in configure phase to call advanceToResultPhase',
   );
 
-  // TODO move this into a cloud function
-
-  const database = firebase.database();
-  const sessionRef = database.ref(`/sessions/${state.session.id}`);
-  await Promise.all([
-    sessionRef.child('phase').set(PHASE_RESULT),
-    sessionRef.child('result/pending').set(true),
-  ]);
-
-  const usersRef = sessionRef.child('users');
-
-  const users = await new Promise(resolve => {
-    const handler = usersRef.on('value', snapshot => {
-      const value = snapshot.val();
-      if (Object.values(value).every(user => user.ready)) {
-        usersRef.off('value', handler);
-        resolve(value);
-      }
-    });
-  });
-
-  const combinedEvents = R.compose(
-    R.map(event => ({
-      start: parseDate(event.start.dateTime),
-      end: parseDate(event.end.dateTime),
-    })),
-    R.filter(R.identity),
-    R.flatten,
-    R.map(R.prop('events')),
-    R.values,
-  )(users);
-
-  const decodeDay = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-  ];
-
-  const freeIntervals = R.compose(
-    R.sort((a, b) => sortByDistanceFrom1PM(a.start, b.start)),
-    groupIntervals,
-    R.filter(
-      datetime => state.session.config.days[decodeDay[getDay(datetime)]],
-    ),
-    R.filter(
-      restrictHours(
-        state.session.config.searchFromHour,
-        state.session.config.searchToHour,
-      ),
-    ),
-    getFreeHalfHourIntervals,
-  )(combinedEvents);
-
-  await sessionRef.child('result/meetings').set(
-    freeIntervals.map(({ start, duration }) => ({
-      start: start.toISOString(),
-      duration,
-    })),
-  );
-  await sessionRef.child('result/pending').set(false);
+  await functions('findMeetingTimes');
 }
 
 async function returnToLobbyPhase({ commit, state }) {
@@ -390,7 +312,7 @@ async function disposeSession({ commit, state }) {
       database.ref(`/users/${uid}/previousSessions`).push(sessionId),
     ),
     ...userIds.map(uid =>
-      database.ref(`/users/${uid}/currentSession`).set(null),
+      database.ref(`/users/${uid}/current-session`).set(null),
     ),
   ]);
 }

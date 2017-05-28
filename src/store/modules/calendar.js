@@ -50,7 +50,7 @@ async function fetchCalendars({ commit, rootState }) {
 
   const database = firebase.database();
   const snapshot = await database
-    .ref(`/users/${rootState.auth.uid}/selectedCalendars`)
+    .ref(`/users/${rootState.auth.uid}/selected-calendars`)
     .once('value');
   const selectedCalendars = snapshot.val();
   if (selectedCalendars) {
@@ -76,7 +76,7 @@ async function uploadSelectedCalendars({ commit, rootState }, selected) {
     R.toPairs,
   )(selected);
   const userRef = database.ref(`/users/${rootState.auth.uid}`);
-  userRef.child('selectedCalendars').set(encoded);
+  userRef.child('selected-calendars').set(encoded);
 }
 
 async function fetchCalendarEvents({ commit, state, rootState }) {
