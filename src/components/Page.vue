@@ -7,9 +7,10 @@
         <mumeet-logo></mumeet-logo>
       </router-link>
       <template v-if="isSignedIn">
-        <span class="username">Hi, {{ user.displayName.split(' ')[0] }}</span>
-        <!-- FIXME can't access the photo :c -->
-        <!-- <img :src="user.photoURL"/> -->
+        <div class="header-bar_profile">
+          <span class="username">Hi, {{ user.profile.given_name }}</span>
+          <img class="header-bar_picture" :src="user.profile.picture"/>
+        </div>
       </template>
     </div>
     <div class="content">
@@ -28,7 +29,7 @@ export default {
   },
   computed: mapState({
     isSignedIn: state => state.auth.isSignedIn,
-    user: state => state.auth.user,
+    user: state => state.users.users[state.auth.uid],
   }),
 };
 </script>
@@ -81,5 +82,17 @@ export default {
 
 .username {
   font-size: 1.6rem;
+}
+
+.header-bar_picture {
+  height: 3rem;
+  width: auto;
+  border-radius: 50%;
+  margin-left: 1rem;
+}
+
+.header-bar_profile {
+  display: flex;
+  align-items: center;
 }
 </style>

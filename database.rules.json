@@ -1,0 +1,37 @@
+{
+  "rules": {
+
+    "users": {
+      "$uid": {
+        "currentSession": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "profile": {
+          ".read": "true",
+          ".write": "$uid === auth.uid"
+        },
+        "selectedCalendars": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "previousSessions": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        },
+        "calendars": {
+          ".read": "$uid === auth.uid",
+          ".write": "false"
+        },
+        "tokens": {
+          ".read": "false",
+          ".write": "false"
+        }
+      }
+    },
+    "google-credentials": {
+      ".read": false,
+      ".write": false
+    }
+  }
+}

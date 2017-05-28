@@ -1,0 +1,27 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 6
+      },
+      "modules": false
+    }]
+  ],
+  "env": {
+    "development": {
+      "plugins": ["external-helpers"]
+    },
+    "test": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "current",
+            "modules": true
+          }
+        }],
+        "@ava/transform-test-files"
+      ],
+      "plugins": ["transform-runtime"]
+    }
+  }
+}

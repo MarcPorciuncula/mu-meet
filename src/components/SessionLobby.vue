@@ -7,12 +7,12 @@
     <p class="subtitle">
       Host:
     </p>
-    <div class="user">{{ host.displayName }}</div>
+    <div class="user">{{ host.profile.name }}</div>
     <p class="subtitle">
       Members:
     </p>
     <div v-for="user of members" class="user">
-      {{ user.displayName }}
+      {{ user.profile.name }}
     </div>
     <template v-if="isHost">
       <p>
@@ -49,9 +49,10 @@ export default {
     if (store.state.scheduling.session.phase !== PHASE_LOBBY) {
       next({ path: '/session' });
     } else {
-      await store.dispatch(
-        'fetchUsers',
-        Object.keys(store.state.scheduling.session.users),
+      await Promise.all(
+        Object.keys(store.state.scheduling.session.users).map(uid =>
+          store.dispatch('ensureUserProfile', uid),
+        ),
       );
       next();
     }
@@ -77,7 +78,9 @@ export default {
   }),
   watch: {
     userIds(userIds) {
-      this.$store.dispatch('fetchUsers', userIds);
+      userIds.forEach(id => {
+        this.$store.dispatch('ensureUserProfile', id);
+      });
     },
     phase(phase) {
       if (phase !== PHASE_LOBBY) {

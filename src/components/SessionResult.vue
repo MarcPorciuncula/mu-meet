@@ -30,7 +30,7 @@ import Page from './Page';
 import UserAction from './UserAction';
 import parseDate from 'date-fns/parse';
 import formatDate from 'date-fns/format';
-import addHours from 'date-fns/add_hours';
+import addMinutes from 'date-fns/add_minutes';
 import { PHASE_RESULT } from '@/store/modules/scheduling';
 import R from 'ramda';
 import store from '@/store';
@@ -46,7 +46,7 @@ export default {
     };
   },
   async beforeRouteEnter(to, from, next) {
-    const { uid } = store.state.auth.user;
+    const { uid } = store.state.auth;
     const { pending } = store.state.scheduling.session.result;
     const { ready } = store.state.scheduling.session.users[uid];
     if (pending && !ready) {
@@ -57,7 +57,7 @@ export default {
   },
   computed: mapState({
     pending: state => state.scheduling.session.result.pending,
-    ready: state => state.scheduling.session.users[state.auth.user.uid].ready,
+    ready: state => state.scheduling.session.users[state.auth.uid].ready,
     meetings: state =>
       R.defaultTo(
         [],
@@ -78,10 +78,11 @@ export default {
   },
   methods: {
     format(meeting) {
+      // FIXME deal with if the meeting starts and ends on different days
       const startDate = formatDate(meeting.start, 'ddd. DD MMMM');
       const startTime = formatDate(meeting.start, 'h:mma');
       const endTime = formatDate(
-        addHours(meeting.start, meeting.duration),
+        addMinutes(meeting.start, meeting.duration),
         'h:mma',
       );
       return `${startDate}<br/>${startTime} to ${endTime}`;

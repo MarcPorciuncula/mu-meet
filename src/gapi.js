@@ -1,6 +1,6 @@
 /* global gapi */
 
-export const SCOPE = 'https://www.googleapis.com/auth/calendar';
+export const SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
 
 const client = Promise.resolve()
   .then(() => {

@@ -9,28 +9,27 @@ export default {
     updateUser,
   },
   actions: {
-    fetchUsers,
+    ensureUserProfile,
   },
 };
 
-function updateUser(state, data) {
-  Vue.set(state.users, data.uid, data);
+function updateUser(state, { uid, user }) {
+  Vue.set(state.users, uid, user);
 }
 
-async function fetchUsers({ commit, state }, userIds) {
+async function ensureUserProfile({ commit, state }, uid) {
+  if (state.users[uid]) {
+    return;
+  }
+
   const database = firebase.database();
 
-  const users = await Promise.all(
-    userIds
-      .filter(id => !state.users[id])
-      .map(id =>
-        database
-          .ref(`/users/${id}`)
-          .once('value')
-          .then(snapshot => snapshot.val()),
-      ),
-  );
-  for (const user of users) {
-    commit('updateUser', user);
-  }
+  const profile = await database
+    .ref(`/users/${uid}/profile`)
+    .once('value')
+    .then(snapshot => snapshot.val());
+
+  const user = profile ? { profile } : null;
+
+  commit('updateUser', { uid, user });
 }

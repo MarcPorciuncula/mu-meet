@@ -16,6 +16,13 @@ yarn build
 ```
 This project was bootstrapped with the Vue Webpack template. For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
+- Obtain OAuth 2 client credentials
+  - Visit https://console.developers.google.com/apis/credentials
+  - Create or edit an OAuth 2 client ID
+  - Set at least one JavaScript origin and redirect URI
+  - Download the credential as JSON
+  - Place the file in `/functions/secret/client.json`
+
 ## Deploy
 
 ```bash

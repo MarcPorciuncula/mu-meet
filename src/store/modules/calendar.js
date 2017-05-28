@@ -4,6 +4,7 @@ import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
 import invariant from 'invariant';
 import R from 'ramda';
+import { functions } from '@/functions';
 
 export default {
   state: {
@@ -39,14 +40,17 @@ async function fetchCalendars({ commit, rootState }) {
   if (!rootState.auth.isSignedIn) {
     throw new Error('Cannot fetch calendars when not logged in');
   }
-  const google = await getGoogle();
-  const response = await google.client.calendar.calendarList.list();
-  const body = JSON.parse(response.body);
-  commit('updateCalendars', body.items);
+  await functions('getCalendars');
+  const calendarsSnapshot = await firebase
+    .database()
+    .ref(`/users/${rootState.auth.uid}/calendars`)
+    .once('value');
+  const calendars = calendarsSnapshot.val();
+  commit('updateCalendars', calendars);
 
   const database = firebase.database();
   const snapshot = await database
-    .ref(`/users/${rootState.auth.user.uid}/selectedCalendars`)
+    .ref(`/users/${rootState.auth.uid}/selected-calendars`)
     .once('value');
   const selectedCalendars = snapshot.val();
   if (selectedCalendars) {
@@ -71,8 +75,8 @@ async function uploadSelectedCalendars({ commit, rootState }, selected) {
     R.map(([id, isSelected]) => [btoa(id), isSelected]),
     R.toPairs,
   )(selected);
-  const userRef = database.ref(`/users/${rootState.auth.user.uid}`);
-  userRef.child('selectedCalendars').set(encoded);
+  const userRef = database.ref(`/users/${rootState.auth.uid}`);
+  userRef.child('selected-calendars').set(encoded);
 }
 
 async function fetchCalendarEvents({ commit, state, rootState }) {
