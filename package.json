@@ -9,7 +9,7 @@
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
-    "deploy": "firebase deploy",
+    "deploy-all": "firebase deploy",
     "deploy-hosting": "firebase deploy --only hosting",
     "deploy-database": "firebase deploy --only database",
     "deploy-functions": "firebase deploy --only functions"
