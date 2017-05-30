@@ -68,6 +68,15 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  store.dispatch('setProgressState', true);
+  next();
+});
+
+router.afterEach(async route => {
+  store.dispatch('setProgressState', false);
+});
+
+router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.state.auth.isSignedIn === null) {
       await store.dispatch('refreshAuthStatus');

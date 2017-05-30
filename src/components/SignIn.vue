@@ -49,8 +49,10 @@ export default {
     },
   },
   methods: {
-    signIn() {
-      this.$store.dispatch('signIn');
+    async signIn() {
+      this.$store.dispatch('setProgressState', true);
+      await this.$store.dispatch('signIn');
+      this.$store.dispatch('setProgressState', false);
     },
   },
 };
