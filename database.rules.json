@@ -1,9 +1,12 @@
 {
   "rules": {
-
+    "sessions": {
+      ".read": "true",
+      ".write": "true"
+    },
     "users": {
       "$uid": {
-        "currentSession": {
+        "current-session": {
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
         },
@@ -11,11 +14,7 @@
           ".read": "true",
           ".write": "$uid === auth.uid"
         },
-        "selectedCalendars": {
-          ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
-        },
-        "previousSessions": {
+        "selected-calendars": {
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
         },
