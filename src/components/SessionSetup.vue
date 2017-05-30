@@ -57,9 +57,14 @@ export default {
   },
   methods: {
     async create() {
+      this.$store.dispatch('addProgressItem', {
+        id: 'CREATE_SCHEDULING_SESSION',
+        message: 'Creating session',
+      });
       await this.$store.dispatch('createSchedulingSession');
       await this.$store.dispatch('refreshSchedulingSessionStatus');
       await this.$store.dispatch('subscribeSchedulingSessionStatus');
+      this.$store.dispatch('removeProgressItem', 'CREATE_SCHEDULING_SESSION');
       await this.$router.push(
         `/session/lobby?id=${this.$store.state.scheduling.session.id}`,
       );
