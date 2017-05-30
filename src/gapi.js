@@ -1,4 +1,5 @@
 /* global gapi */
+import credentials from '../secret/client.json';
 
 export const SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
 
@@ -14,7 +15,7 @@ const client = Promise.resolve()
   .then(() =>
     gapi.client.init({
       scope: SCOPE,
-      clientId: '569083161786-h71j7a2haos4d1ohu6t8hru61ffv4s56.apps.googleusercontent.com',
+      clientId: credentials.web.client_id,
       discoveryDocs: [
         'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
       ],

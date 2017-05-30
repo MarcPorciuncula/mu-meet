@@ -6,13 +6,12 @@ import {
   deleteUserData,
 } from './actions';
 
-export const onUserCreateFetchProfile = functions.auth
-  .user()
-  .onCreate(fetchProfileIntoDatabase);
-
-export const onUserCreateFetchCalendars = functions.auth
-  .user()
-  .onCreate(fetchCalendarsIntoDatabase);
+export const onUserCreate = functions.auth.user().onCreate(async event => {
+  await Promise.all([
+    fetchProfileIntoDatabase(event),
+    fetchCalendarsIntoDatabase(event),
+  ]);
+});
 
 export const onUserDeleteCleanUp = functions.auth
   .user()
