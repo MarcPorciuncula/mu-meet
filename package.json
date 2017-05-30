@@ -9,8 +9,10 @@
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
-    "deploy:database": "firebase deploy --only database",
-    "deploy": "surge -p dist -d https://mumeet.surge.sh"
+    "deploy-all": "firebase deploy",
+    "deploy-hosting": "firebase deploy --only hosting",
+    "deploy-database": "firebase deploy --only database",
+    "deploy-functions": "firebase deploy --only functions"
   },
   "dependencies": {
     "awaiting": "^2.2.0",

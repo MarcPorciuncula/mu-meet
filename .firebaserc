@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "meetingsync-f62e3"
+    "production": "meetingsync-f62e3",
+    "staging": "mumeet-staging"
   }
 }

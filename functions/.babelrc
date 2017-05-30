@@ -11,6 +11,9 @@
     "development": {
       "plugins": ["external-helpers"]
     },
+    "production": {
+      "plugins": ["external-helpers"]
+    },
     "test": {
       "presets": [
         ["env", {
