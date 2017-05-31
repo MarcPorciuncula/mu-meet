@@ -6,9 +6,10 @@
 
 <script>
 import nprogress from 'nprogress';
+
 export default {
   mounted() {
-    nprogress.configure({ parent: '.nprogress-wrapper' });
+    nprogress.configure({ parent: '.nprogress-wrapper', showSpinner: false });
   },
 };
 </script>

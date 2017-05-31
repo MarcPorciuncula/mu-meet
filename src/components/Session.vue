@@ -67,6 +67,7 @@ function redirectToSessionSubroute(to, from, next) {
         );
     }
   }
+  store.dispatch('removeProgressItem', 'ROUTE_TRANSITION');
 }
 </script>
 
