@@ -12,6 +12,7 @@ import {
   PHASE_ARCHIVED,
 } from '@/store/modules/scheduling';
 import store from '@/store';
+import R from 'ramda';
 
 export default {
   components: {
@@ -20,18 +21,29 @@ export default {
   async beforeRouteEnter(to, from, next) {
     if (!store.state.auth.isSignedIn) {
       next({ path: '/login', query: { redirect: to.fullPath } });
-    } else if (!store.state.calendar.selected) {
-      next({ path: '/calendars', query: { redirect: to.fullPath } });
-    } else {
-      await store.dispatch('refreshSchedulingSessionStatus');
-      if (
-        store.state.scheduling.isInSession &&
-        !store.state.scheduling.subscription.isSubscribed
-      ) {
-        await store.dispatch('subscribeSchedulingSessionStatus');
-      }
-      redirectToSessionSubroute(to, from, next);
+      return;
     }
+
+    if (!Object.keys(store.state.calendars).length) {
+      await store.dispatch('fetchCalendars');
+    }
+
+    if (
+      !R.compose(R.filter(R.prop('selected')), R.values)(store.state.calendars)
+        .length
+    ) {
+      next({ path: '/calendars', query: { redirect: to.fullPath } });
+      return;
+    }
+
+    await store.dispatch('refreshSchedulingSessionStatus');
+    if (
+      store.state.scheduling.isInSession &&
+      !store.state.scheduling.subscription.isSubscribed
+    ) {
+      await store.dispatch('subscribeSchedulingSessionStatus');
+    }
+    redirectToSessionSubroute(to, from, next);
   },
   async beforeRouteUpdate(to, from, next) {
     redirectToSessionSubroute(to, from, next);

@@ -10,10 +10,12 @@
       <md-checkbox
         v-for="calendar of calendars"
         class="md-primary calendar-select_checkbox"
-        v-model="selected[calendar.id]"
+        :value="calendar.selected"
+        @change="updateCalendarSelected({ id: calendar.id, selected: $event})"
         :id="`calendar_${calendar.id}`"
         :key="calendar.id"
-        :name="calendar.id">
+        :name="calendar.id"
+      >
         <span v-on:click="selected[calendar.id] = !selected[calendar.id]">
           {{ calendar.summary }}
         </span>
@@ -22,7 +24,7 @@
     <p>
       ready to begin?
     </p>
-    <user-action v-on:click="registerEvents()">
+    <user-action v-on:click="next">
       continue
     </user-action>
   </page>
@@ -30,7 +32,7 @@
 
 <script>
 import Vue from 'vue';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { MdCore, MdCheckbox } from 'vue-material';
 import 'vue-material/dist/components/mdCheckbox/index.css';
 import Page from './Page';
@@ -48,23 +50,17 @@ export default {
     UserAction,
   },
   async beforeRouteEnter(to, from, next) {
-    await store.dispatch('fetchCalendars');
-    next(vm => {
-      vm.selected = store.state.calendar.selected || {};
-    });
-  },
-  data() {
-    return {
-      selected: {},
-    };
+    if (!Object.keys(store.state.calendars).length) {
+      await store.dispatch('fetchCalendars');
+    }
+    next();
   },
   computed: mapState({
-    calendars: state => state.calendar.calendars,
+    calendars: state => state.calendars,
   }),
   methods: {
-    async registerEvents() {
-      await this.$store.dispatch('uploadSelectedCalendars', this.selected);
-      await this.$store.dispatch('fetchCalendarEvents');
+    ...mapActions(['updateCalendarSelected']),
+    next() {
       if (this.$route.query.redirect) {
         this.$router.push(this.$route.query.redirect);
       } else {

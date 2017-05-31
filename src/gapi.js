@@ -16,9 +16,6 @@ const client = Promise.resolve()
     gapi.client.init({
       scope: SCOPE,
       clientId: credentials.web.client_id,
-      discoveryDocs: [
-        'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-      ],
     }),
   )
   .then(() => gapi);

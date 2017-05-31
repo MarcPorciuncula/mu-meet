@@ -33,7 +33,6 @@ import formatDate from 'date-fns/format';
 import addMinutes from 'date-fns/add_minutes';
 import { PHASE_RESULT } from '@/store/modules/scheduling';
 import R from 'ramda';
-import store from '@/store';
 
 export default {
   components: {
@@ -44,16 +43,6 @@ export default {
     return {
       showMore: false,
     };
-  },
-  async beforeRouteEnter(to, from, next) {
-    const { uid } = store.state.auth;
-    const { pending } = store.state.scheduling.session.result;
-    const { ready } = store.state.scheduling.session.users[uid];
-    if (pending && !ready) {
-      await store.dispatch('fetchCalendarEvents');
-      await store.dispatch('uploadEvents');
-    }
-    next();
   },
   computed: mapState({
     pending: state => state.scheduling.session.result.pending,
