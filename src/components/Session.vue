@@ -79,7 +79,7 @@ function redirectToSessionSubroute(to, from, next) {
         );
     }
   }
-  store.dispatch('removeProgressItem', 'ROUTE_TRANSITION');
+  store.dispatch('removeProgressItem', 'route/transition');
 }
 </script>
 
