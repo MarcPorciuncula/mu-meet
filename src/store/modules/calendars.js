@@ -3,6 +3,10 @@ import * as firebase from 'firebase';
 
 const state = {};
 
+function hasCalendarsSelected(state, getters) {
+  return !!Object.values(state).filter(calendar => calendar.selected).length;
+}
+
 function updateCalendar(state, calendar) {
   Vue.set(state, encodeId(calendar.id), calendar);
   if (typeof state[encodeId(calendar.id)].selected === 'undefined') {
@@ -58,6 +62,9 @@ function encodeId(id) {
 
 export default {
   state,
+  getters: {
+    hasCalendarsSelected,
+  },
   mutations: {
     updateCalendar,
     updateCalendarSelected: _updateCalendarSelected,

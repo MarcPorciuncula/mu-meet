@@ -27,10 +27,9 @@ export default {
     MumeetLogo,
   },
   async beforeRouteEnter(to, from, next) {
-    if (store.state.auth.isSignedIn === null) {
-      await store.dispatch('refreshAuthStatus');
-    }
-    if (store.state.auth.isSignedIn) {
+    if (store.state.auth.isSignedIn && store.getters.hasCalendarsSelected) {
+      next({ path: '/session' });
+    } else if (store.state.auth.isSignedIn) {
       next({ path: '/calendars', query: to.query });
     }
     next();
@@ -39,13 +38,22 @@ export default {
     isSignedIn: state => state.auth.isSignedIn,
   }),
   watch: {
-    isSignedIn(isSignedIn) {
-      if (isSignedIn) {
-        this.$router.push({
+    isSignedIn(value) {
+      if (!value) {
+        return;
+      }
+
+      let to;
+      if (store.getters.hasCalendarsSelected) {
+        to = this.$route.query.redirect || '/session';
+      } else {
+        to = {
           path: '/calendars',
           query: this.$route.query,
-        });
+        };
       }
+
+      this.$router.push(to);
     },
   },
   methods: {
