@@ -46,13 +46,15 @@ export default {
     UserAction,
   },
   async beforeRouteEnter(to, from, next) {
-    await store.dispatch('fetchCalendars');
+    if (!Object.keys(store.state.calendars).length) {
+      await store.dispatch('fetchCalendars');
+    }
     next();
   },
   computed: mapState({
     isHost: state => state.scheduling.session.isHost,
     calendars: state =>
-      state.calendar.calendars.filter(({ id }) => state.calendar.selected[id]),
+      Object.values(state.calendars).filter(R.prop('selected')),
     config: state => state.scheduling.session.config,
     phase: state => state.scheduling.session.phase,
     sessionId: state => state.scheduling.session.id,

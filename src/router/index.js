@@ -77,7 +77,6 @@ router.beforeEach(async (to, from, next) => {
       return;
     } else {
       store.dispatch('ensureUserProfile', store.state.auth.uid);
-      store.dispatch('fetchCalendars');
     }
   }
   next();
