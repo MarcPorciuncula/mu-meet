@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Page from './Page';
 import MumeetLogo from './MumeetLogo';
 import store from '@/store';
@@ -48,13 +48,7 @@ export default {
       }
     },
   },
-  methods: {
-    async signIn() {
-      this.$store.dispatch('setProgressState', true);
-      await this.$store.dispatch('signIn');
-      this.$store.dispatch('setProgressState', false);
-    },
-  },
+  methods: mapActions(['signIn']),
 };
 </script>
 

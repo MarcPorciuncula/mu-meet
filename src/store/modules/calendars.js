@@ -14,7 +14,11 @@ function _updateCalendarSelected(state, { id, selected }) {
   state[encodeId(id)].selected = selected;
 }
 
-async function fetchCalendars({ commit, state, rootState }) {
+async function fetchCalendars({ commit, dispatch, state, rootState }) {
+  dispatch('addProgressItem', {
+    id: 'calendars/fetch',
+    message: 'Fetching your calendars',
+  });
   const database = firebase.database();
   const userRef = database.ref(`/users/${rootState.auth.uid}`);
 
@@ -34,6 +38,7 @@ async function fetchCalendars({ commit, state, rootState }) {
       selected: !!selected[encodeId(calendar.id)],
     });
   }
+  dispatch('removeProgressItem', 'calendars/fetch');
 }
 
 async function updateCalendarSelected(

@@ -10,7 +10,6 @@ function updateProgressState(state, data) {
 }
 
 async function addProgressItem(context, item) {
-  console.log('adding progress item', item.id, item.message);
   const { commit, state } = context;
   if (!state.pending.length) {
     nprogress.start();
@@ -28,7 +27,6 @@ async function addProgressItem(context, item) {
 }
 
 function removeProgressItem({ commit, state }, id) {
-  console.log('removing progress item', id);
   commit('updateProgressState', {
     pending: state.pending.filter(R.complement(R.propEq('id', id))),
   });
@@ -39,16 +37,17 @@ function removeProgressItem({ commit, state }, id) {
   }
 }
 
-// function setProgressState({ commit, state }, loading) {
-//   if (state.loading && loading) {
-//     nprogress.inc();
-//   } else if (!state.loading && loading) {
-//     nprogress.start();
-//   } else {
-//     nprogress.done();
-//   }
-//   commit('updateProgressState', { loading });
-// }
+function updateProgressItem({ commit, state }, { id, message }) {
+  commit('updateProgressState', {
+    pending: state.pending.map(
+      R.when(
+        R.both(R.propEq('id', id), R.always(message)),
+        R.assoc('message', message),
+      ),
+    ),
+  });
+  nprogress.inc();
+}
 
 export default {
   state,
@@ -56,8 +55,8 @@ export default {
     updateProgressState,
   },
   actions: {
-    // setProgressState,
     addProgressItem,
+    updateProgressItem,
     removeProgressItem,
   },
 };

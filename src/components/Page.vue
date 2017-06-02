@@ -33,9 +33,13 @@ export default {
   computed: mapState({
     isSignedIn: state => state.auth.isSignedIn,
     user: state => state.users.users[state.auth.uid],
-    loadingMessage: state =>
-      state.progress.pending.length &&
-      state.progress.pending[state.progress.pending.length - 1].message,
+    loadingMessage: state => {
+      const item = state.progress.pending
+        .slice()
+        .reverse()
+        .find(item => item.message);
+      return item ? item.message : '';
+    },
   }),
 };
 </script>
