@@ -3,9 +3,12 @@
     <div class="background-gradient"></div>
     <div class="background-image"></div>
     <div class="header-bar">
-      <router-link to="/">
+      <router-link v-if="!loadingMessage" to="/">
         <mumeet-logo></mumeet-logo>
       </router-link>
+      <span v-else class="loading-message">
+        {{ loadingMessage }}
+      </span>
       <template v-if="isSignedIn">
         <div class="header-bar_profile">
           <span class="username">Hi, {{ user.profile.given_name }}</span>
@@ -30,6 +33,9 @@ export default {
   computed: mapState({
     isSignedIn: state => state.auth.isSignedIn,
     user: state => state.users.users[state.auth.uid],
+    loadingMessage: state =>
+      state.progress.pending.length &&
+      state.progress.pending[state.progress.pending.length - 1].message,
   }),
 };
 </script>
@@ -94,5 +100,9 @@ export default {
 .header-bar_profile {
   display: flex;
   align-items: center;
+}
+
+.loading-message {
+  font-size: 1.6rem;
 }
 </style>

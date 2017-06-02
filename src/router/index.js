@@ -68,9 +68,26 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  store.dispatch('addProgressItem', {
+    id: 'ROUTE_TRANSITION',
+  });
+  next();
+});
+
+router.afterEach(async route => {
+  store.dispatch('removeProgressItem', 'ROUTE_TRANSITION');
+});
+
+router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.state.auth.isSignedIn === null) {
-      await store.dispatch('refreshAuthStatus');
+      const pending = store.dispatch('refreshAuthStatus');
+      store.dispatch('addProgressItem', {
+        id: 'REFRESH_AUTH_STATUS',
+        done: pending,
+        message: 'Checking auth status',
+      });
+      await pending;
     }
     if (!store.state.auth.isSignedIn) {
       next({ path: '/login', query: { redirect: to.fullPath } });
