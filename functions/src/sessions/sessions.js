@@ -10,6 +10,7 @@ import { fetchEvents } from '../calendar/google-calendar';
 import addMinutes from 'date-fns/add_minutes';
 import isBefore from 'date-fns/is_before';
 import isEqual from 'date-fns/is_equal';
+// import { toISOTimezoneString } from '../../../lib/src/timezone'
 
 const SESSION_ERROR_CODES = {
   ALREADY_IN_SESSION: 'session/already-in-session',
@@ -32,6 +33,7 @@ const DEFAULT_STATE = {
   host: null,
   phase: PHASE_LOBBY,
   users: {},
+  startedAt: null,
   config: {
     minDuration: 1,
     searchFromDate: null,
@@ -58,7 +60,7 @@ const DEFAULT_STATE = {
  * Creates a new session and sets the host to the supplied user
  * @param  {string} hostId
  */
-export async function createSession(hostId) {
+export async function createSession(hostId, { startedAt, timezoneOffset }) {
   const database = admin.database();
 
   const host = await database
@@ -77,9 +79,16 @@ export async function createSession(hostId) {
 
   const session = Object.assign({}, DEFAULT_STATE, {
     host: hostId,
+    startedAt: parseDate(startedAt),
     config: Object.assign({}, DEFAULT_STATE.config, {
-      searchFromDate: getStartOfWeek(new Date()),
-      searchToDate: getEndOfWeek(new Date()),
+      searchFromDate: addMinutes(
+        getStartOfWeek(parseDate(startedAt)),
+        timezoneOffset,
+      ),
+      searchToDate: addMinutes(
+        getEndOfWeek(parseDate(startedAt)),
+        timezoneOffset,
+      ),
     }),
     users: {
       [hostId]: { ready: false },
@@ -87,9 +96,7 @@ export async function createSession(hostId) {
   });
 
   await a.list([
-    database
-      .ref(`/sessions/${sessionId}`)
-      .set(R.evolve({ config: serializeConfig })(session)),
+    database.ref(`/sessions/${sessionId}`).set(serializeSession(session)),
     database.ref(`/users/${hostId}/current-session`).set(sessionId),
   ]);
 }
@@ -139,7 +146,7 @@ export async function findMeetingTimes(sessionId) {
   }
 
   console.log(
-    `Fetched ${events.length} events from ${config.searchFromDate.toISOString()} to ${config.searchToDate.toISOString()}`,
+    `Fetched ${events.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
   );
 
   // TODO restrict days, hours
@@ -159,7 +166,7 @@ export async function findMeetingTimes(sessionId) {
     }, []),
     intervals => {
       const candidates = R.fromPairs(
-        R.map(interval => [interval.toISOString(), true], intervals),
+        R.map(interval => [interval.toString(), true], intervals),
       );
       for (const event of events) {
         const spannedIntervals = getSpannedIntervals(
@@ -169,7 +176,7 @@ export async function findMeetingTimes(sessionId) {
           config.searchFromDate,
         );
         for (const interval of spannedIntervals) {
-          candidates[interval.toISOString()] = false;
+          candidates[interval.toString()] = false;
         }
       }
       return R.compose(R.map(parseDate), R.keys, R.pickBy(R.identity))(
@@ -178,15 +185,27 @@ export async function findMeetingTimes(sessionId) {
     },
   )(getIntervals(30, config.searchFromDate, config.searchToDate));
 
-  await sessionRef
-    .child('result/meetings')
-    .set(
-      meetings.map(({ start, duration }) => ({
-        start: start.toISOString(),
-        duration,
-      })),
-    );
+  await sessionRef.child('result/meetings').set(
+    meetings.map(({ start, duration }) => ({
+      start: start.toString(),
+      duration,
+    })),
+  );
   await sessionRef.child('result/pending').set(false);
+}
+
+// function hydrateSession(session) {
+//   return R.evolve({
+//     startedAt: parseDate,
+//     config: hydrateConfig,
+//   })(session);
+// }
+
+function serializeSession(session) {
+  return R.evolve({
+    startedAt: toString,
+    config: serializeConfig,
+  })(session);
 }
 
 function hydrateConfig(config) {
@@ -198,13 +217,13 @@ function hydrateConfig(config) {
 
 function serializeConfig(config) {
   return R.evolve({
-    searchFromDate: toISOString,
-    searchToDate: toISOString,
+    searchFromDate: toString,
+    searchToDate: toString,
   })(config);
 }
 
-function toISOString(date) {
-  return date.toISOString();
+function toString(date) {
+  return date.toString();
 }
 
 function atob(encoded) {

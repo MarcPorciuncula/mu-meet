@@ -194,7 +194,12 @@ async function createSchedulingSession({ commit, dispatch, state, rootState }) {
     id: 'scheduling/create-session',
     message: 'Creating session',
   });
-  await functions('createSession');
+  await functions('createSession', {
+    data: {
+      startedAt: new Date().toString(),
+      timezoneOffset: new Date().getTimezoneOffset(),
+    },
+  });
   dispatch('removeProgressItem', 'scheduling/create-session');
 }
 
