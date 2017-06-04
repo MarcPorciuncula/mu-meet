@@ -74,6 +74,45 @@
     string-format-obj "^1.0.0"
     through2 "^2.0.0"
 
+"@material/animation@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@material/animation/-/animation-0.2.3.tgz#25f24962cd649e76459a16ab234b7846a7a7f419"
+
+"@material/base@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@material/base/-/base-0.2.0.tgz#685e2c344aa037e42be7978e1f365ff183b9f3a1"
+
+"@material/button@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@material/button/-/button-0.3.7.tgz#3912791322f7f7129a5a2239c3098e8b10a4ceb8"
+  dependencies:
+    "@material/animation" "^0.2.3"
+    "@material/elevation" "^0.1.8"
+    "@material/ripple" "^0.6.2"
+    "@material/theme" "^0.1.5"
+    "@material/typography" "^0.2.2"
+
+"@material/elevation@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@material/elevation/-/elevation-0.1.8.tgz#57a1f3541a330d035633db7f5db82c462d0ccad0"
+  dependencies:
+    "@material/animation" "^0.2.3"
+
+"@material/ripple@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@material/ripple/-/ripple-0.6.2.tgz#a8556db7c141d35f5582c5990be8690bef9dee59"
+  dependencies:
+    "@material/base" "^0.2.0"
+    "@material/theme" "^0.1.5"
+
+"@material/theme@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@material/theme/-/theme-0.1.5.tgz#5c7bd9a1974d8c1c0eacf037e0235aad9c5cb699"
+
+"@material/typography@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@material/typography/-/typography-0.2.2.tgz#dc5f0763ad7d6e5ad5c86c394b360f2b4cf30bb2"
+
 JSONStream@^1.2.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/JSONStream/-/JSONStream-1.3.1.tgz#707f761e01dae9e16f1bcf93703b78c70966579a"
