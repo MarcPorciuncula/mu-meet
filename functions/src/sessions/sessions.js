@@ -10,6 +10,7 @@ import { fetchEvents } from '../calendar/google-calendar';
 import addMinutes from 'date-fns/add_minutes';
 import { Timeslot, getAvailableTimeslots } from './timeslot';
 import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
+import addHours from 'date-fns/add_hours';
 
 const SESSION_ERROR_CODES = {
   ALREADY_IN_SESSION: 'session/already-in-session',
@@ -160,8 +161,25 @@ export async function findMeetingTimes(sessionId) {
       ),
   );
 
+  const restrictedHours = [];
+  let current = config.searchFromDate;
+  for (let i = 0; i < 7; i++) {
+    restrictedHours.push(new Timeslot(current, config.searchFromHour * 60));
+    restrictedHours.push(
+      new Timeslot(
+        addHours(current, config.searchToHour),
+        (24 - config.searchToHour) * 60,
+      ),
+    );
+    current = addHours(current, 24);
+  }
+
   const range = new Timeslot(config.searchFromDate, 60 * 24 * 7);
-  const meetings = getAvailableTimeslots(range, calendarEventTimeslots, 30);
+  const meetings = getAvailableTimeslots(
+    range,
+    R.flatten([calendarEventTimeslots, restrictedHours]),
+    30,
+  );
 
   // TODO restrict days, hours
   // TODO prioritise
