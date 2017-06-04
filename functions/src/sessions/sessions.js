@@ -40,15 +40,7 @@ const DEFAULT_STATE = {
     searchToDate: null,
     searchFromHour: 9,
     searchToHour: 18,
-    days: {
-      sunday: false,
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: false,
-    },
+    days: [false, true, true, true, true, true, false],
   },
   result: {
     pending: false,
@@ -174,14 +166,22 @@ export async function findMeetingTimes(sessionId) {
     current = addHours(current, 24);
   }
 
+  const restrictedDays = [];
+  for (let i = 0; i < 7; i++) {
+    if (!config.days[i]) {
+      restrictedDays.push(
+        new Timeslot(addMinutes(config.searchFromDate, 60 * 24 * i), 60 * 24),
+      );
+    }
+  }
+
   const range = new Timeslot(config.searchFromDate, 60 * 24 * 7);
   const meetings = getAvailableTimeslots(
     range,
-    R.flatten([calendarEventTimeslots, restrictedHours]),
+    R.flatten([calendarEventTimeslots, restrictedHours, restrictedDays]),
     30,
   );
 
-  // TODO restrict days, hours
   // TODO prioritise
 
   await sessionRef
