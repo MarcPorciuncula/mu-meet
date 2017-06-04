@@ -1,11 +1,13 @@
 // @flow
 
+import R from 'ramda';
 import addMinutes from 'date-fns/add_minutes';
 import addSeconds from 'date-fns/add_seconds';
 import setMilliseconds from 'date-fns/set_milliseconds';
 import isBefore from 'date-fns/is_before';
 import isAfter from 'date-fns/is_after';
 import isEqual from 'date-fns/is_equal';
+import compareAsc from 'date-fns/compare_asc';
 
 export class Timeslot {
   start: Date;
@@ -147,4 +149,34 @@ export function getBoundaryTimeslotsOverRange(
   }
 
   return boundaries;
+}
+
+export function getAvailableTimeslots(
+  range: Timeslot,
+  occupied: Array<Timeslot>,
+  duration: number,
+): Array<Timeslot> {
+  const isAvailable = {};
+
+  for (let timeslot of range.subdivide(duration)) {
+    isAvailable[timeslot.start.toISOString()] = true;
+  }
+
+  for (let timeslot of occupied) {
+    const spanned = timeslot.subdivide(duration, {
+      align: range.start,
+      includeBoundaries: true,
+    });
+    for (let timeslot of spanned) {
+      isAvailable[timeslot.start.toISOString()] = false;
+    }
+  }
+
+  const timeslots = R.toPairs(isAvailable)
+    .filter(([timestamp, available]) => available)
+    .map(([timestamp]) => new Date(timestamp))
+    .sort(compareAsc)
+    .map(start => new Timeslot(start, duration));
+
+  return timeslots;
 }

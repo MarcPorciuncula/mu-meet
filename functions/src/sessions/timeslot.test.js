@@ -6,6 +6,7 @@ import {
   getTimeslotsInRange,
   getTimeslotsOverRange,
   getBoundaryTimeslotsOverRange,
+  getAvailableTimeslots,
 } from './timeslot';
 
 // const toJSON = x =>
@@ -31,7 +32,7 @@ test('Timeslot#subdivide splits a timeslot into multiple smaller ones', t => {
   ]);
 });
 
-test('Timeslots.accumulate combines adjacent timeslots', t => {
+test('Timeslots.accumulate combines adjacent (ordered and aligned) timeslots', t => {
   {
     const start = new Date('2017-06-03T14:00:00.000Z');
     const duration = 600;
@@ -166,5 +167,27 @@ test('getTimeslotsOverRange returns timeslots of the given range within and on t
     new Timeslot(new Date('2017-06-03T14:40:00.000Z'), 30),
     new Timeslot(new Date('2017-06-03T15:10:00.000Z'), 30),
     new Timeslot(new Date('2017-06-03T15:40:00.000Z'), 30),
+  ]);
+});
+
+test('getAvailableTimeslots finds all subdivided timeslots that are not occupied', t => {
+  const range = new Timeslot(new Date('2017-06-03T14:00:00.000Z'), 60);
+  const occupied = [
+    new Timeslot(new Date('2017-06-03T14:10:00.000Z'), 7),
+    new Timeslot(new Date('2017-06-03T13:59:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:30:00.000Z'), 1),
+  ];
+
+  const result = getAvailableTimeslots(range, occupied, 5);
+
+  t.deepEqual(result, [
+    new Timeslot(new Date('2017-06-03T14:05:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:20:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:25:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:35:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:40:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:45:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:50:00.000Z'), 5),
+    new Timeslot(new Date('2017-06-03T14:55:00.000Z'), 5),
   ]);
 });

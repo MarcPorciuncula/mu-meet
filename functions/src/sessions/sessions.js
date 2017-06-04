@@ -8,9 +8,8 @@ import parseDate from 'date-fns/parse';
 import { getOAuth2Client } from '../auth/google-oauth';
 import { fetchEvents } from '../calendar/google-calendar';
 import addMinutes from 'date-fns/add_minutes';
-import isBefore from 'date-fns/is_before';
-import isEqual from 'date-fns/is_equal';
-// import { toISOTimezoneString } from '../../../lib/src/timezone'
+import { Timeslot, getAvailableTimeslots } from './timeslot';
+import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
 
 const SESSION_ERROR_CODES = {
   ALREADY_IN_SESSION: 'session/already-in-session',
@@ -89,6 +88,7 @@ export async function createSession(hostId, { startedAt, timezoneOffset }) {
         getEndOfWeek(parseDate(startedAt)),
         timezoneOffset,
       ),
+      timezoneOffset,
     }),
     users: {
       [hostId]: { ready: false },
@@ -122,7 +122,7 @@ export async function findMeetingTimes(sessionId) {
   await sessionRef.child('phase').set('PHASE_RESULT');
 
   // FIXME don't do this serially
-  const events = [];
+  const calendarEvents = [];
   for (let uid of uids) {
     let { save, oAuth2Client } = await getOAuth2Client(uid);
     const calendarIds = await database
@@ -132,8 +132,8 @@ export async function findMeetingTimes(sessionId) {
       .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
 
     for (let calendarId of calendarIds) {
-      events.splice(
-        events.length,
+      calendarEvents.splice(
+        calendarEvents.length,
         ...(await fetchEvents(uid, oAuth2Client, {
           from: config.searchFromDate,
           to: config.searchToDate,
@@ -146,51 +146,29 @@ export async function findMeetingTimes(sessionId) {
   }
 
   console.log(
-    `Fetched ${events.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
+    `Fetched ${calendarEvents.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
   );
+
+  const calendarEventTimeslots = calendarEvents.map(
+    event =>
+      new Timeslot(
+        parseDate(event.start.dateTime),
+        getDifferenceInMinutes(
+          parseDate(event.start.dateTime),
+          parseDate(event.end.dateTime),
+        ),
+      ),
+  );
+
+  const range = new Timeslot(config.searchFromDate, 60 * 24 * 7);
+  const meetings = getAvailableTimeslots(range, calendarEventTimeslots, 30);
 
   // TODO restrict days, hours
   // TODO prioritise
-  const meetings = R.compose(
-    R.reduce((arr, interval) => {
-      if (arr.length === 0) {
-        return [{ start: interval, duration: 30 }];
-      }
-      const last = arr[arr.length - 1];
-      if (isEqual(addMinutes(last.start, last.duration), interval)) {
-        last.duration = last.duration + 30;
-        return arr;
-      } else {
-        return [...arr, { start: interval, duration: 30 }];
-      }
-    }, []),
-    intervals => {
-      const candidates = R.fromPairs(
-        R.map(interval => [interval.toString(), true], intervals),
-      );
-      for (const event of events) {
-        const spannedIntervals = getSpannedIntervals(
-          30,
-          parseDate(event.start.dateTime),
-          parseDate(event.end.dateTime),
-          config.searchFromDate,
-        );
-        for (const interval of spannedIntervals) {
-          candidates[interval.toString()] = false;
-        }
-      }
-      return R.compose(R.map(parseDate), R.keys, R.pickBy(R.identity))(
-        candidates,
-      );
-    },
-  )(getIntervals(30, config.searchFromDate, config.searchToDate));
 
-  await sessionRef.child('result/meetings').set(
-    meetings.map(({ start, duration }) => ({
-      start: start.toString(),
-      duration,
-    })),
-  );
+  await sessionRef
+    .child('result/meetings')
+    .set(meetings.map(timeslot => timeslot.toJSON()));
   await sessionRef.child('result/pending').set(false);
 }
 
@@ -233,36 +211,3 @@ function atob(encoded) {
 // function btoa(raw) {
 //   return new Buffer(raw).toString('base64');
 // }
-
-/**
- * Finds the start datetimes of slots of duration from the start date to the end date
- * @param  {number} duration duration of intervals in minutes
- * @return {Array<Date>} datetimes of interval starts
- */
-export function getIntervals(duration, from, to) {
-  const intervals = [];
-
-  let current = from;
-  while (isBefore(current, to)) {
-    intervals.push(current);
-    current = addMinutes(current, duration);
-  }
-
-  return intervals;
-}
-
-function getSpannedIntervals(duration, start, end, from) {
-  const intervals = [];
-
-  let current = from;
-  while (isBefore(current, start)) {
-    current = addMinutes(current, duration);
-  }
-
-  while (isBefore(current, end)) {
-    intervals.push(current);
-    current = addMinutes(current, duration);
-  }
-
-  return intervals;
-}
