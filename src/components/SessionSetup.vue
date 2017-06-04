@@ -20,7 +20,7 @@
 <script>
 import Vue from 'vue';
 import { MdCore, MdInputContainer } from 'vue-material';
-import 'vue-material/dist/components/MdInputContainer/index.css';
+import 'vue-material/dist/components/mdInputContainer/index.css';
 import Page from './Page';
 import UserAction from './UserAction';
 import store from '@/store';
