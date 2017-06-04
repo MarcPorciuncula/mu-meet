@@ -125,8 +125,7 @@ export async function findMeetingTimes(sessionId) {
       .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
 
     for (let calendarId of calendarIds) {
-      calendarEvents.splice(
-        calendarEvents.length,
+      calendarEvents.push(
         ...(await fetchEvents(uid, oAuth2Client, {
           from: config.searchFromDate,
           to: config.searchToDate,
@@ -147,11 +146,13 @@ export async function findMeetingTimes(sessionId) {
       new Timeslot(
         parseDate(event.start.dateTime),
         getDifferenceInMinutes(
-          parseDate(event.start.dateTime),
           parseDate(event.end.dateTime),
+          parseDate(event.start.dateTime),
         ),
       ),
   );
+
+  console.log(calendarEventTimeslots.map(x => x.toJSON()));
 
   const restrictedHours = [];
   let current = config.searchFromDate;
