@@ -176,10 +176,12 @@ export async function findMeetingTimes(sessionId) {
   }
 
   const range = new Timeslot(config.searchFromDate, 60 * 24 * 7);
-  const meetings = getAvailableTimeslots(
-    range,
-    R.flatten([calendarEventTimeslots, restrictedHours, restrictedDays]),
-    30,
+  const meetings = Timeslot.accumulate(
+    getAvailableTimeslots(
+      range,
+      R.flatten([calendarEventTimeslots, restrictedHours, restrictedDays]),
+      30,
+    ),
   );
 
   // TODO prioritise
