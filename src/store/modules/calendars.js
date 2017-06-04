@@ -10,7 +10,7 @@ function hasCalendarsSelected(state, getters) {
 function updateCalendar(state, calendar) {
   Vue.set(state, encodeId(calendar.id), calendar);
   if (typeof state[encodeId(calendar.id)].selected === 'undefined') {
-    state[encodeId(calendar.id)].selected = false;
+    Vue.set(state[encodeId(calendar.id)], 'selected', false);
   }
 }
 
@@ -33,7 +33,7 @@ async function fetchCalendars({ commit, dispatch, state, rootState }) {
   const selected = await userRef
     .child('selected-calendars')
     .once('value')
-    .then(s => s.val());
+    .then(s => s.val() || {});
 
   for (const calendar of calendars) {
     commit('updateCalendar', calendar);
