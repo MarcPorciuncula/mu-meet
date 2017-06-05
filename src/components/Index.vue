@@ -186,15 +186,11 @@ section {
 }
 
 .section--graphic {
-  background: #B3E5FC;
+  background: #ECEFF1;
   height: 32rem;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  &::before {
-    content: 'Pretty graphic coming soon :)'
-  }
 }
 
 .section_centered {
