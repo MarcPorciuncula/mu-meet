@@ -1,15 +1,19 @@
 image: node:7
 
-before_script:
-  - npm install -g yarn
-  - yarn add global firebase-tools
-
 cache:
   paths:
     - node_modules/
 
-staging:
-  type: deploy
+stages:
+- build
+- deploy
+
+staging-build:
+  stage: build
+  environment:
+    name: staging
+  only:
+  - next
   script:
   - mkdir secret
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_STAGING > secret/client.json
@@ -19,4 +23,12 @@ staging:
   - yarn
   - yarn build
   - cd ..
+
+staging-deploy:
+  stage: deploy
+  environment:
+    name: staging
+  only:
+  - next
+  script:
   - yarn deploy-all -- --project staging --token "$FIREBASE_CI_TOKEN"
