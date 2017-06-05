@@ -126,12 +126,15 @@ export default {
 
 <style scoped lang="scss">
 @import '@material/animation/functions';
+@import '@material/elevation/mixins';
 
 .wrapper {
   position: relative;
 }
 
 .header {
+  @include mdc-elevation(2);
+
   height: 5.8rem;
   position: fixed;
   z-index: 1;

@@ -92,6 +92,7 @@ export default {
 
 <style scoped lang="scss">
 @import '@material/animation/functions';
+@import '@material/elevation/mixins';
 
 .wrapper {
   min-height: 100vh;
@@ -107,6 +108,8 @@ export default {
 }
 
 .header_bar {
+  @include mdc-elevation(2);
+
   height: 5.8rem;
   padding: 0 2rem;
   display: flex;
@@ -120,10 +123,11 @@ export default {
 }
 
 .header_menu {
+  @include mdc-elevation(4);
   width: 100%;
+
+  margin-top: 0.1rem;
   flex-grow: 1;
-  border-top: 2px solid rgba(#000, 0.1);
-  border-bottom: 2px solid rgba(#000, 0.1);
   position: relative;
   background-color: white;
 }
@@ -192,10 +196,10 @@ export default {
   display: block;
   content: " ";
   left: 0;
-  top: 0;
+  top: 5.8rem;
   right: 0;
-  bottom: 0;
-  background-color: #fff;
+  height: calc(100vh - 5.8rem);
+  background-color: rgba(#ECEFF1, 0.8);
 }
 
 .header_profile-picture {
