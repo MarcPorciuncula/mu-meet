@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <div>
     <p>we're almost there</p>
     <p>we'll search for meeting times of at least {{ hours }} {{ range }} on {{ days }} from {{ from }} to {{ to }}, but not on university holidays.
     </p>
@@ -27,12 +27,11 @@
     <p v-else>
       sit tight, your host will advance when ready
     </p>
-  </page>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Page from './Page';
 import UserAction from './UserAction';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import addHours from 'date-fns/add_hours';
@@ -42,7 +41,6 @@ import store from '@/store';
 
 export default {
   components: {
-    Page,
     UserAction,
   },
   async beforeRouteEnter(to, from, next) {

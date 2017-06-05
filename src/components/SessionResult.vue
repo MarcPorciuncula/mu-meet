@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <div>
     <template v-if="pending">
       <p>finding meeting times for your team...</p>
     </template>
@@ -21,12 +21,11 @@
         </p>
       </template>
     </template>
-  </page>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Page from './Page';
 import UserAction from './UserAction';
 import parseDate from 'date-fns/parse';
 import formatDate from 'date-fns/format';
@@ -36,7 +35,6 @@ import R from 'ramda';
 
 export default {
   components: {
-    Page,
     UserAction,
   },
   data() {

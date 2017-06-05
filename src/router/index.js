@@ -18,11 +18,13 @@ const router = new VueRouter({
       path: '/',
       name: 'Index',
       component: Index,
+      meta: { shell: false },
     },
     {
       path: '/login',
       name: 'SignIn',
       component: SignIn,
+      meta: { shell: true },
       async beforeEnter(to, from, next) {
         if (store.state.auth.isSignedIn === null) {
           await store.dispatch('refreshAuthStatus');
@@ -34,33 +36,37 @@ const router = new VueRouter({
       path: '/calendars',
       name: 'SelectCalendars',
       component: SelectCalendars,
-      meta: { requiresAuth: true },
+      meta: { shell: true, requiresAuth: true },
     },
     {
       path: '/session',
       name: 'Session',
       component: Session,
-      meta: { requiresAuth: true },
+      meta: { shell: true, requiresAuth: true },
       children: [
         {
           path: 'setup',
           name: 'SessionSetup',
           component: SessionSetup,
+          meta: { shell: true, requiresAuth: true },
         },
         {
           path: 'lobby',
           name: 'SessionLobby',
           component: SessionLobby,
+          meta: { shell: true, requiresAuth: true },
         },
         {
           path: 'confirm',
           name: 'SessionConfirm',
           component: SessionConfirm,
+          meta: { shell: true, requiresAuth: true },
         },
         {
           path: 'result',
           name: 'SessionResult',
           component: SessionResult,
+          meta: { shell: true, requiresAuth: true },
         },
       ],
     },

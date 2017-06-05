@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <div>
     <p>
       <mumeet-logo></mumeet-logo> uses your Google Calendar to check your schedule.
     </p>
@@ -27,7 +27,7 @@
     <user-action v-on:click="next">
       continue
     </user-action>
-  </page>
+  </div>
 </template>
 
 <script>
@@ -35,7 +35,6 @@ import Vue from 'vue';
 import { mapState, mapActions } from 'vuex';
 import { MdCore, MdCheckbox } from 'vue-material';
 import 'vue-material/dist/components/mdCheckbox/index.css';
-import Page from './Page';
 import MumeetLogo from './MumeetLogo';
 import UserAction from './UserAction';
 import store from '@/store';
@@ -45,7 +44,6 @@ Vue.use(MdCheckbox);
 
 export default {
   components: {
-    Page,
     MumeetLogo,
     UserAction,
   },

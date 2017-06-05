@@ -1,9 +1,8 @@
 <template>
-  <router-view></router-view>
+  <router-view/>
 </template>
 
 <script>
-import Page from './Page';
 import invariant from 'invariant';
 import {
   PHASE_LOBBY,
@@ -15,9 +14,6 @@ import store from '@/store';
 import R from 'ramda';
 
 export default {
-  components: {
-    Page,
-  },
   async beforeRouteEnter(to, from, next) {
     if (!store.state.auth.isSignedIn) {
       next({ path: '/login', query: { redirect: to.fullPath } });

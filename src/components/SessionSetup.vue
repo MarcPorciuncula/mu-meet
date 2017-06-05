@@ -1,27 +1,24 @@
 <template>
-  <page>
-    <template>
-      <p>is your team ready to begin?<br/>start a live scheduling session</p>
-      <user-action v-on:click="create()">Create session</user-action>
-      <p>already have a session?<br/>enter your session code</p>
-      <md-input-container>
-        <label for="session-code">
-          Session code
-        </label>
-        <md-input v-model="sessionId" />
-      </md-input-container>
-      <user-action v-on:click="join()">
-        Join session
-      </user-action>
-    </template>
-  </page>
+  <div>
+    <p>is your team ready to begin?<br/>start a live scheduling session</p>
+    <user-action v-on:click="create()">Create session</user-action>
+    <p>already have a session?<br/>enter your session code</p>
+    <md-input-container>
+      <label for="session-code">
+        Session code
+      </label>
+      <md-input v-model="sessionId" />
+    </md-input-container>
+    <user-action v-on:click="join()">
+      Join session
+    </user-action>
+  </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import { MdCore, MdInputContainer } from 'vue-material';
 import 'vue-material/dist/components/mdInputContainer/index.css';
-import Page from './Page';
 import UserAction from './UserAction';
 import store from '@/store';
 
@@ -30,7 +27,6 @@ Vue.use(MdInputContainer);
 
 export default {
   components: {
-    Page,
     UserAction,
   },
   data() {

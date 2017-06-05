@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <div>
     <p>your session code is <u>{{ sessionId }}</u><br/>invite your team members with this link:</p>
     <md-input-container>
       <md-input :value="`${origin}/session?id=${sessionId}`" />
@@ -25,14 +25,13 @@
     <p v-else>
       sit tight, your host will advance when ready
     </p>
-  </page>
+  </div>
 </template>
 
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
 import { MdCore, MdInputContainer } from 'vue-material';
-import Page from './Page';
 import UserAction from './UserAction';
 import { PHASE_LOBBY } from '@/store/modules/scheduling';
 import store from '@/store';
@@ -42,7 +41,6 @@ Vue.use(MdInputContainer);
 
 export default {
   components: {
-    Page,
     UserAction,
   },
   async beforeRouteEnter(to, from, next) {

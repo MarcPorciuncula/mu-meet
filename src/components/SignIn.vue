@@ -1,5 +1,5 @@
 <template>
-  <page>
+  <div>
     <p>
       <mumeet-logo></mumeet-logo> uses your Google Calendar to check your schedule.
     </p>
@@ -12,18 +12,16 @@
     <p class="signin-button-wrapper">
       <button v-on:click="signIn()" class="md-raised">Sign in with Google</button>
     </p>
-  </page>
+  </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import Page from './Page';
 import MumeetLogo from './MumeetLogo';
 import store from '@/store';
 
 export default {
   components: {
-    Page,
     MumeetLogo,
   },
   async beforeRouteEnter(to, from, next) {
