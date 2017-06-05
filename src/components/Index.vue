@@ -238,8 +238,9 @@ section {
   }
 
   &-enter-active {
-    $duration: 500ms;
-    transition: mdc-animation-enter(opacity, $duration), mdc-animation-enter(transform, $duration);
+    $duration: 400ms;
+    $delay: 200ms;
+    transition: mdc-animation-enter(opacity, $duration, $delay), mdc-animation-enter(transform, $duration, $delay);
   }
 
   &-leave-active {
