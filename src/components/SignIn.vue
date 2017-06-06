@@ -7,14 +7,14 @@
       <div class="signin-form">
         <h3 class="signin-form_headline">Sign in with Google to continue to MUmeet</h3>
         <p>MUmeet uses Google Calendar to determine your schedule and find meeting times.</p>
-        <google-signin-button v-on:click="signIn()" :disabled="isPendingSignIn"/>
+        <google-signin-button v-on:click="signIn()" :disabled="isPendingSignIn || isSignedIn"/>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import GoogleSigninButton from './GoogleSigninButton';
 import dashboard from '@/router/dashboard';
 
@@ -26,16 +26,14 @@ export default {
     isSignedIn: state => state.auth.isSignedIn,
     isPendingSignIn: state => state.auth.pending === 'PENDING_SIGN_IN',
   }),
-  watch: {
-    isSignedIn(value) {
-      if (!value) {
-        return;
-      }
-
+  methods: {
+    async signIn() {
+      await this.$store.dispatch('signIn');
+      // HACK wait for the profile to pop up in the corner, should coordinate this properly
+      await new Promise(resolve => setTimeout(resolve, 1000));
       this.$router.push(dashboard.path);
     },
   },
-  methods: mapActions(['signIn']),
 };
 </script>
 
