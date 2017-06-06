@@ -16,7 +16,7 @@ export default {};
   height: 3.6rem;
   padding: 0 1.6rem;
   font-size: 1.4rem; // Override font to specifically be px as spec defined pt
-  font-weight: 500;
+  font-weight: 400;
   line-height: 3.6rem; // Override line-height so text aligns centered
   font-family: inherit;
   text-transform: initial;

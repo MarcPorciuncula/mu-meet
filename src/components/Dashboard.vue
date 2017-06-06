@@ -22,10 +22,11 @@
           Join a meeting plan
         </li>
         <li role="separator" class="mdc-list-divider"></li>
-        <li class="mdc-list-item menu-item" v-mdc-ripple>
-          My calendars
-          <span class="mdc-list-item__end-detail notification-dot"></span>
-        </li>
+        <router-link :to="calendars.path">
+          <li class="mdc-list-item menu-item" v-mdc-ripple>
+            My calendars
+          </li>
+        </router-link>
         <li class="mdc-list-item menu-item" v-mdc-ripple>
           Past meeting plans
         </li>
@@ -36,15 +37,21 @@
 
 <script>
 import MdcRipple from '@/directives/mdc-ripple';
+import calendars from '@/router/calendars';
 
 export default {
   directives: {
     MdcRipple,
   },
+  data() {
+    return {
+      calendars,
+    };
+  },
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '@material/list/mdc-list';
 @import '@material/elevation/mixins';
 @import '@material/ripple/mixins';
@@ -114,10 +121,5 @@ section {
 
 .notification-dot--accent {
   background-color: #039BE5;
-}
-
-.mdc-list-item.mdc-ripple-upgraded {
-  // HACK when the list item is given a ripple, the list item is moved left and given padding, so the ripple bleeds over to the edge of the list, however the width is wrong
-  width: calc(100% + 2 * #{$mdc-list-side-padding});
 }
 </style>

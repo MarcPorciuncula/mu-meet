@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import SelectCalendars from '@/components/SelectCalendars';
 import Session from '@/components/Session';
 import SessionSetup from '@/components/SessionSetup';
 import SessionLobby from '@/components/SessionLobby';
@@ -9,6 +8,7 @@ import SessionResult from '@/components/SessionResult';
 import landing from './landing';
 import login from './login';
 import dashboard from './dashboard';
+import calendars from './calendars';
 import store from '@/store';
 
 Vue.use(VueRouter);
@@ -18,12 +18,7 @@ const router = new VueRouter({
     landing,
     login,
     dashboard,
-    {
-      path: '/calendars',
-      name: 'SelectCalendars',
-      component: SelectCalendars,
-      meta: { shell: true, requiresAuth: true },
-    },
+    calendars,
     {
       path: '/session',
       name: 'Session',

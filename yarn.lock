@@ -92,6 +92,16 @@
     "@material/theme" "^0.1.5"
     "@material/typography" "^0.2.2"
 
+"@material/checkbox@^0.3.5":
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/@material/checkbox/-/checkbox-0.3.5.tgz#6de81f6fe82a725b1530d5fc8939e786c6b07c44"
+  dependencies:
+    "@material/animation" "^0.2.3"
+    "@material/base" "^0.2.0"
+    "@material/ripple" "^0.6.2"
+    "@material/rtl" "^0.1.4"
+    "@material/theme" "^0.1.5"
+
 "@material/elevation@^0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@material/elevation/-/elevation-0.1.8.tgz#57a1f3541a330d035633db7f5db82c462d0ccad0"
