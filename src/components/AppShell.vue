@@ -197,8 +197,8 @@ export default {
 
 .content {
   position: relative;
-  font-size: 2.4rem;
   padding-top: 5.8rem;
+  min-height: calc(100vh - 5.8rem);
 }
 
 .content--hidden::after {
