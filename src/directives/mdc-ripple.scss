@@ -1,0 +1,7 @@
+@import "@material/ripple/mixins";
+
+.mdc-ripple {
+  @include mdc-ripple-base;
+
+  overflow: hidden;
+}

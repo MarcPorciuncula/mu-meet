@@ -8,6 +8,7 @@ import SessionSetup from '@/components/SessionSetup';
 import SessionLobby from '@/components/SessionLobby';
 import SessionConfirm from '@/components/SessionConfirm';
 import SessionResult from '@/components/SessionResult';
+import Dashboard from '@/components/Dashboard';
 import store from '@/store';
 
 Vue.use(VueRouter);
@@ -36,6 +37,12 @@ const router = new VueRouter({
       path: '/calendars',
       name: 'SelectCalendars',
       component: SelectCalendars,
+      meta: { shell: true, requiresAuth: true },
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Dashboard,
       meta: { shell: true, requiresAuth: true },
     },
     {

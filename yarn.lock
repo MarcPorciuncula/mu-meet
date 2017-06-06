@@ -98,12 +98,25 @@
   dependencies:
     "@material/animation" "^0.2.3"
 
+"@material/list@^0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@material/list/-/list-0.2.9.tgz#cafcba9d8551ec546e4ed86e00dc345e66eda74c"
+  dependencies:
+    "@material/ripple" "^0.6.2"
+    "@material/rtl" "^0.1.4"
+    "@material/theme" "^0.1.5"
+    "@material/typography" "^0.2.2"
+
 "@material/ripple@^0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@material/ripple/-/ripple-0.6.2.tgz#a8556db7c141d35f5582c5990be8690bef9dee59"
   dependencies:
     "@material/base" "^0.2.0"
     "@material/theme" "^0.1.5"
+
+"@material/rtl@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@material/rtl/-/rtl-0.1.4.tgz#03b99a0ff4fae54d271ce7c586b5cf6dee8c60bc"
 
 "@material/theme@^0.1.5":
   version "0.1.5"
