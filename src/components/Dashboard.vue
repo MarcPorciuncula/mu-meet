@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper-dashboard">
     <section class="section-main-action">
       <div class="main-action" v-mdc-ripple>
         <div>
