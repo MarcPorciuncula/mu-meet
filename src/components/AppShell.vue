@@ -14,12 +14,12 @@
           </span>
         </transition>
         <transition name="slide-up" appear>
-          <span class="header_user-name">
-            {{ user && user.profile.given_name }}
+          <span v-if="user" class="header_user-name">
+            {{ user.profile.given_name }}
           </span>
         </transition>
         <transition name="fade-in" appear>
-          <img class="header_profile-picture" :src=" user && user.profile.picture" @click="showMenu = !showMenu" />
+          <img v-if="user" class="header_profile-picture" :src="user.profile.picture" @click="showMenu = !showMenu" />
         </transition>
       </div>
       <div class="header_menu" v-show="showMenu">
@@ -58,6 +58,11 @@ export default {
       showGreeting: false,
     };
   },
+  created() {
+    if (this.isSignedIn) {
+      this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+    }
+  },
   mounted() {
     if (this.user) {
       this.greet();
@@ -76,6 +81,11 @@ export default {
     user(value, old) {
       if (!old && value) {
         this.greet();
+      }
+    },
+    isSignedIn(value) {
+      if (value) {
+        this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
       }
     },
   },
