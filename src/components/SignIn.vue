@@ -31,7 +31,7 @@ export default {
       await this.$store.dispatch('signIn');
       // HACK wait for the profile to pop up in the corner, should coordinate this properly
       await new Promise(resolve => setTimeout(resolve, 1000));
-      this.$router.push(dashboard.path);
+      this.$router.push(this.$route.query.callback || dashboard.path);
     },
   },
 };

@@ -69,18 +69,15 @@ router.beforeEach(async (to, from, next) => {
   if (store.state.auth.isSignedIn === null) {
     await store.dispatch('refreshAuthStatus');
   }
-  next();
-  // if (to.matched.some(record => record.meta.requiresAuth)) {
-  //   if (store.state.auth.isSignedIn === null) {
-  //   }
-  //   if (!store.state.auth.isSignedIn) {
-  //     next({ path: '/login', query: { redirect: to.fullPath } });
-  //     return;
-  //   } else {
-  //     store.dispatch('ensureUserProfile', store.state.auth.uid);
-  //   }
-  // }
-  // next();
+
+  if (
+    to.matched.some(route => route.meta.requiresAuth) &&
+    !store.state.auth.isSignedIn
+  ) {
+    next({ path: login.path, query: { callback: to.fullPath } });
+  } else {
+    next();
+  }
 });
 
 export default router;
