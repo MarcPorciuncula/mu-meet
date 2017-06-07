@@ -13,7 +13,7 @@
           :style="`background-color: ${calendar.backgroundColor}`"
         >
         </div>
-        {{ calendar.summary }}
+        <span class="calendar-name">{{ calendar.summary }}</span>
         <div class="mdc-list-item__end-detail">
           <mdc-checkbox
             :value="calendar.selected"
@@ -100,5 +100,12 @@ section {
   width: 1.5rem;
   border-radius: 50%;
   margin-right: 1rem;
+}
+
+.calendar-name {
+  text-overflow: ellipsis;
+  overflow-y: hidden;
+  white-space: nowrap;
+  max-width: calc(100% - 8rem);
 }
 </style>
