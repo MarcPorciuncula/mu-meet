@@ -14,10 +14,12 @@
     </section>
     <section>
       <ul class="mdc-list">
-        <li class="mdc-list-item menu-item" v-mdc-ripple ref="start">
-          Start a meeting plan
-          <span class="mdc-list-item__end-detail notification-dot notification-dot--accent"></span>
-        </li>
+        <router-link :to="meet.path">
+          <li class="mdc-list-item menu-item" v-mdc-ripple>
+            Start a meeting plan
+            <span class="mdc-list-item__end-detail notification-dot notification-dot--accent"></span>
+          </li>
+        </router-link>
         <li class="mdc-list-item menu-item" v-mdc-ripple>
           Join a meeting plan
         </li>
@@ -38,6 +40,7 @@
 <script>
 import MdcRipple from '@/directives/mdc-ripple';
 import calendars from '@/router/calendars';
+import meet from '@/router/meet';
 
 export default {
   directives: {
@@ -46,6 +49,7 @@ export default {
   data() {
     return {
       calendars,
+      meet,
     };
   },
 };
