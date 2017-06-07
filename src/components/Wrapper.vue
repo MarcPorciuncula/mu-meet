@@ -1,7 +1,8 @@
 <template>
   <div class="nprogress-wrapper">
     <component :is="root">
-      <router-view/>
+      <router-view slot="header-bar-control" name="app-bar-control"></router-view>
+      <router-view />
     </component>
   </div>
 </template>

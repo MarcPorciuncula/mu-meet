@@ -3,26 +3,14 @@
     <header class="header">
       <div class="header_bar">
         <div style="flex: 1">
-          <transition name="slide-up" mode="out-in">
+          <transition name="fade-in" mode="out-in">
             <span v-if="loadingMessage">{{ loadingMessage }}</span>
             <mumeet-logo v-else class="header_logo"></mumeet-logo>
           </transition>
         </div>
-        <transition name="slide-up" appear>
-          <span v-show="showGreeting && user" class="header_user-name">
-            Hi,&thinsp;
-          </span>
-        </transition>
-        <transition name="slide-up" appear>
-          <span v-if="user" class="header_user-name">
-            {{ user.profile.given_name }}
-          </span>
-        </transition>
-        <transition name="fade-in" appear>
-          <img v-if="user" class="header_profile-picture" :src="user.profile.picture" @click="showMenu = !showMenu" />
-        </transition>
+        <slot name="header-bar-control"></slot>
       </div>
-      <div class="header_menu" v-show="showMenu">
+      <!-- <div class="header_menu" v-show="showMenu">
         <div class="menu_arrow"></div>
         <div class="menu_inner">
           <ul class="menu-list">
@@ -36,66 +24,31 @@
             <li class="menu-item">Report a bug</li>
           </ul>
         </div>
-      </div>
+      </div> -->
     </header>
-    <div :class="['content', { 'content--hidden': showMenu }]">
+    <div :class="['content', /*{ 'content--hidden': showMenu }*/]">
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import MumeetLogo from './MumeetLogo';
 
 export default {
   components: {
     MumeetLogo,
   },
-  data() {
-    return {
-      showMenu: false,
-      showGreeting: false,
-    };
-  },
-  created() {
-    if (this.isSignedIn) {
-      this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
-    }
-  },
-  mounted() {
-    if (this.user) {
-      this.greet();
-    }
-  },
+  // data() {
+  //   return {
+  //     showMenu: false,
+  //   };
+  // },
   computed: {
-    ...mapState({
-      isSignedIn: state => state.auth.isSignedIn,
-      user: state => state.users.users[state.auth.uid],
-    }),
     ...mapGetters({
       loadingMessage: 'getLoadingMessage',
     }),
-  },
-  watch: {
-    user(value, old) {
-      if (!old && value) {
-        this.greet();
-      }
-    },
-    isSignedIn(value) {
-      if (value) {
-        this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
-      }
-    },
-  },
-  methods: {
-    greet() {
-      this.showGreeting = true;
-      setTimeout(() => {
-        this.showGreeting = false;
-      }, 2000);
-    },
   },
 };
 </script>
@@ -132,68 +85,68 @@ export default {
   font-size: 2.4rem;
 }
 
-.header_menu {
-  @include mdc-elevation(4);
-  width: 100%;
-
-  margin-top: 0.1rem;
-  flex-grow: 1;
-  position: relative;
-  background-color: white;
-}
-
-.menu_inner {
-  position: relative;
-}
-
-.menu_arrow {
-  position: absolute;
-  top: -7px;
-  right: 3rem;
-  width: 12px;
-
-  &::before {
-    content: " ";
-    background-color: white;
-    width: 14px;
-    height: 14px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    border: 2px solid rgba(#000, 0.1);
-    transform: rotate(45deg);
-  }
-
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 7px;
-    left: -5px;
-    width: 24px;
-    height: 10px;
-    background-color: white;
-  }
-}
-
-.menu-list {
-  list-style: none;
-  margin: 0;
-  padding: 0.5rem 0;
-  font-size: 1.4rem;
-}
-
-.menu-item {
-  margin: 0;
-  padding: 1.2rem 2.5rem;
-}
-
-.menu-separator {
-  height: 0;
-  margin: 0.5rem 0;
-  border-top: 2px solid rgba(#000, 0.03);
-}
+// .header_menu {
+//   @include mdc-elevation(4);
+//   width: 100%;
+//
+//   margin-top: 0.1rem;
+//   flex-grow: 1;
+//   position: relative;
+//   background-color: white;
+// }
+//
+// .menu_inner {
+//   position: relative;
+// }
+//
+// .menu_arrow {
+//   position: absolute;
+//   top: -7px;
+//   right: 3rem;
+//   width: 12px;
+//
+//   &::before {
+//     content: " ";
+//     background-color: white;
+//     width: 14px;
+//     height: 14px;
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     display: block;
+//     border: 2px solid rgba(#000, 0.1);
+//     transform: rotate(45deg);
+//   }
+//
+//   &::after {
+//     content: "";
+//     display: block;
+//     position: absolute;
+//     top: 7px;
+//     left: -5px;
+//     width: 24px;
+//     height: 10px;
+//     background-color: white;
+//   }
+// }
+//
+// .menu-list {
+//   list-style: none;
+//   margin: 0;
+//   padding: 0.5rem 0;
+//   font-size: 1.4rem;
+// }
+//
+// .menu-item {
+//   margin: 0;
+//   padding: 1.2rem 2.5rem;
+// }
+//
+// .menu-separator {
+//   height: 0;
+//   margin: 0.5rem 0;
+//   border-top: 2px solid rgba(#000, 0.03);
+// }
 
 .content {
   position: relative;
@@ -201,60 +154,33 @@ export default {
   min-height: calc(100vh - 5.8rem);
 }
 
-.content--hidden::after {
-  position: absolute;
-  display: block;
-  content: " ";
-  left: 0;
-  top: 5.8rem;
-  right: 0;
-  height: calc(100vh - 5.8rem);
-  background-color: rgba(#ECEFF1, 0.8);
-}
+// .content--hidden::after {
+//   position: absolute;
+//   display: block;
+//   content: " ";
+//   left: 0;
+//   top: 5.8rem;
+//   right: 0;
+//   height: calc(100vh - 5.8rem);
+//   background-color: rgba(#ECEFF1, 0.8);
+// }
 
-.header_profile-picture {
-  height: 3rem;
-  width: auto;
-  border-radius: 50%;
-  margin-left: 1rem;
-}
-
-.slide-up {
+.fade-in {
   &-enter-active {
-    $duration: 600ms;
-    $delay: 300ms;
-    transition: mdc-animation-enter(opacity, $duration, $delay), mdc-animation-enter(transform, $duration, $delay);
+    $duration: 300ms;
+    transition: mdc-animation-enter(opacity, $duration);
   }
 
   &-leave-active {
     $duration: 300ms;
-    transition: mdc-animation-exit(opacity, $duration), mdc-animation-exit(transform, $duration);
+    transition: mdc-animation-exit(opacity, $duration);
   }
 
   &-enter {
     opacity: 0;
-    transform: translateY(50%);
   }
 
   &-leave-to {
-    opacity: 0;
-    transform: translateY(-50%);
-  }
-}
-
-.fade-in {
-  &-enter-active {
-    $duration: 1000ms;
-    $delay: 300ms;
-    transition: mdc-animation-enter(opacity, $duration, $delay);
-  }
-
-  &-leave-active {
-    $duration: 200ms;
-    transition: mdc-animation-exit(opacity, $duration);
-  }
-
-  &-enter, &-leave {
     opacity: 0;
   }
 }
