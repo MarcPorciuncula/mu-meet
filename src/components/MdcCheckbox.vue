@@ -3,6 +3,7 @@
     <input
       type="checkbox"
       class="mdc-checkbox__native-control"
+      @change="$emit('change', getInnerValue());"
     />
     <div class="mdc-checkbox__background">
       <svg
@@ -38,12 +39,13 @@ export default {
     this.checkbox.disabled = this.disabled;
   },
   watch: {
-    value(checked) {
-      this.checkbox.checked = checked;
-      this.$emit('change', checked);
-    },
     disabled(value) {
       this.checkbox.disabled = value;
+    },
+  },
+  methods: {
+    getInnerValue() {
+      return this.checkbox.checked;
     },
   },
   beforeDestroy() {

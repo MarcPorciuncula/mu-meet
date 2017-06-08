@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import store from '@/store';
 import MdcCheckbox from './MdcCheckbox';
 import MdcButton from './MdcButton';
@@ -50,9 +50,11 @@ export default {
     calendars: state => state.calendars,
   }),
   methods: {
-    ...mapActions(['updateCalendarSelected']),
+    updateCalendarSelected({ id, selected }) {
+      this.$store.dispatch('updateCalendarSelected', { id, selected });
+    },
     confirm() {
-      this.$router.push(dashboard.path);
+      this.$router.push(this.$route.query.callback || dashboard.path);
     },
   },
 };

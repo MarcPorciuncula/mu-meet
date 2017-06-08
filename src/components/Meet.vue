@@ -5,66 +5,59 @@
         Meeting Planner
       </h2>
     </section>
-    <section class="section-meeting-suggestion">
-      Find a meeting time by inviting your team to this planning session.
-    </section>
     <section>
-      <ul class="mdc-list mdc-list--dense mdc-list--two-line">
-        <li class="mdc-list-item">
+      <ul class="mdc-list mdc-list--two-line">
+        <li class="mdc-list-item" ref="invite" v-mdc-ripple>
+          <span class="mdc-list-item__start-detail material-icons material-icons--adjust-left">
+            group_add
+          </span>
           <span class="mdc-list-item__text">
             Invite your team
             <span class="mdc-list-item__text__secondary">
-              mumeet.surge.sh/#/meet/B7h1kC
+              {{ displayLink }}
             </span>
           </span>
         </li>
-        <li class="mdc-list-item">
+        <li class="mdc-list-item" v-mdc-ripple>
+          <span class="mdc-list-item__start-detail material-icons">
+            tune
+          </span>
           <span class="mdc-list-item__text">
-            Set meeting parameters
+            Set meeting parameters (Coming soon)
             <span class="mdc-list-item__text__secondary">
-              1 hour from 9am to 5pm on weekdays, this week.
+              At least 1 hour from 9am to 5pm on weekdays, this week.
+            </span>
+          </span>
+        </li>
+        <router-link :to="`/calendars?callback=${$route.path}`">
+          <li class="mdc-list-item" v-mdc-ripple>
+            <span class="mdc-list-item__start-detail material-icons">
+              event_note
+            </span>
+            <span class="mdc-list-item__text">
+              Select your calendars
+              <span class="mdc-list-item__text__secondary">
+                {{ calendars.length }}
+                calendar{{ calendars.length === 1 ? '' : 's' }}
+                selected
+              </span>
+            </span>
+          </li>
+        </router-link>
+        <li class="mdc-list-divider" role="separator"></li>
+        <li class="mdc-list-item" v-mdc-ripple>
+          <span class="mdc-list-item__start-detail material-icons">
+            event
+          </span>
+          <span class="mdc-list-item__text">
+            Find a time
+            <span class="mdc-list-item__text__secondary">
+              12 possible meeting times
             </span>
           </span>
         </li>
       </ul>
     </section>
-    <!-- <section>
-      <h3 class="section_heading">Settings</h3>
-      <ul class="mdc-list mdc-list--two-line mdc-list--dense">
-        <li class="mdc-list-item">
-          <span class="mdc-list-item__text">
-            Minimum duration
-            <span class="mdc-list-item__text__secondary">
-              1 hour
-            </span>
-          </span>
-        </li>
-        <li class="mdc-list-item">
-          <span class="mdc-list-item__text">
-            Days
-            <span class="mdc-list-item__text__secondary">
-              Weekdays
-            </span>
-          </span>
-        </li>
-        <li class="mdc-list-item">
-          <span class="mdc-list-item__text">
-            Hours
-            <span class="mdc-list-item__text__secondary">
-              9am - 5pm
-            </span>
-          </span>
-        </li>
-        <li class="mdc-list-item">
-          <span class="mdc-list-item__text">
-            Search dates
-            <span class="mdc-list-item__text__secondary">
-              This week
-            </span>
-          </span>
-        </li>
-      </ul>
-    </section> -->
     <section>
       <h3 class="section_heading">
         Team
@@ -83,6 +76,9 @@
               {{ user.profile.email }}
             </span>
           </span>
+          <span class="mdc-list-item__end-detail material-icons">
+            {{ user.isHost ? 'supervisor_account' : 'more_vert' }}
+          </span>
         </li>
       </ul>
     </section>
@@ -91,28 +87,61 @@
 
 <script>
 import { mapState } from 'vuex';
+import Clipboard from 'clipboard/dist/clipboard';
+import MdcRipple from '@/directives/mdc-ripple';
 
 export default {
+  directives: {
+    MdcRipple,
+  },
+  created() {
+    this.ensureUserProfiles();
+  },
+  mounted() {
+    this.clipboard = new Clipboard(this.$refs.invite, {
+      text: () => this.inviteLink,
+    });
+    this.clipboard.on('success', () => {
+      // FIXME notify the user
+      console.log('Copied to clipboard');
+    });
+  },
   computed: mapState({
-    users: () => [
-      {
-        profile: {
-          name: 'Marc Porciuncula',
-          email: 'mpor14@student.monash.edu',
-          picture:
-            'https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg',
-        },
-        isHost: true,
-      },
-    ],
+    hostUid: state => state.meet.session.host,
+    userUids: state => Object.keys(state.meet.session.users),
+    users(state) {
+      return this.userUids.map(uid =>
+        Object.assign({ profile: {} }, state.users.users[uid], {
+          isHost: uid === this.hostUid,
+        }),
+      );
+    },
+    inviteLink: state => location.href,
+    displayLink: state => location.href.match(/https?:\/\/(.+)/)[1],
+    calendars: state =>
+      Object.values(state.calendars).filter(calendar => calendar.selected),
   }),
+  watch: {
+    userUids() {
+      this.ensureUserProfiles();
+    },
+  },
+  methods: {
+    ensureUserProfiles() {
+      this.userUids.forEach(uid => {
+        this.$store.dispatch('ensureUserProfile', uid);
+      });
+    },
+  },
+  beforeDestroy() {
+    this.clipboard.destroy();
+  },
 };
 </script>
 
 <style scoped lang="scss">
 @import '@material/list/mdc-list';
 @import '@material/elevation/mixins';
-@import '@material/ripple/mixins';
 
 .wrapper-meet {
   min-height: calc(100vh - 5.8rem);
@@ -130,6 +159,10 @@ section {
   font-size: 3.6rem;
 }
 
+.section_heading:first-child {
+  margin-top: 0;
+}
+
 .section_headline:last-child {
   margin-bottom: 0;
 }
@@ -139,9 +172,6 @@ section {
   margin-bottom: 0;
 }
 
-.section_heading:first-child {
-  margin-top: 0;
-}
 
 .mdc-list {
   font-size: 1.6rem;
@@ -155,5 +185,18 @@ section {
 .mdc-list-item__text .mdc-list-item__text__secondary {
   font-family: inherit;
   font-size: 1.4rem;
+  line-height: 1.6rem;
+}
+
+.mdc-list  .mdc-list-item__start-detail {
+  margin-right: 24px;
+}
+
+.material-icons {
+  color: #616161
+}
+
+.material-icons--adjust-left {
+  transform: translateX(-2px);
 }
 </style>

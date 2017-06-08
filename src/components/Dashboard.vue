@@ -14,7 +14,7 @@
     </section>
     <section>
       <ul class="mdc-list">
-        <router-link :to="meet.path">
+        <router-link :to="`${meet.path}/new`">
           <li class="mdc-list-item menu-item" v-mdc-ripple>
             Start a meeting plan
             <span class="mdc-list-item__end-detail notification-dot notification-dot--accent"></span>
