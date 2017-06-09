@@ -14,6 +14,13 @@
     <div class="content">
       <slot></slot>
     </div>
+    <section class="section-beta-disclaimer">
+      <p>You are using MUmeet beta</p>
+      <p>This site is currently under construction, and some features may be missing or unstable. If there's a major problem, or if you want to follow development, you can <a target="_blank" href="https://twitter.com/MarcoThePoro">find me on twitter</a>.</p>
+      <p>
+        Thanks for using MUmeet :)
+      </p>
+    </section>
   </div>
 </template>
 
@@ -88,6 +95,23 @@ export default {
 
   &-leave-to {
     opacity: 0;
+  }
+}
+
+.section-beta-disclaimer {
+  background-color: #212121;
+  color: white;
+  font-family: 'Roboto Mono', monospace;
+  padding: 2rem;
+  margin: 2rem 0 0 0;
+  font-size: 1.4rem;
+
+  a {
+    border-bottom: 1px solid white;
+    &:hover, &:active, &:focus {
+      background-color: white;
+      color: #212121;
+    }
   }
 }
 </style>
