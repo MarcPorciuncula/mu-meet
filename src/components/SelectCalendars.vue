@@ -1,53 +1,44 @@
 <template>
-  <page>
+  <section>
+    <h2 class="section_headline">
+      Select Calendars
+    </h2>
     <p>
-      <mumeet-logo></mumeet-logo> uses your Google Calendar to check your schedule.
+      Select the calendars you would like to schedule around.
     </p>
-    <p>
-      which calendars would you like to schedule around?
-    </p>
-    <div class="calendar-select">
-      <md-checkbox
-        v-for="calendar of calendars"
-        class="md-primary calendar-select_checkbox"
-        :value="calendar.selected"
-        @change="updateCalendarSelected({ id: calendar.id, selected: $event})"
-        :id="`calendar_${calendar.id}`"
-        :key="calendar.id"
-        :name="calendar.id"
-      >
-        <span v-on:click="selected[calendar.id] = !selected[calendar.id]">
-          {{ calendar.summary }}
-        </span>
-      </md-checkbox>
+    <ul class="mdc-list mdc-list--dense">
+      <li v-for="calendar of calendars" class="mdc-list-item menu-item">
+        <div
+          class="mdc-list-item__start-detail calendar-dot"
+          :style="`background-color: ${calendar.backgroundColor}`"
+        >
+        </div>
+        <span class="calendar-name">{{ calendar.summary }}</span>
+        <div class="mdc-list-item__end-detail">
+          <mdc-checkbox
+            :value="calendar.selected"
+            @change="updateCalendarSelected({ id: calendar.id, selected: $event })"
+          />
+        </div>
+      </li>
+    </ul>
+    <div style="text-align: right">
+      <mdc-button class="confirm-button" @click="confirm">Confirm</mdc-button>
     </div>
-    <p>
-      ready to begin?
-    </p>
-    <user-action v-on:click="next">
-      continue
-    </user-action>
-  </page>
+  </section>
 </template>
 
 <script>
-import Vue from 'vue';
-import { mapState, mapActions } from 'vuex';
-import { MdCore, MdCheckbox } from 'vue-material';
-import 'vue-material/dist/components/mdCheckbox/index.css';
-import Page from './Page';
-import MumeetLogo from './MumeetLogo';
-import UserAction from './UserAction';
+import { mapState } from 'vuex';
 import store from '@/store';
-
-Vue.use(MdCore);
-Vue.use(MdCheckbox);
+import MdcCheckbox from './MdcCheckbox';
+import MdcButton from './MdcButton';
+import dashboard from '@/router/dashboard';
 
 export default {
   components: {
-    Page,
-    MumeetLogo,
-    UserAction,
+    MdcCheckbox,
+    MdcButton,
   },
   async beforeRouteEnter(to, from, next) {
     if (!Object.keys(store.state.calendars).length) {
@@ -59,19 +50,19 @@ export default {
     calendars: state => state.calendars,
   }),
   methods: {
-    ...mapActions(['updateCalendarSelected']),
-    next() {
-      if (this.$route.query.redirect) {
-        this.$router.push(this.$route.query.redirect);
-      } else {
-        this.$router.push('/session');
-      }
+    updateCalendarSelected({ id, selected }) {
+      this.$store.dispatch('updateCalendarSelected', { id, selected });
+    },
+    confirm() {
+      this.$router.push(this.$route.query.callback || dashboard.path);
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+@import '@material/list/mdc-list';
+
 .calendar-select {
   display: flex;
   flex-direction: column;
@@ -79,7 +70,44 @@ export default {
   font-size: 2rem;
 }
 
-.md-checkbox.calendar-select_checkbox {
-  margin: 1rem 0.5rem;
+.mdc-list {
+  font-size: 1.6rem;
+  font-family: inherit;
+  line-height: 1.75em;
+  letter-spacing: 0.02em;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+}
+
+.mdc-checkbox {
+  margin: -10px 0 0 -10px;
+}
+
+.mdc-list-item {
+  overflow: visible;
+}
+
+section {
+  padding: 0 2.5rem;
+}
+
+.confirm-button {
+  background-color: #039BE5;
+  color: white;
+  margin-top: 3rem;
+}
+
+.mdc-list-item__start-detail.calendar-dot {
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.calendar-name {
+  text-overflow: ellipsis;
+  overflow-y: hidden;
+  white-space: nowrap;
+  max-width: calc(100% - 8rem);
 }
 </style>

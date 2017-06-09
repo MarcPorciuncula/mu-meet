@@ -1,0 +1,35 @@
+import Meet from '@/components/Meet';
+import ProfileBadge from '@/components/ProfileBadge';
+import store from '@/store';
+import dashboard from '../dashboard';
+
+async function beforeEnter(to, from, next) {
+  if (!store.getters.isInSession) {
+    await store.dispatch('refreshMeetSession');
+  }
+
+  if (!store.getters.isInSession) {
+    await store.dispatch('joinMeetSession', to.params.code);
+  }
+
+  if (store.state.meet.session.id !== to.params.code) {
+    // next(`/meet/${store.state.meet.session.id}`);
+    next({ name: dashboard.name });
+  } else {
+    if (!Object.values(store.state.calendars).length) {
+      await store.dispatch('fetchCalendars');
+    }
+    next();
+  }
+}
+
+export default {
+  path: ':code',
+  name: 'meet-current-session',
+  components: {
+    default: Meet,
+    'app-bar-control': ProfileBadge,
+  },
+  beforeEnter: beforeEnter,
+  meta: { shell: true },
+};

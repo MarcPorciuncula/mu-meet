@@ -84,7 +84,7 @@ export async function createSession(hostId, { startedAt, timezoneOffset }) {
       timezoneOffset,
     }),
     users: {
-      [hostId]: { ready: false },
+      [hostId]: { subscribed: false },
     },
   });
 

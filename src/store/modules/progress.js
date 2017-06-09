@@ -49,8 +49,21 @@ function updateProgressItem({ commit, state }, { id, message }) {
   nprogress.inc();
 }
 
+function getLoadingMessage(state) {
+  for (let i = state.pending.length - 1; i >= 0; i--) {
+    const message = state.pending[i].message;
+    if (message) {
+      return message;
+    }
+  }
+  return null;
+}
+
 export default {
   state,
+  getters: {
+    getLoadingMessage,
+  },
   mutations: {
     updateProgressState,
   },

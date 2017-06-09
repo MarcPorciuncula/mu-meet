@@ -21,10 +21,17 @@ export default {
     signOut,
     refreshAuthStatus,
   },
+  getters: {
+    authUid: getAuthUid,
+  },
 };
 
 function updateAuthStatus(state, data) {
   Object.assign(state, R.pick(['pending', 'isSignedIn', 'uid'], data));
+}
+
+function getAuthUid(state) {
+  return state.uid;
 }
 
 async function signIn({ commit, dispatch, state }) {
