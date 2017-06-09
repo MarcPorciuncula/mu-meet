@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="app-shell-wrapper">
     <header class="header">
       <div class="header_bar">
         <div style="flex: 1">
@@ -10,23 +10,8 @@
         </div>
         <slot name="header-bar-control"></slot>
       </div>
-      <!-- <div class="header_menu" v-show="showMenu">
-        <div class="menu_arrow"></div>
-        <div class="menu_inner">
-          <ul class="menu-list">
-            <li class="menu-item">Leave session</li>
-            <li class="menu-separator"></li>
-            <li class="menu-item">Profile</li>
-            <li class="menu-item">Settings</li>
-            <li class="menu-item">Help</li>
-            <li class="menu-item">Sign out</li>
-            <li class="menu-separator"></li>
-            <li class="menu-item">Report a bug</li>
-          </ul>
-        </div>
-      </div> -->
     </header>
-    <div :class="['content', /*{ 'content--hidden': showMenu }*/]">
+    <div class="content">
       <slot></slot>
     </div>
   </div>
@@ -40,11 +25,6 @@ export default {
   components: {
     MumeetLogo,
   },
-  // data() {
-  //   return {
-  //     showMenu: false,
-  //   };
-  // },
   computed: {
     ...mapGetters({
       loadingMessage: 'getLoadingMessage',
@@ -57,7 +37,7 @@ export default {
 @import '@material/animation/functions';
 @import '@material/elevation/mixins';
 
-.wrapper {
+.app-shell-wrapper {
   min-height: 100vh;
   position: relative;
 }
@@ -85,85 +65,11 @@ export default {
   font-size: 2.4rem;
 }
 
-// .header_menu {
-//   @include mdc-elevation(4);
-//   width: 100%;
-//
-//   margin-top: 0.1rem;
-//   flex-grow: 1;
-//   position: relative;
-//   background-color: white;
-// }
-//
-// .menu_inner {
-//   position: relative;
-// }
-//
-// .menu_arrow {
-//   position: absolute;
-//   top: -7px;
-//   right: 3rem;
-//   width: 12px;
-//
-//   &::before {
-//     content: " ";
-//     background-color: white;
-//     width: 14px;
-//     height: 14px;
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     display: block;
-//     border: 2px solid rgba(#000, 0.1);
-//     transform: rotate(45deg);
-//   }
-//
-//   &::after {
-//     content: "";
-//     display: block;
-//     position: absolute;
-//     top: 7px;
-//     left: -5px;
-//     width: 24px;
-//     height: 10px;
-//     background-color: white;
-//   }
-// }
-//
-// .menu-list {
-//   list-style: none;
-//   margin: 0;
-//   padding: 0.5rem 0;
-//   font-size: 1.4rem;
-// }
-//
-// .menu-item {
-//   margin: 0;
-//   padding: 1.2rem 2.5rem;
-// }
-//
-// .menu-separator {
-//   height: 0;
-//   margin: 0.5rem 0;
-//   border-top: 2px solid rgba(#000, 0.03);
-// }
-
 .content {
   position: relative;
   padding-top: 5.8rem;
   min-height: calc(100vh - 5.8rem);
 }
-
-// .content--hidden::after {
-//   position: absolute;
-//   display: block;
-//   content: " ";
-//   left: 0;
-//   top: 5.8rem;
-//   right: 0;
-//   height: calc(100vh - 5.8rem);
-//   background-color: rgba(#ECEFF1, 0.8);
-// }
 
 .fade-in {
   &-enter-active {

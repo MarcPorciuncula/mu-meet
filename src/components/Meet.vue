@@ -4,6 +4,9 @@
       <h2 class="section_headline">
         Meeting Planner
       </h2>
+      <p>
+        Invite your team with the link below. Make sure everyone selects their calendars and then press find meeting times. If someone changes their calendars or someone new joins, press find meeting times again.
+      </p>
     </section>
     <section>
       <ul class="mdc-list mdc-list--two-line">
@@ -25,7 +28,7 @@
           <span class="mdc-list-item__text">
             Set meeting parameters (Coming soon)
             <span class="mdc-list-item__text__secondary">
-              At least 1 hour from 9am to 5pm on weekdays, this week.
+              At least 30 mins from 9am to 5pm on weekdays, this week.
             </span>
           </span>
         </li>
@@ -45,14 +48,14 @@
           </li>
         </router-link>
         <li class="mdc-list-divider" role="separator"></li>
-        <li class="mdc-list-item" v-mdc-ripple>
+        <li class="mdc-list-item" v-mdc-ripple @click="findMeetingTimes">
           <span class="mdc-list-item__start-detail material-icons">
             event
           </span>
           <span class="mdc-list-item__text">
-            Find a time
+            Find meeting times
             <span class="mdc-list-item__text__secondary">
-              12 possible meeting times
+              <!-- 12 possible meeting times -->
             </span>
           </span>
         </li>
@@ -82,6 +85,29 @@
         </li>
       </ul>
     </section>
+    <section v-if="meetings.length" ref="meetings">
+      <h3 class="section_heading">
+        Meeting times
+      </h3>
+      <div class="mdc-list-group">
+        <template v-for="meetings of meetingsByDate">
+          <h3 class="mdc-list-group__subheader">
+            {{ format(meetings[0].start, 'ddd Do MMM') }}
+          </h3>
+          <ul class="mdc-list">
+            <li v-for="meeting of meetings" class="mdc-list-item">
+              <span class="mdc-list-item__text">
+                {{ format(meeting.start, 'h:mma')}} to {{ format(meeting.end, 'h:mma')}}
+                <span class="mdc-list-item__text__secondary">
+                  {{ meeting.duration / 60 }} hour{{ meeting.duration !== 60 ? 's' : '' }}
+                </span>
+              </span>
+            </li>
+          </ul>
+          <hr class="mdc-list-group__divider"/>
+        </template>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -89,6 +115,9 @@
 import { mapState } from 'vuex';
 import Clipboard from 'clipboard/dist/clipboard';
 import MdcRipple from '@/directives/mdc-ripple';
+import R from 'ramda';
+import Vue from 'vue';
+import format from 'date-fns/format';
 
 export default {
   directives: {
@@ -103,21 +132,38 @@ export default {
       console.log('Copied to clipboard');
     });
   },
-  computed: mapState({
-    hostUid: state => state.meet.session.host,
-    userUids: state => Object.keys(state.meet.session.users),
-    users(state) {
-      return this.userUids.map(uid =>
-        Object.assign({ profile: {} }, state.users.users[uid], {
-          isHost: uid === this.hostUid,
-        }),
+  computed: {
+    ...mapState({
+      hostUid: state => state.meet.session.host,
+      userUids: state => Object.keys(state.meet.session.users),
+      users(state) {
+        return this.userUids.map(uid =>
+          Object.assign({ profile: {} }, state.users.users[uid], {
+            isHost: uid === this.hostUid,
+          }),
+        );
+      },
+      inviteLink: state => location.href,
+      displayLink: state => location.href.match(/https?:\/\/(.+)/)[1],
+      calendars: state =>
+        Object.values(state.calendars).filter(calendar => calendar.selected),
+      meetings: state => state.meet.session.result.meetings,
+    }),
+    meetingsByDate() {
+      return R.groupBy(meeting => format(meeting.start, 'DD-MM-YYYY'))(
+        this.meetings,
       );
     },
-    inviteLink: state => location.href,
-    displayLink: state => location.href.match(/https?:\/\/(.+)/)[1],
-    calendars: state =>
-      Object.values(state.calendars).filter(calendar => calendar.selected),
-  }),
+  },
+  methods: {
+    async findMeetingTimes() {
+      await this.$store.dispatch('requestMeetResult');
+      Vue.nextTick(() => {
+        this.$refs.meetings.scrollIntoView({ behavior: 'smooth' });
+      });
+    },
+    format,
+  },
   beforeDestroy() {
     this.clipboard.destroy();
   },
@@ -154,17 +200,27 @@ section {
 
 .section_heading {
   font-size: 1.8rem;
-  margin-bottom: 0;
 }
 
+
+.mdc-list,
+.mdc-list-group__divider,
+.mdc-list-group__subheader {
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
 
 .mdc-list {
   font-size: 1.6rem;
   font-family: inherit;
   line-height: 1.6em;
   letter-spacing: 0.02em;
-  margin-left: -1rem;
-  margin-right: -1rem;
+}
+
+.mdc-list-group__subheader {
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .mdc-list-item__text .mdc-list-item__text__secondary {
@@ -173,8 +229,13 @@ section {
   line-height: 1.6rem;
 }
 
-.mdc-list  .mdc-list-item__start-detail {
+.mdc-list .mdc-list-item__start-detail {
   margin-right: 24px;
+}
+
+.mdc-list-group__subheader {
+  font-family: inherit;
+  font-size: 1.4rem;
 }
 
 .material-icons {

@@ -1,11 +1,16 @@
 // @flow
 import firebase from 'firebase';
+import R from 'ramda';
 import { functions } from '@/functions';
+import addSeconds from 'date-fns/add_seconds';
 
 type EmptySessionState = {
   id: null,
   host: null,
   users: {},
+  result: {
+    meetings: [],
+  },
 };
 
 type UserState = {
@@ -18,6 +23,13 @@ type SessionState =
       id: string,
       host: string,
       users: { [uid: string]: UserState },
+      result: {
+        meetings: Array<{
+          duration: number,
+          start: Date,
+          end: Date,
+        }>,
+      },
     };
 
 type State = {
@@ -40,6 +52,9 @@ const state = ({
     id: null,
     host: null,
     users: {},
+    result: {
+      meetings: [],
+    },
   },
   isSubscribed: false,
   pending: false,
@@ -120,7 +135,7 @@ async function createMeetSession({
 
 async function joinMeetSession(
   { state, dispatch, commit, rootState }: DispatchContext,
-  id,
+  id: string,
 ) {
   const database = firebase.database();
 
@@ -174,7 +189,20 @@ async function subscribeMeetSession({
       const data = snapshot.val();
       console.log(data);
       if (data) {
-        commit('updateMeetSessionState', data);
+        commit(
+          'updateMeetSessionState',
+          R.evolve({
+            result: R.evolve({
+              meetings: R.map(
+                R.evolve({
+                  start: (datestring: string) => new Date(datestring),
+                  end: (datestring: string) =>
+                    addSeconds(new Date(datestring), 1),
+                }),
+              ),
+            }),
+          })(data),
+        );
         if (typeof data.users === 'object') {
           Object.keys(data.users).forEach(uid =>
             dispatch('ensureUserProfile', uid),
@@ -211,8 +239,20 @@ function unsubscribeMeetSession({ commit, state }: DispatchContext) {
       id: null,
       host: null,
       users: {},
+      result: {
+        meetings: [],
+      },
     }: SessionState),
   );
+}
+
+async function requestMeetResult({ dispatch }: DispatchContext) {
+  dispatch('addProgressItem', {
+    id: 'meet/request-result',
+    message: 'Finding meeting times',
+  });
+  await functions('findMeetingTimes');
+  dispatch('removeProgressItem', 'meet/request-result');
 }
 
 export default {
@@ -231,5 +271,6 @@ export default {
     joinMeetSession,
     subscribeMeetSession,
     unsubscribeMeetSession,
+    requestMeetResult,
   },
 };
