@@ -5,7 +5,8 @@
         "node": 6
       },
       "modules": false
-    }]
+    }],
+    "flow"
   ],
   "env": {
     "development": {
@@ -22,6 +23,7 @@
             "modules": true
           }
         }],
+        "flow",
         "@ava/transform-test-files"
       ],
       "plugins": ["transform-runtime"]

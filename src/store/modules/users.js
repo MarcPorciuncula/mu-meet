@@ -1,18 +1,6 @@
 import * as firebase from 'firebase';
 import Vue from 'vue';
 
-export default {
-  state: {
-    users: {},
-  },
-  mutations: {
-    updateUser,
-  },
-  actions: {
-    ensureUserProfile,
-  },
-};
-
 function updateUser(state, { uid, user }) {
   Vue.set(state.users, uid, user);
 }
@@ -33,3 +21,15 @@ async function ensureUserProfile({ commit, state }, uid) {
 
   commit('updateUser', { uid, user });
 }
+
+export default {
+  state: {
+    users: {},
+  },
+  mutations: {
+    updateUser,
+  },
+  actions: {
+    ensureUserProfile,
+  },
+};

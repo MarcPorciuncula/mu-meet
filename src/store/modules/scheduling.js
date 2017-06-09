@@ -185,12 +185,22 @@ async function subscribeSchedulingSessionStatus({ commit, state, rootState }) {
   await initial;
 }
 
-async function createSchedulingSession({ commit, state, rootState }) {
+async function createSchedulingSession({ commit, dispatch, state, rootState }) {
   invariant(
     rootState.auth.isSignedIn,
     'Must be signed in to call createSchedulingSession',
   );
-  await functions('createSession');
+  dispatch('addProgressItem', {
+    id: 'scheduling/create-session',
+    message: 'Creating session',
+  });
+  await functions('createSession', {
+    data: {
+      startedAt: new Date().toString(),
+      timezoneOffset: new Date().getTimezoneOffset(),
+    },
+  });
+  dispatch('removeProgressItem', 'scheduling/create-session');
 }
 
 async function joinSchedulingSession({ commit, state, rootState }, sessionId) {

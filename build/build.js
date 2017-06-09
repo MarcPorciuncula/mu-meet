@@ -10,7 +10,7 @@ var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
 
-var spinner = ora(`building for ${process.env.NODE_ENV === 'production' ? 'production' : 'staging'}...`)
+var spinner = ora(`building for production...`)
 spinner.start()
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
@@ -25,6 +25,11 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       chunks: false,
       chunkModules: false
     }) + '\n\n')
+
+    if (stats.hasErrors()) {
+      console.log('  Build finished with errors.');
+      process.exit(1);
+    }
 
     console.log(chalk.cyan('  Build complete.\n'))
     console.log(chalk.yellow(

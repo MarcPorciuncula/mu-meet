@@ -1,6 +1,7 @@
 <template>
   <span class="mumeet-logo">
     <span class="mumeet-logo_emphasize">mu</span>meet
+    <span class="mumeet-logo_beta">beta</span>
   </span>
 </template>
 
@@ -15,5 +16,11 @@ export default {};
 
 .mumeet-logo_emphasize {
   font-weight: bold;
+}
+
+.mumeet-logo_beta {
+  font-size: 0.6em;
+  letter-spacing: -1px;
+  font-family: "Roboto Mono", monospace;
 }
 </style>

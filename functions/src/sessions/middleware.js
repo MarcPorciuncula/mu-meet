@@ -7,9 +7,10 @@ import * as admin from 'firebase-admin';
 
 export async function createSession(req, res) {
   const { uid } = res.locals.idToken;
+  const { startedAt, timezoneOffset } = req.body;
 
   try {
-    await _createSession(uid);
+    await _createSession(uid, { startedAt, timezoneOffset });
   } catch (err) {
     if (err.code === SessionError.codes.ALREADY_IN_SESSION) {
       // FIXME find a way of notifying the user

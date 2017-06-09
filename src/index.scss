@@ -1,5 +1,5 @@
 $min-rem-size: 10;
-$max-rem-size: 14;
+$max-rem-size: 10;
 $min-screen-size: 400;
 $max-screen-size: 800;
 
@@ -20,7 +20,7 @@ html {
 
 body {
   font-family: "Open Sans", sans-serif;
-  font-size: 1.6em;
+  font-size: 1.6rem;
   color: var(--type-color);
   margin: 0;
   padding: 0;
