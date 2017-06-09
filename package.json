@@ -12,7 +12,8 @@
     "deploy-all": "firebase deploy",
     "deploy-hosting": "firebase deploy --only hosting",
     "deploy-database": "firebase deploy --only database",
-    "deploy-functions": "firebase deploy --only functions"
+    "deploy-functions": "firebase deploy --only functions",
+    "surge": "surge"
   },
   "dependencies": {
     "@material/animation": "^0.2.3",
