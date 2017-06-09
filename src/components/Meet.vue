@@ -147,7 +147,7 @@ export default {
       displayLink: state => location.href.match(/https?:\/\/(.+)/)[1],
       calendars: state =>
         Object.values(state.calendars).filter(calendar => calendar.selected),
-      meetings: state => state.meet.session.result.meetings,
+      meetings: state => state.meet.session.result.meetings || [],
     }),
     meetingsByDate() {
       return R.groupBy(meeting => format(meeting.start, 'DD-MM-YYYY'))(
