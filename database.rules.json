@@ -1,12 +1,51 @@
 {
   "rules": {
     "sessions": {
-      ".read": "true",
-      ".write": "true"
+      "$id": {
+        ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
+        "config": {
+          ".write": false
+        },
+        "host": {
+          ".write": "data.val() === auth.uid"
+        },
+        "result": {
+          ".write": false
+        },
+        "users": {
+          "$uid": {
+            ".write": "$uid === auth.uid"
+          }
+        }
+      }
     },
     "users": {
-      ".read": "true",
-      ".write": "true"
+      "$uid": {
+        "calendars": {
+          ".read": "$uid === auth.uid",
+          ".write": false
+        },
+        "current-session": {
+          ".write": "$uid === auth.uid",
+          ".read": "$uid === auth.uid"
+        },
+        "previous-sessions": {
+          ".write": "$uid === auth.uid",
+          ".read": "$uid === auth.uid"
+        },
+        "profile": {
+          ".read": true,
+          ".write": false
+        },
+        "selected-calendars": {
+          ".read": true,
+          ".write": "$uid === auth.uid"
+        },
+        "tokens": {
+          ".read": false,
+          ".write": false
+        }
+      }
     },
     "google-credentials": {
       ".read": false,

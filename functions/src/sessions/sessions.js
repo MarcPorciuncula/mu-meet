@@ -27,11 +27,8 @@ export class SessionError extends Error {
   }
 }
 
-const PHASE_LOBBY = 'PHASE_LOBBY';
-
 const DEFAULT_STATE = {
   host: null,
-  phase: PHASE_LOBBY,
   users: {},
   startedAt: null,
   config: {
