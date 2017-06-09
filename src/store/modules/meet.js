@@ -5,6 +5,11 @@ import { functions } from '@/functions';
 type EmptySessionState = {
   id: null,
   host: null,
+  users: {},
+};
+
+type UserState = {
+  connected: boolean,
 };
 
 type SessionState =
@@ -12,6 +17,7 @@ type SessionState =
   | {
       id: string,
       host: string,
+      users: { [uid: string]: UserState },
     };
 
 type State = {
@@ -33,6 +39,7 @@ const state = ({
   session: {
     id: null,
     host: null,
+    users: {},
   },
   isSubscribed: false,
   pending: false,
@@ -105,16 +112,48 @@ async function createMeetSession({
   commit('updateMeetSessionState', {
     id: sessionId,
     host: getters.authUid,
-    users: { [getters.authUid]: { ready: false } },
+    users: { [getters.authUid]: { subscribed: false } },
   });
   await dispatch('subscribeMeetSession');
   dispatch('removeProgressItem', 'meet/create-session');
+}
+
+async function joinMeetSession(
+  { state, dispatch, commit, rootState }: DispatchContext,
+  id,
+) {
+  const database = firebase.database();
+
+  dispatch('addProgressItem', {
+    id: 'meet/join-session',
+    message: `Joining meeting plan ${id}`,
+  });
+
+  const sessionRef = database.ref(`/sessions/${id}`);
+  const startedAt = await sessionRef
+    .child('startedAt')
+    .once('value')
+    .then(s => s.val());
+  if (startedAt === null) {
+    throw new Error('session does not exist');
+  }
+
+  await database.ref(`/users/${rootState.auth.uid}/current-session`).set(id);
+  await sessionRef.child(`/users/${rootState.auth.uid}/subscribed`).set(false);
+  commit('updateMeetSessionState', {
+    id,
+    users: { [rootState.auth.uid]: { subscribed: false } },
+  });
+  await dispatch('subscribeMeetSession');
+
+  dispatch('removeProgressItem', 'meet/join-session');
 }
 
 async function subscribeMeetSession({
   state,
   dispatch,
   commit,
+  rootState,
 }: DispatchContext) {
   if (state.session.id === null) {
     throw new Error('No session to subscribe to');
@@ -122,18 +161,25 @@ async function subscribeMeetSession({
 
   const database = firebase.database();
 
-  console.log(state.session.id);
   const sessionRef = database.ref(`/sessions/${state.session.id}`);
+  const subscribedRef = sessionRef.child(
+    `/users/${rootState.auth.uid}/subscribed`,
+  );
+
+  await subscribedRef.onDisconnect().set(false);
+  await subscribedRef.set(true);
   await new Promise(resolve => {
     const handler = snapshot => {
       resolve();
       const data = snapshot.val();
       console.log(data);
       if (data) {
-        commit('updateMeetSessionState', {
-          host: data.host,
-          users: data.users,
-        });
+        commit('updateMeetSessionState', data);
+        if (typeof data.users === 'object') {
+          Object.keys(data.users).forEach(uid =>
+            dispatch('ensureUserProfile', uid),
+          );
+        }
       } else {
         dispatch('unsubscribeMeetSession');
       }
@@ -141,12 +187,12 @@ async function subscribeMeetSession({
     commit('updateMeetState', {
       unsubscribe: () => {
         sessionRef.off('value', handler);
+        sessionRef.onDisconnect().cancel();
+        subscribedRef.set(false);
       },
     });
     sessionRef.on('value', handler);
   });
-
-  console.log('adad');
 
   commit('updateMeetState', {
     isSubscribed: true,
@@ -164,6 +210,7 @@ function unsubscribeMeetSession({ commit, state }: DispatchContext) {
     ({
       id: null,
       host: null,
+      users: {},
     }: SessionState),
   );
 }
@@ -181,6 +228,7 @@ export default {
   actions: {
     refreshMeetSession,
     createMeetSession,
+    joinMeetSession,
     subscribeMeetSession,
     unsubscribeMeetSession,
   },

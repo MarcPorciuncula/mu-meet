@@ -94,9 +94,6 @@ export default {
   directives: {
     MdcRipple,
   },
-  created() {
-    this.ensureUserProfiles();
-  },
   mounted() {
     this.clipboard = new Clipboard(this.$refs.invite, {
       text: () => this.inviteLink,
@@ -121,18 +118,6 @@ export default {
     calendars: state =>
       Object.values(state.calendars).filter(calendar => calendar.selected),
   }),
-  watch: {
-    userUids() {
-      this.ensureUserProfiles();
-    },
-  },
-  methods: {
-    ensureUserProfiles() {
-      this.userUids.forEach(uid => {
-        this.$store.dispatch('ensureUserProfile', uid);
-      });
-    },
-  },
   beforeDestroy() {
     this.clipboard.destroy();
   },

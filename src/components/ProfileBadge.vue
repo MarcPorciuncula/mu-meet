@@ -1,25 +1,32 @@
 <template>
-  <div class="profile-badge">
-    <transition name="slide-up" appear>
-      <span v-show="showGreeting && user" class="header_user-name">
-        Hi,&thinsp;
-      </span>
-    </transition>
-    <transition name="slide-up" appear>
-      <span v-if="user" class="header_user-name">
-        {{ user.profile.given_name }}
-      </span>
-    </transition>
-    <transition name="fade-in" appear>
-      <img v-if="user" class="header_profile-picture" :src="user.profile.picture"/>
-    </transition>
+  <div class="wrapper">
+    <div class="profile-badge">
+      <transition name="slide-up" appear>
+        <span v-show="showGreeting && user" class="header_user-name">
+          Hi,&thinsp;
+        </span>
+      </transition>
+      <transition name="slide-up" appear>
+        <span v-if="user" class="header_user-name">
+          {{ user.profile.given_name }}
+        </span>
+      </transition>
+      <transition name="fade-in" appear>
+        <img v-if="user" class="header_profile-picture" :src="user.profile.picture"/>
+      </transition>
+    </div>
+    <overflow-menu/>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import OverflowMenu from './OverflowMenu';
 
 export default {
+  components: {
+    OverflowMenu,
+  },
   data() {
     return {
       showGreeting: false,
@@ -67,9 +74,14 @@ export default {
 <style scoped lang="scss">
 @import '@material/animation/functions';
 
-.profile-badge {
+.profile-badge,
+.wrapper {
   display: flex;
   align-items: center;
+}
+
+.profile-badge {
+  padding: 0 0.5rem;
 }
 
 .header_profile-picture {

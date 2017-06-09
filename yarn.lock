@@ -117,6 +117,16 @@
     "@material/theme" "^0.1.5"
     "@material/typography" "^0.2.2"
 
+"@material/menu@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@material/menu/-/menu-0.2.7.tgz#8e7c43b28d77160efd97eed17b6b2dd37b320aab"
+  dependencies:
+    "@material/animation" "^0.2.3"
+    "@material/base" "^0.2.0"
+    "@material/elevation" "^0.1.8"
+    "@material/theme" "^0.1.5"
+    "@material/typography" "^0.2.2"
+
 "@material/ripple@^0.6.2":
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/@material/ripple/-/ripple-0.6.2.tgz#a8556db7c141d35f5582c5990be8690bef9dee59"

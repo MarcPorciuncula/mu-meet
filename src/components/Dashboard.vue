@@ -1,29 +1,33 @@
 <template>
   <div class="wrapper-dashboard">
     <section class="section-main-action">
-      <div class="main-action" v-mdc-ripple>
-        <div>
-          <p class="main-action_subtitle">
-            <span class="underline">Get started</span>
-          </p>
-          <p class="main-action_headline">
-            Start a<br/>meeting plan
-          </p>
+      <router-link :to="action.to">
+        <div class="main-action" v-mdc-ripple>
+          <div>
+            <p class="main-action_subtitle">
+              <span class="underline">{{ action.subtitle }}</span>
+            </p>
+            <p class="main-action_headline">
+              {{ action.title }}
+            </p>
+          </div>
         </div>
-      </div>
+      </router-link>
     </section>
     <section>
       <ul class="mdc-list">
-        <router-link :to="`${meet.path}/new`">
+        <template v-if="!isInSession">
+          <router-link :to="`${meet.path}/new`">
+            <li class="mdc-list-item menu-item" v-mdc-ripple>
+              Start a meeting plan
+              <span class="mdc-list-item__end-detail notification-dot notification-dot--accent"></span>
+            </li>
+          </router-link>
           <li class="mdc-list-item menu-item" v-mdc-ripple>
-            Start a meeting plan
-            <span class="mdc-list-item__end-detail notification-dot notification-dot--accent"></span>
+            Join a meeting plan
           </li>
-        </router-link>
-        <li class="mdc-list-item menu-item" v-mdc-ripple>
-          Join a meeting plan
-        </li>
-        <li role="separator" class="mdc-list-divider"></li>
+          <li role="separator" class="mdc-list-divider"></li>
+        </template>
         <router-link :to="calendars.path">
           <li class="mdc-list-item menu-item" v-mdc-ripple>
             My calendars
@@ -41,6 +45,8 @@
 import MdcRipple from '@/directives/mdc-ripple';
 import calendars from '@/router/calendars';
 import meet from '@/router/meet';
+import meetCurrent from '@/router/meet/current';
+import meetNew from '@/router/meet/new';
 
 export default {
   directives: {
@@ -51,6 +57,29 @@ export default {
       calendars,
       meet,
     };
+  },
+  computed: {
+    isInSession() {
+      return this.$store.getters.isInSession;
+    },
+    action() {
+      if (this.$store.state.meet.session.id) {
+        return {
+          subtitle: 'Pick up where you left off',
+          title: 'Resume meeting plan',
+          to: {
+            name: meetCurrent.name,
+            params: { code: this.$store.state.meet.session.id },
+          },
+        };
+      } else {
+        return {
+          subtitle: 'Get started',
+          title: 'Start a meeting plan',
+          to: { name: meetNew.name },
+        };
+      }
+    },
   },
 };
 </script>
