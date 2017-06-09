@@ -103,8 +103,8 @@ async function createMeetSession({
   commit,
   getters,
 }: DispatchContext) {
-  if (state.isInSession) {
-    throw new Error('Already in session');
+  if (getters.isInSession) {
+    await dispatch('archiveMeetSession');
   }
   const database = firebase.database();
 
@@ -134,10 +134,14 @@ async function createMeetSession({
 }
 
 async function joinMeetSession(
-  { state, dispatch, commit, rootState }: DispatchContext,
+  { state, dispatch, commit, rootState, getters }: DispatchContext,
   id: string,
 ) {
   const database = firebase.database();
+
+  if (getters.isInSession) {
+    await dispatch('archiveMeetSession');
+  }
 
   dispatch('addProgressItem', {
     id: 'meet/join-session',
@@ -193,12 +197,14 @@ async function subscribeMeetSession({
           'updateMeetSessionState',
           R.evolve({
             result: R.evolve({
-              meetings: R.map(
-                R.evolve({
-                  start: (datestring: string) => new Date(datestring),
-                  end: (datestring: string) =>
-                    addSeconds(new Date(datestring), 1),
-                }),
+              meetings: R.defaultTo([])(
+                R.map(
+                  R.evolve({
+                    start: (datestring: string) => new Date(datestring),
+                    end: (datestring: string) =>
+                      addSeconds(new Date(datestring), 1),
+                  }),
+                ),
               ),
             }),
           })(data),
@@ -255,6 +261,23 @@ async function requestMeetResult({ dispatch }: DispatchContext) {
   dispatch('removeProgressItem', 'meet/request-result');
 }
 
+async function archiveMeetSession({
+  state,
+  dispatch,
+  rootState,
+}: DispatchContext) {
+  if (!state.session.id) {
+    throw new Error('Not in session');
+  }
+
+  const database = firebase.database();
+  await database.ref(`/users/${rootState.auth.uid}/current-session`).set(null);
+  await database
+    .ref(`/users/${rootState.auth.uid}/previous-sessions`)
+    .push(state.session.id);
+  await dispatch('unsubscribeMeetSession');
+}
+
 export default {
   state,
   getters: {
@@ -272,5 +295,6 @@ export default {
     subscribeMeetSession,
     unsubscribeMeetSession,
     requestMeetResult,
+    archiveMeetSession,
   },
 };
