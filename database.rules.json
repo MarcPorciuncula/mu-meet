@@ -5,28 +5,8 @@
       ".write": "true"
     },
     "users": {
-      "$uid": {
-        "current-session": {
-          ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
-        },
-        "profile": {
-          ".read": "true",
-          ".write": "$uid === auth.uid"
-        },
-        "selected-calendars": {
-          ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
-        },
-        "calendars": {
-          ".read": "$uid === auth.uid",
-          ".write": "false"
-        },
-        "tokens": {
-          ".read": "false",
-          ".write": "false"
-        }
-      }
+      ".read": "true",
+      ".write": "true"
     },
     "google-credentials": {
       ".read": false,
