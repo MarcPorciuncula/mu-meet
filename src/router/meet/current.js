@@ -1,22 +1,18 @@
 import Meet from '@/components/Meet';
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
-import dashboard from '../dashboard';
 
 async function beforeEnter(to, from, next) {
   if (!store.getters.isInSession) {
     await store.dispatch('refreshMeetSession');
   }
-
   if (store.state.meet.session.id !== to.params.code) {
     await store.dispatch('joinMeetSession', to.params.code);
-    next({ name: dashboard.name });
-  } else {
-    if (!Object.values(store.state.calendars).length) {
-      await store.dispatch('fetchCalendars');
-    }
-    next();
   }
+  if (!Object.values(store.state.calendars).length) {
+    await store.dispatch('fetchCalendars');
+  }
+  next();
 }
 
 export default {
