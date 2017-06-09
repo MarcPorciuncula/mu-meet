@@ -8,12 +8,8 @@ async function beforeEnter(to, from, next) {
     await store.dispatch('refreshMeetSession');
   }
 
-  if (!store.getters.isInSession) {
-    await store.dispatch('joinMeetSession', to.params.code);
-  }
-
   if (store.state.meet.session.id !== to.params.code) {
-    // next(`/meet/${store.state.meet.session.id}`);
+    await store.dispatch('joinMeetSession', to.params.code);
     next({ name: dashboard.name });
   } else {
     if (!Object.values(store.state.calendars).length) {
