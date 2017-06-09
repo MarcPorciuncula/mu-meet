@@ -35,3 +35,37 @@ staging-deploy:
   - next
   script:
   - yarn deploy-all -- --project staging --token "$FIREBASE_CI_TOKEN"
+
+production-build:
+  stage: build
+  environment:
+    name: production
+  artifacts:
+    paths:
+    - node_modules/
+    - dist/
+    - functions/index.js
+    - functions/node_modules/
+  only:
+  - master
+  script:
+  - mkdir secret
+  - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json
+  - echo $FIREBASE_CONFIG_PRODUCTION > secret/firebase-config.json
+  - yarn
+  - yarn build
+  - cd functions
+  - yarn
+  - yarn build
+  - cd ..
+
+production-deploy:
+  stage: deploy
+  environment:
+    name: production
+  only:
+  - master
+  script:
+  - surge -p dist -d $SURGE_DOMAIN
+  - yarn deploy-functions -- --project production --token "$FIREBASE_CI_TOKEN"
+  - yarn deploy-database -- --project production --token "$FIREBASE_CI_TOKEN"
