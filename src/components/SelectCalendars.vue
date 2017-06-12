@@ -32,7 +32,7 @@
 import { mapState } from 'vuex';
 import store from '@/store';
 import MdcCheckbox from './MdcCheckbox';
-import MdcButton from './MdcButton';
+import MdcButton from './Material/Button';
 import dashboard from '@/router/dashboard';
 
 export default {

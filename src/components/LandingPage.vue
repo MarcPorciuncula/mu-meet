@@ -15,7 +15,7 @@
     <section class="section--splash" ref="splash">
       <div class="section_centered section_vertical-align">
         <div>
-          <h1 class="section_headline">
+          <h1 class="type--display1">
             A quick and easy meeting scheduler
           </h1>
           <router-link to="/login">
@@ -25,23 +25,23 @@
       </div>
     </section>
     <section>
-      <div class="copy">
-        <h2 class="section_headline">
+      <type-container>
+        <type-text tag="h2" type="headline">
           Find meeting times that suit you and your team's calendars.
-        </h2>
-        <p>
+        </type-text>
+        <type-text tag="p" type="body1">
           Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
-        </p>
-      </div>
+        </type-text>
+      </type-container>
     </section>
     <section class="section--graphic">
 
     </section>
     <section>
       <div class="copy">
-        <h2 class="section_headline">
+        <type-text tag="h2" type="headline">
           Powered by Google Calendar
-        </h2>
+        </type-text>
         <p>
           MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar.
         </p>
@@ -90,7 +90,9 @@
 </template>
 
 <script>
-import MdcButton from './MdcButton';
+import './Material/typography.scss';
+import MdcButton from './Material/Button';
+import { TypeText, TypeContainer } from './Material/Typography';
 import MumeetLogo from './MumeetLogo';
 
 const THRESHOLD = 0.1;
@@ -99,6 +101,8 @@ export default {
   components: {
     MdcButton,
     MumeetLogo,
+    TypeText,
+    TypeContainer,
   },
   data() {
     return {
@@ -213,7 +217,6 @@ section {
 .get-started {
   background-color: #2196F3;
   color: white;
-  line-height: 2.6rem;
 }
 
 .footer {

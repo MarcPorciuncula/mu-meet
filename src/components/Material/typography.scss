@@ -1,0 +1,18 @@
+@import 'mdc-variables';
+@import '@material/typography/variables';
+@import '@material/typography/mixins';
+
+.type {
+  @include mdc-typography-base;
+}
+
+@each $style in map-keys($mdc-typography-styles) {
+  .type--#{$style} {
+    @include mdc-typography($style);
+  }
+
+  .type-container > .type--#{$style},
+  .type--#{$style}.type--adjust-margin {
+    @include mdc-typography-adjust-margin($style);
+  }
+}
