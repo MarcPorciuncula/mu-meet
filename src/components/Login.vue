@@ -1,0 +1,66 @@
+<template>
+  <layout-container tag="section" class="section-login">
+    <type-container>
+      <type-text tag="h3" type="headline">
+        Sign in with Google to continue to MUmeet.
+      </type-text>
+      <type-text tag="p" type="body2">
+        MUmeet uses Google Calendar to determine your schedule and find meeting times.
+      </type-text>
+      <div class="login-action-container">
+      <google-signin-button v-on:click="signIn" :disabled="isPendingSignIn || isSignedIn" />
+        <type-text tag="p" type="body2" class="help-text" v-show="!(isPendingSignIn || isSignedIn)">
+          This will pop up a new tab.
+        </type-text>
+      </div>
+    </type-container>
+  </layout-container>
+</template>
+
+<script>
+import { mapState } from 'vuex';
+import GoogleSigninButton from './GooglesigninButton';
+import LayoutContainer from './Layout/Container';
+import { TypeContainer, TypeText } from './Material/Typography';
+import dashboard from '@/router/dashboard';
+import { PENDING_SIGN_IN } from '@/store/modules/auth';
+
+export default {
+  components: {
+    GoogleSigninButton,
+    TypeContainer,
+    TypeText,
+    LayoutContainer,
+  },
+  computed: mapState({
+    isSignedIn: state => state.auth.isSignedIn,
+    isPendingSignIn: state => state.auth.pending === PENDING_SIGN_IN,
+  }),
+  methods: {
+    async signIn() {
+      await this.$store.dispatch('signIn');
+      // HACK wait for the profile to pop up in the corner, should coordinate this properly
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      this.$router.push(this.$route.query.callback || dashboard.path);
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+.section-login {
+  min-height: 100vmin;
+  height: 0;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #616161;
+  margin-top: 0.25rem;
+}
+
+.login-action-container {
+  text-align: center;
+  margin: 3rem;
+}
+</style>

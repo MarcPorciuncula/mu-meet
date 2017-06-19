@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <header-bar>
+    <header-bar title="helo">
       <div slot="controls">
         <transition name="drop-in">
           <router-link to="/login" v-show="showHeaderGetStarted" style="display: block">
@@ -144,7 +144,7 @@ export default {
 }
 
 .section-splash {
-  min-height: 100vh;
+  min-height: calc(100vh - 3.475rem);
   height: 0;
   background: #ECEFF1;
 

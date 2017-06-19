@@ -15,17 +15,25 @@
         <img v-if="user" class="header_profile-picture" :src="user.profile.picture"/>
       </transition>
     </div>
-    <overflow-menu/>
+    <mdc-menu>
+      <mdc-menu-item>
+        Hi Dude
+      </mdc-menu-item>
+    </mdc-menu>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import OverflowMenu from './OverflowMenu';
+import MdcMenu from './Material/Menu';
+import MdcMenuItem from './Material/MenuItem';
 
 export default {
   components: {
     OverflowMenu,
+    MdcMenu,
+    MdcMenuItem,
   },
   data() {
     return {
@@ -81,14 +89,14 @@ export default {
 }
 
 .profile-badge {
-  padding: 0 0.5rem;
+  // padding: 0 0.5rem;
 }
 
 .header_profile-picture {
-  height: 3rem;
+  height: 2rem;
   width: auto;
   border-radius: 50%;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 .slide-up {

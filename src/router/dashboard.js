@@ -14,6 +14,6 @@ export default {
     default: Dashboard,
     'app-bar-control': ProfileBadge,
   },
-  meta: { shell: true },
+  meta: { shell: true, title: 'Dashboard' },
   beforeEnter,
 };

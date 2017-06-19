@@ -9,22 +9,18 @@ import store from '@/store';
 
 Vue.use(VueRouter);
 
-const router = new VueRouter({
-  routes: [landing, login, dashboard, calendars, meet],
-});
-
-router.beforeEach(async (to, from, next) => {
+function addRouteTransitionProgressItem(to, from, next) {
   store.dispatch('addProgressItem', {
     id: 'router/transition',
   });
   next();
-});
+}
 
-router.afterEach(async route => {
+function clearRouteTransitionProgressItem(route) {
   store.dispatch('removeProgressItem', 'router/transition');
-});
+}
 
-router.beforeEach(async (to, from, next) => {
+async function verifyAuth(to, from, next) {
   if (store.state.auth.isSignedIn === null) {
     await store.dispatch('refreshAuthStatus');
   }
@@ -37,6 +33,14 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next();
   }
+}
+
+const router = new VueRouter({
+  routes: [landing, login, dashboard, calendars, meet],
 });
+
+router.beforeEach(addRouteTransitionProgressItem);
+router.afterEach(clearRouteTransitionProgressItem);
+router.beforeEach(verifyAuth);
 
 export default router;

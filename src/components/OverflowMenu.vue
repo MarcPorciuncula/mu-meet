@@ -60,22 +60,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import './Material/mdc-variables';
 @import '@material/menu/mdc-menu';
-
-.mdc-simple-menu .mdc-list-item {
-  font-size: 1.4rem;
-  font-family: inherit;
-}
-
-.mdc-list {
-  font-family: inherit;
-}
 
 .menu-button {
   background: none;
   border: none;
-  transform: translateY(0.3rem);
+  transform: translateY(0.2rem);
   padding: 0;
+  color: #424242;
 
   &:focus {
     outline: none;

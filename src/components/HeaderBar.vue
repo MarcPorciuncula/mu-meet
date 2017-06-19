@@ -5,9 +5,20 @@
         <type-text v-if="message" tag="span" type="body2" key="message">
           {{ message }}
         </type-text>
-        <type-text v-else tag="span" type="headline" key="logo">
-          <mumeet-logo></mumeet-logo>
-        </type-text>
+        <div v-else :class="['title', { 'title--show-subtitle': showTitle }]">
+          <div class="title_inner">
+            <div class="title_item">
+              <type-text tag="h1" type="headline" key="logo">
+                <mumeet-logo></mumeet-logo>
+              </type-text>
+            </div>
+            <div class="title_item">
+              <type-text tag="h2" type="title">
+                {{ title }}
+              </type-text>
+            </div>
+          </div>
+        </div>
       </transition>
     </div>
     <slot name="controls"></slot>
@@ -26,6 +37,8 @@ export default {
   },
   props: {
     message: VueTypes.string,
+    title: VueTypes.string,
+    showTitle: VueTypes.bool.def(false),
   },
 };
 </script>
@@ -37,7 +50,6 @@ export default {
 header {
   @include mdc-elevation(2);
 
-  height: 3.625rem;
   padding: 0 1.25rem;
   position: fixed;
   width: 100%;
@@ -46,6 +58,40 @@ header {
   flex-direction: row;
   align-items: center;
   z-index: 1;
+}
+
+header,
+.title,
+.title_item {
+  height: 3.625rem;
+}
+
+.title {
+  position: relative;
+  overflow: hidden;
+}
+
+.title_item {
+  display: flex;
+  align-items: center;
+}
+
+.title_item .type {
+  margin: 0;
+}
+
+.title_inner {
+  height: 200%;
+  position: absolute;
+}
+
+.title_inner {
+  will-change: transform;
+  transition: transform 200ms $mdc-animation-fast-out-slow-in-timing-function;
+}
+
+.title--show-subtitle .title_inner {
+  transform: translateY(-50%);
 }
 
 .fade-in {

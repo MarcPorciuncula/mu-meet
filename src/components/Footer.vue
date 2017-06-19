@@ -16,7 +16,7 @@
         </type-text>
       </type-container>
     </layout-container>
-    <layout-container tag="section" padding="less">
+    <!-- <layout-container tag="section" padding="less">
       <type-container>
         <type-text tag="h3" type="body2" class="footer_subheading">
           Support
@@ -37,7 +37,7 @@
           Contact the developer
         </type-text>
       </type-container>
-    </layout-container>
+    </layout-container> -->
     <layout-container tag="section" padding="less">
       <type-container>
         <type-text tag="p" type="body2">
