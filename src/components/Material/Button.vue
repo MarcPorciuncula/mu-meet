@@ -4,6 +4,7 @@
       'mdc-button--raised': raised,
       'mdc-button--dense': dense,
       'mdc-button--compact': compact,
+      'mdc-button--hero': hero,
     }]"
     @click="$emit('click', $event)"
   >
@@ -12,20 +13,14 @@
 </template>
 
 <script>
+import VueTypes from 'vue-types';
+
 export default {
   props: {
-    raised: {
-      type: Boolean,
-      default: false,
-    },
-    dense: {
-      type: Boolean,
-      default: false,
-    },
-    compact: {
-      type: Boolean,
-      default: false,
-    },
+    raised: VueTypes.bool.def(false),
+    dense: VueTypes.bool.def(false),
+    compact: VueTypes.bool.def(false),
+    hero: VueTypes.bool.def(false),
   },
 };
 </script>
@@ -33,8 +28,17 @@ export default {
 <style lang="scss">
 @import 'mdc-variables';
 @import '@material/button/mdc-button';
+@import '@material/typography/mixins';
 
 .mdc-button {
   text-transform: initial;
+}
+
+.mdc-button--hero {
+  @include mdc-typography(subheading2);
+
+  width: 100%;
+  height: 3rem;
+  line-height: 3rem;
 }
 </style>

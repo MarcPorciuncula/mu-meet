@@ -6,7 +6,7 @@ export const TypeText = {
     return h(
       this.tag,
       {
-        class: `type--${this.type}`,
+        class: `type type--${this.type}`,
       },
       this.$slots.default,
     );

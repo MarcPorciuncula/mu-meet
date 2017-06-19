@@ -20,7 +20,7 @@ export default {};
 
 .mumeet-logo_beta {
   font-size: 0.6em;
-  letter-spacing: -1px;
-  font-family: "Roboto Mono", monospace;
+  /*letter-spacing: -1px;
+  font-family: "Roboto Mono", monospace;*/
 }
 </style>

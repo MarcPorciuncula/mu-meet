@@ -7,7 +7,7 @@ $mdc-typography-font-weight-values: (
   light: 300,
   regular: 400,
   medium: 500,
-  bold: 700,
+  bold: 600,
   black: 900
 ) !default;
 
@@ -76,14 +76,16 @@ $mdc-typography-styles: (
     font-size: .875rem, /* 14sp */
     line-height: 1.5rem, /* 24sp */
     font-weight: map-get($mdc-typography-font-weight-values, medium),
-    letter-spacing: .02em,
+    // letter-spacing: .02em,
+    letter-spacing: 0,
     margin: -.25rem 0 .75rem 0 /* -4sp 0 12sp 0 */
   ),
   body1: (
     font-size: .875rem, /* 14sp */
     line-height: 1.25rem, /* 20sp */
     font-weight: map-get($mdc-typography-font-weight-values, regular),
-    letter-spacing: .02em,
+    // letter-spacing: .02em,
+    letter-spacing: 0,
     margin: -.25rem 0 .75rem 0 /* -4sp 0 12sp 0 */
   ),
   caption: (

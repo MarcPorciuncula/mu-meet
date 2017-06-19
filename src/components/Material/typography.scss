@@ -2,8 +2,13 @@
 @import '@material/typography/variables';
 @import '@material/typography/mixins';
 
+.type-container {
+  padding-top: 0.75rem;
+}
+
 .type {
   @include mdc-typography-base;
+  color: #424242;
 }
 
 @each $style in map-keys($mdc-typography-styles) {
