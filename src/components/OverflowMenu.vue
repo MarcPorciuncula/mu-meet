@@ -61,7 +61,7 @@ export default {
 
 <style scoped lang="scss">
 @import './Material/mdc-variables';
-@import '@material/menu/mdc-menu';
+// @import '@material/menu/mdc-menu';
 
 .menu-button {
   background: none;

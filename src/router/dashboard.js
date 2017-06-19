@@ -1,4 +1,4 @@
-import Dashboard from '@/components/Dashboard';
+import Dashboard from '@/components/Dashboard2';
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
 

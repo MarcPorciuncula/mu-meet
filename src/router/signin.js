@@ -1,4 +1,4 @@
-import Login from '@/components/Login';
+import SignIn from '@/components/SignIn';
 import ProfileBadge from '@/components/ProfileBadge';
 import dashboard from '@/router/dashboard';
 import store from '@/store';
@@ -12,9 +12,9 @@ async function beforeEnter(to, from, next) {
 }
 
 export default {
-  path: '/login',
+  path: '/signin',
   components: {
-    default: Login,
+    default: SignIn,
     'app-bar-control': ProfileBadge,
   },
   meta: { shell: true, title: 'Sign in' },

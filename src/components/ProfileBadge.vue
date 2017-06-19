@@ -16,9 +16,11 @@
       </transition>
     </div>
     <mdc-menu>
-      <mdc-menu-item>
-        Hi Dude
-      </mdc-menu-item>
+      <router-link v-show="isSignedIn" to="/signout">
+        <mdc-menu-item>
+          Sign out
+        </mdc-menu-item>
+      </router-link>
     </mdc-menu>
   </div>
 </template>

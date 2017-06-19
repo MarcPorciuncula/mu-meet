@@ -30,7 +30,7 @@ export default {
 }
 
 .layout-container--pad-normal {
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .layout-container--pad-more {

@@ -3,7 +3,7 @@
     <header-bar title="helo">
       <div slot="controls">
         <transition name="drop-in">
-          <router-link to="/login" v-show="showHeaderGetStarted" style="display: block">
+          <router-link :to="links.signin" v-show="showHeaderGetStarted" style="display: block">
             <mdc-button raised class="get-started">
               Find a time
             </mdc-button>
@@ -16,7 +16,7 @@
         <type-text tag="h1" type="display1">
           MUmeet finds meeting times based on your team's calendars.
         </type-text>
-        <router-link to="/login">
+        <router-link :to="links.signin">
           <mdc-button hero raised class="get-started">Find a time</mdc-button>
         </router-link>
       </div>
@@ -58,7 +58,7 @@
         </type-text>
       </type-container>
       <div style="text-align: center" ref="getStarted">
-        <router-link to="/login">
+        <router-link :to="links.signin">
           <mdc-button hero raised class="get-started">
             Find a time
           </mdc-button>
@@ -77,6 +77,7 @@ import LayoutContainer from './Layout/Container';
 import MumeetLogo from './MumeetLogo';
 import HeaderBar from './HeaderBar';
 import PageFooter from './Footer';
+import signin from '@/router/signin';
 
 const THRESHOLD = 0.1;
 
@@ -114,6 +115,7 @@ export default {
   data() {
     return {
       showHeaderGetStarted: false,
+      links: { signin: signin.path },
     };
   },
   mounted() {

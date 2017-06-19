@@ -73,6 +73,7 @@ export default {
 .app-shell {
   min-height: 100vh;
   position: relative;
+  background-color: rgba(#ECEFF1, 0.2);
 }
 
 .section-title {

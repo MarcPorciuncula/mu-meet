@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import landing from './landing';
-import login from './login';
+import signin from './signin';
+import signout from './signout';
 import dashboard from './dashboard';
 import calendars from './calendars';
 import meet from './meet';
@@ -29,14 +30,14 @@ async function verifyAuth(to, from, next) {
     to.matched.some(route => route.meta.requiresAuth) &&
     !store.state.auth.isSignedIn
   ) {
-    next({ path: login.path, query: { callback: to.fullPath } });
+    next({ path: signin.path, query: { callback: to.fullPath } });
   } else {
     next();
   }
 }
 
 const router = new VueRouter({
-  routes: [landing, login, dashboard, calendars, meet],
+  routes: [landing, signin, signout, dashboard, calendars, meet],
 });
 
 router.beforeEach(addRouteTransitionProgressItem);

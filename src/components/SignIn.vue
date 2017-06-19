@@ -1,5 +1,5 @@
 <template>
-  <layout-container tag="section" class="section-login">
+  <layout-container tag="section" class="section-signin">
     <type-container>
       <type-text tag="h3" type="headline">
         Sign in with Google to continue to MUmeet.
@@ -7,7 +7,10 @@
       <type-text tag="p" type="body2">
         MUmeet uses Google Calendar to determine your schedule and find meeting times.
       </type-text>
-      <div class="login-action-container">
+      <type-text tag="p" type="body2">
+        You may be asked to give MUmeet permission to read your calendars. We'll never show anyone your calendars without your permission.
+      </type-text>
+      <div class="signin-action-container">
       <google-signin-button v-on:click="signIn" :disabled="isPendingSignIn || isSignedIn" />
         <type-text tag="p" type="body2" class="help-text" v-show="!(isPendingSignIn || isSignedIn)">
           This will pop up a new tab.
@@ -48,8 +51,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.section-login {
-  min-height: 100vmin;
+.section-signin {
+  min-height: 72vh;
   height: 0;
 }
 
@@ -59,7 +62,7 @@ export default {
   margin-top: 0.25rem;
 }
 
-.login-action-container {
+.signin-action-container {
   text-align: center;
   margin: 3rem;
 }

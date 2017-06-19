@@ -42,7 +42,7 @@
       <type-container>
         <type-text tag="p" type="body2">
           MUmeet was built by <a href="#">Marc Porciuncula</a> for <a href="#">Unihack</a> Mini 2017.<br/>
-          Made with &lt;3 in Melbourne, Australia.
+          Made with ❤ in Melbourne, Australia.
         </type-text>
       </type-container>
     </layout-container>
