@@ -1,21 +1,23 @@
 <template>
-  <layout-container tag="footer" padding="none">
-    <layout-container tag="section" padding="less" class="footer_section-beta">
-      <type-container >
-        <type-text tag="h3" type="body2" class="footer_subheading">
-          You are using MUmeet beta
-        </type-text>
-        <type-text tag="p" type="body1">
-          This site is currently under construction, some features may be missing or unstable.
-        </type-text>
-        <type-text tag="p" type="body1">
-          For development updates, you can <a target="_blank" href="https://twitter.com/MarcoThePoro">follow the developer on twitter</a>.
-        </type-text>
-        <type-text tag="p" type="body1">
-          Thanks for trying out MUmeet.
-        </type-text>
-      </type-container>
-    </layout-container>
+  <footer class="footer">
+    <layout-section class="footer_section-beta">
+      <layout-container padding="less">
+        <type-container>
+          <type-text tag="h3" type="body2" class="footer_subheading">
+            You are using MUmeet beta
+          </type-text>
+          <type-text tag="p" type="body1">
+            This site is currently under construction, some features may be missing or unstable.
+          </type-text>
+          <type-text tag="p" type="body1">
+            For development updates, you can <a target="_blank" href="https://twitter.com/MarcoThePoro">follow the developer on twitter</a>.
+          </type-text>
+          <type-text tag="p" type="body1">
+            Thanks for trying out MUmeet.
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
     <!-- <layout-container tag="section" padding="less">
       <type-container>
         <type-text tag="h3" type="body2" class="footer_subheading">
@@ -38,24 +40,28 @@
         </type-text>
       </type-container>
     </layout-container> -->
-    <layout-container tag="section" padding="less">
-      <type-container>
-        <type-text tag="p" type="body2">
-          MUmeet was built by <a href="#">Marc Porciuncula</a> for <a href="#">Unihack</a> Mini 2017.<br/>
-          Made with ❤ in Melbourne, Australia.
-        </type-text>
-      </type-container>
-    </layout-container>
-  </layout-container>
+    <layout-section>
+      <layout-container padding="less">
+        <type-container>
+          <type-text tag="p" type="body2">
+            MUmeet was built by <a href="#">Marc Porciuncula</a> for <a href="#">Unihack</a> Mini 2017.<br/>
+            Made with ❤ in Melbourne, Australia.
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
+  </footer>
 </template>
 
 <script>
 import LayoutContainer from './Layout/Container';
+import LayoutSection from './Layout/Section';
 import { TypeContainer, TypeText } from './Material/Typography';
 
 export default {
   components: {
     LayoutContainer,
+    LayoutSection,
     TypeContainer,
     TypeText,
   },
@@ -63,7 +69,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-footer {
+.footer {
   color: #CFD8DC;
   background-color: #263238;
 }

@@ -20,7 +20,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+.layout-container {
+  max-width: 60rem;
+  width: 100%;
+}
+
 .layout-container--pad-none {
   padding: 0;
 }

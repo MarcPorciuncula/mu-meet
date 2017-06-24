@@ -10,13 +10,15 @@
         <slot name="header-bar-control"></slot>
       </div>
     </header-bar>
-    <section class="section-title" ref="title">
-      <type-container>
-        <type-text tag="h2" type="title" :class="{ hidden: showTitle }">
-          {{ $route.meta.title }}
-        </type-text>
-      </type-container>
-    </section>
+    <layout-section class="section-title" ref="title">
+      <layout-container class="section-title_inner">
+        <type-container>
+          <type-text tag="h2" type="title" :class="{ hidden: showTitle }">
+            {{ $route.meta.title }}
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
     <div class="content">
       <slot></slot>
     </div>
@@ -29,6 +31,8 @@ import { mapGetters } from 'vuex';
 import HeaderBar from './HeaderBar';
 import PageFooter from './Footer';
 import { TypeContainer, TypeText } from './Material/Typography';
+import LayoutSection from './Layout/Section';
+import LayoutContainer from './Layout/Container';
 
 export default {
   components: {
@@ -36,6 +40,8 @@ export default {
     PageFooter,
     TypeContainer,
     TypeText,
+    LayoutSection,
+    LayoutContainer,
   },
   data() {
     return {
@@ -49,7 +55,7 @@ export default {
         threshold: [0.5, 0],
       },
     );
-    this.intersectionObserver.observe(this.$refs.title);
+    this.intersectionObserver.observe(this.$refs.title.$el);
   },
   computed: {
     ...mapGetters({
@@ -77,9 +83,12 @@ export default {
 }
 
 .section-title {
-  padding: 1.5rem;
-  padding-top: calc(3.625rem + 0.8rem);
-  padding-bottom: 1rem;
+  padding-top: 3.625rem;
+
+  &_inner {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
 
   .type {
     margin-bottom: 0;

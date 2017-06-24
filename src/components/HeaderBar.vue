@@ -1,39 +1,45 @@
 <template>
-  <header>
-    <div style="flex-grow: 1">
-      <transition name="fade-in" mode="out-in">
-        <type-text v-if="message" tag="span" type="body2" key="message">
-          {{ message }}
-        </type-text>
-        <div v-else :class="['title', { 'title--show-subtitle': showTitle }]">
-          <div class="title_inner">
-            <div class="title_item">
-              <type-text tag="h1" type="headline" key="logo">
-                <mumeet-logo></mumeet-logo>
-              </type-text>
-            </div>
-            <div class="title_item">
-              <type-text tag="h2" type="title">
-                {{ title }}
-              </type-text>
+  <layout-section tag="header" class="header">
+    <layout-container padding="none" class="header_inner">
+      <div style="flex-grow: 1">
+        <transition name="fade-in" mode="out-in">
+          <type-text v-if="message" tag="span" type="body2" key="message">
+            {{ message }}
+          </type-text>
+          <div v-else :class="['title', { 'title--show-subtitle': showTitle }]">
+            <div class="title_inner">
+              <div class="title_item">
+                <type-text tag="h1" type="headline" key="logo">
+                  <mumeet-logo></mumeet-logo>
+                </type-text>
+              </div>
+              <div class="title_item">
+                <type-text tag="h2" type="title">
+                  {{ title }}
+                </type-text>
+              </div>
             </div>
           </div>
-        </div>
-      </transition>
-    </div>
-    <slot name="controls"></slot>
-  </header>
+        </transition>
+      </div>
+      <slot name="controls"></slot>
+    </layout-container>
+  </layout-section>
 </template>
 
 <script>
 import VueTypes from 'vue-types';
 import { TypeText } from './Material/Typography';
 import MumeetLogo from './MumeetLogo';
+import LayoutSection from './Layout/Section';
+import LayoutContainer from './Layout/Container';
 
 export default {
   components: {
     TypeText,
     MumeetLogo,
+    LayoutSection,
+    LayoutContainer,
   },
   props: {
     message: VueTypes.string,
@@ -47,20 +53,25 @@ export default {
 @import '@material/elevation/mixins';
 @import '@material/animation/functions';
 
-header {
+.header {
   @include mdc-elevation(2);
 
-  padding: 0 1.25rem;
   position: fixed;
   width: 100%;
   background-color: rgba(#fff, 0.95);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   z-index: 1;
 }
 
-header,
+.header_inner {
+  padding: 0 1.25rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.header,
 .title,
 .title_item {
   height: 3.625rem;

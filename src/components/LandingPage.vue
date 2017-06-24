@@ -11,16 +11,18 @@
         </transition>
       </div>
     </header-bar>
-    <layout-container class="section-splash section-vertical-align" ref="splash">
-      <div>
-        <type-text tag="h1" type="display1">
-          MUmeet finds meeting times based on your team's calendars.
-        </type-text>
-        <router-link :to="links.signin">
-          <mdc-button hero raised class="get-started">Find a time</mdc-button>
-        </router-link>
-      </div>
-    </layout-container>
+    <layout-section class="section-splash">
+      <layout-container class="section-vertical-align" ref="splash">
+        <div>
+          <type-text tag="h1" type="display1">
+            MUmeet finds meeting times based on your team's calendars.
+          </type-text>
+          <router-link :to="links.signin">
+            <mdc-button hero raised class="get-started">Find a time</mdc-button>
+          </router-link>
+        </div>
+      </layout-container>
+    </layout-section>
     <landing-section>
       <span slot="headline">
         Find meeting times that suit you and your team's calendars.
@@ -51,20 +53,22 @@
         MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll automatically find and sync your timetable to Google Calendar. (Coming soon)
       </span>
     </landing-section>
-    <layout-container tag="section" padding="normal" class="section-get-started">
-      <type-container>
-        <type-text tag="h2" type="display1">
-          Round up your team and find a better meeting time, it's easy with MUmeet.
-        </type-text>
-      </type-container>
-      <div style="text-align: center" ref="getStarted">
-        <router-link :to="links.signin">
-          <mdc-button hero raised class="get-started">
-            Find a time
-          </mdc-button>
-        </router-link>
-      </div>
-    </layout-container>
+    <layout-section class="section-get-started">
+      <layout-container padding="normal">
+        <type-container>
+          <type-text tag="h2" type="display1">
+            Round up your team and find a better meeting time, it's easy with MUmeet.
+          </type-text>
+        </type-container>
+        <div style="text-align: center" ref="getStarted">
+          <router-link :to="links.signin">
+            <mdc-button hero raised class="get-started">
+              Find a time
+            </mdc-button>
+          </router-link>
+        </div>
+      </layout-container>
+    </layout-section>
     <page-footer></page-footer>
   </div>
 </template>
@@ -74,9 +78,9 @@ import './Material/typography.scss';
 import MdcButton from './Material/Button';
 import { TypeText, TypeContainer } from './Material/Typography';
 import LayoutContainer from './Layout/Container';
-import MumeetLogo from './MumeetLogo';
 import HeaderBar from './HeaderBar';
 import PageFooter from './Footer';
+import LayoutSection from './Layout/Section';
 import signin from '@/router/signin';
 
 const THRESHOLD = 0.1;
@@ -86,31 +90,34 @@ const LandingSection = {
     LayoutContainer,
     TypeText,
     TypeContainer,
+    LayoutSection,
   },
   template: `
-    <layout-container tag="section" padding="more">
-      <type-container>
-        <type-text tag="h2" type="headline">
-          <slot name="headline"></slot>
-        </type-text>
-        <type-text tag="p" type="body1">
-          <slot name="body"></slot>
-        </type-text>
-      </type-container>
-    </layout-container>
+    <layout-section tag="section">
+      <layout-container padding="more">
+        <type-container>
+          <type-text tag="h2" type="headline">
+            <slot name="headline"></slot>
+          </type-text>
+          <type-text tag="p" type="body1">
+            <slot name="body"></slot>
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
   `,
 };
 
 export default {
   components: {
     MdcButton,
-    MumeetLogo,
     TypeText,
     TypeContainer,
     LandingSection,
     LayoutContainer,
     HeaderBar,
     PageFooter,
+    LayoutSection,
   },
   data() {
     return {
