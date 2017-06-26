@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" class="mdc-list">
+  <component :is="tag" :class="['mdc-list']">
     <slot></slot>
   </component>
 </template>

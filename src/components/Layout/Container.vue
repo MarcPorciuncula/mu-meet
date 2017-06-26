@@ -10,7 +10,9 @@ import VueTypes from 'vue-types';
 export default {
   props: {
     tag: VueTypes.string.def('div'),
-    padding: VueTypes.oneOf(['none', 'normal', 'more', 'less']).def('normal'),
+    padding: VueTypes.oneOf(['none', 'normal', 'more', 'less', 'min']).def(
+      'normal',
+    ),
   },
   computed: {
     classes() {
@@ -28,6 +30,10 @@ export default {
 
 .layout-container--pad-none {
   padding: 0;
+}
+
+.layout-container--pad-min {
+  padding: 0.5rem;
 }
 
 .layout-container--pad-less {

@@ -101,6 +101,5 @@ export default {
 
 .content {
   min-height: 72vh;
-  height: 0;
 }
 </style>

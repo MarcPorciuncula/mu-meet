@@ -11,6 +11,16 @@
             {{ Object.values(lastMeetingPlan.users).map(x => x.profile.given_name) | list }}
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
+          <div slot="actions">
+            <mdc-button disabled>
+              Archive
+            </mdc-button>
+            <router-link :to="{ name: meetingPlanRoute.name, params: { code: lastMeetingPlan.id } }">
+              <mdc-button>
+                Resume
+              </mdc-button>
+            </router-link>
+          </div>
         </callout>
         <mdc-list ripple>
           <template v-for="action in actions">
@@ -34,18 +44,31 @@
 import VueTypes from 'vue-types';
 import LayoutContainer from '@/components/Layout/Container';
 import LayoutSection from '@/components/Layout/Section';
+import MdcButton from '@/components/Material/Button';
 import MdcList from '@/components/Material/List';
 import MdcListItem from '@/components/Material/ListItem';
 import Callout from '@/components/Components/Callout';
 import distanceInWords from 'date-fns/distance_in_words';
 
 export default {
+  components: {
+    LayoutContainer,
+    LayoutSection,
+    MdcList,
+    MdcListItem,
+    Callout,
+    MdcButton,
+  },
   props: {
     lastMeetingPlan: VueTypes.shape({
       startedAt: VueTypes.instanceOf(Date).isRequired,
+      id: VueTypes.string.isRequired,
       users: VueTypes.shape({
         profile: VueTypes.shape({ given_name: VueTypes.string }),
       }).loose.isRequired,
+    }),
+    meetingPlanRoute: VueTypes.shape({
+      name: VueTypes.string,
     }),
     actions: VueTypes.arrayOf(
       VueTypes.oneOfType([
@@ -68,13 +91,6 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.interval);
-  },
-  components: {
-    LayoutContainer,
-    LayoutSection,
-    MdcList,
-    MdcListItem,
-    Callout,
   },
   filters: {
     distanceInWords([a, b]) {

@@ -3,6 +3,7 @@ import R from 'ramda';
 import Dashboard from './Dashboard';
 import store from '@/store';
 import calendars from '@/router/calendars';
+import meetingPlanRoute from '@/router/meet/current';
 
 export default {
   name: 'ConnectedDashboard',
@@ -15,6 +16,7 @@ export default {
       props: {
         lastMeetingPlan: this.lastMeetingPlan,
         actions: this.actions,
+        meetingPlanRoute,
       },
     });
   },
@@ -27,6 +29,7 @@ export default {
             R.mapObjIndexed((value, key) => store.state.users.users[key]),
             R.pickBy((value, key) => key !== store.getters.authUid),
           )(store.state.meet.session.users),
+          id: store.state.meet.session.id,
         };
       }
       return null;
