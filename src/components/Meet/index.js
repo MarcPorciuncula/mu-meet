@@ -1,3 +1,6 @@
 import Meet from './Meet';
+import ConnectedMeet from './ConnectedMeet';
 
-export default Meet;
+export default ConnectedMeet;
+
+export { Meet, ConnectedMeet };

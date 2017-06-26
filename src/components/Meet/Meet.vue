@@ -4,113 +4,59 @@
       <layout-container>
         <type-container>
           <type-text tag="p" type="body1">
-            Invite your team with the link below. Make sure everyone selects their calendars then press find meeting times. If someone updates their calendars selection or a new memeber is added, you'll need to manually find meeting times again.
+            Invite your team with the link below. Make sure everyone selects their calendars, then press find meeting times. If someone updates their calendar selection or a new member is added, you'll need to manually find meeting times again.
           </type-text>
         </type-container>
       </layout-container>
     </layout-section>
     <layout-section>
       <layout-container padding="min">
-        <mdc-list>
-          <mdc-list-item multiline ripple @click="copyInviteLink">
-            <span slot="start-detail" class="material-icons">
-              group_add
-            </span>
-            Invite your team
-            <span slot="secondary-text" ref="inviteLink">
-              <span class="hidden">http://</span>{{ inviteLink }}
-            </span>
-          </mdc-list-item>
-          <mdc-list-item multiline ripple>
-            <span slot="start-detail" class="material-icons">
-              tune
-            </span>
-            Change parameters (Coming soon)
-            <span slot="secondary-text">
-              At least 30 min from 9am to 5pm on weekdays, this week.
-            </span>
-          </mdc-list-item>
-          <mdc-list-item multiline ripple>
-            <span slot="start-detail" class="material-icons">
-              event_note
-            </span>
-            Select your calendars
-            <span slot="secondary-text">
-              2 calendars selected
-            </span>
-          </mdc-list-item>
-          <mdc-list-item separator />
-          <mdc-list-item ripple>
-            <span slot="start-detail" class="material-icons">
-              event
-            </span>
-            Find meeting times
-          </mdc-list-item>
-        </mdc-list>
-      </layout-container>
-    </layout-section>
-    <layout-section padding="normal">
-      <layout-container>
-        <type-container>
-          <type-text tag="h3" type="subheading2" style="margin-bottom: 0">
-            Team
-          </type-text>
-        </type-container>
-      </layout-container>
-      <layout-container padding="min">
-        <mdc-list>
-          <mdc-list-item>
-            <img slot="avatar" src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg"/>
-            Marc Porciuncula
-            <span slot="secondary-text">
-              mpor14@student.monash.edu
-            </span>
-          </mdc-list-item>
-        </mdc-list>
-      </layout-container>
-    </layout-section>
-    <layout-section padding="normal">
-      <layout-container>
-        <type-container>
-          <type-text tag="h3" type="subheading2">
-            Meeting times
-          </type-text>
-        </type-container>
-      </layout-container>
-      <layout-container padding="min">
         <mdc-list-group>
-          <mdc-list-group-header>
-            Mon 5th Jun
-          </mdc-list-group-header>
           <mdc-list>
-            <mdc-list-item>
-              9:00am to 9:30am
-              <span slot="secondary-text">
-                Half an hour
+            <mdc-list-item multiline ripple @click="copyInviteLink">
+              <span slot="start-detail" class="material-icons">
+                group_add
+              </span>
+              Invite your team
+              <span slot="secondary-text" ref="inviteLink">
+                {{ inviteLink }}
               </span>
             </mdc-list-item>
+            <mdc-list-item multiline ripple>
+              <span slot="start-detail" class="material-icons">
+                tune
+              </span>
+              Change parameters (Coming soon)
+              <span slot="secondary-text">
+                At least 30 min from 9am to 5pm on weekdays, this week.
+              </span>
+            </mdc-list-item>
+            <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
+              <mdc-list-item multiline ripple>
+                <span slot="start-detail" class="material-icons">
+                  event_note
+                </span>
+                Select your calendars
+                <span slot="secondary-text">
+                  {{ calendars.length || 'No' }} calendar{{ calendars.length === 1 ? '' : 's' }} selected
+                </span>
+              </mdc-list-item>
+            </router-link>
           </mdc-list>
           <mdc-list-group-divider />
-          <mdc-list-group-header>
-            Fri 10th Jun
-          </mdc-list-group-header>
           <mdc-list>
-            <mdc-list-item>
-              9:00am to 9:30am
-              <span slot="secondary-text">
-                Half an hour
+            <mdc-list-item ripple @click="findMeetingTimes()">
+              <span slot="start-detail" class="material-icons">
+                event
               </span>
-            </mdc-list-item>
-            <mdc-list-item>
-              12:00pm to 4:00pm
-              <span slot="secondary-text">
-                4 hours
-              </span>
+              Find meeting times
             </mdc-list-item>
           </mdc-list>
         </mdc-list-group>
       </layout-container>
     </layout-section>
+    <team-list />
+    <meeting-times />
   </div>
 </template>
 
@@ -123,9 +69,10 @@ import {
   List as MdcList,
   ListItem as MdcListItem,
   ListGroup as MdcListGroup,
-  ListGroupHeader as MdcListGroupHeader,
   ListGroupDivider as MdcListGroupDivider,
 } from '@/components/Material/List';
+import TeamList from './TeamList';
+import MeetingTimes from './MeetingTimes';
 
 export default {
   components: {
@@ -136,11 +83,20 @@ export default {
     MdcList,
     MdcListItem,
     MdcListGroup,
-    MdcListGroupHeader,
     MdcListGroupDivider,
+    TeamList,
+    MeetingTimes,
   },
   props: {
-    inviteLink: VueTypes.string.def('localhost:8080/#/meet/ByZuQGuGb'), // FIXME make this required
+    inviteLink: VueTypes.string.isRequired,
+    calendars: VueTypes.arrayOf(
+      VueTypes.shape({
+        id: VueTypes.string,
+      }).loose,
+    ).isRequired,
+    calendarsRoute: VueTypes.shape({ name: VueTypes.string.isRequired }).loose
+      .isRequired,
+    findMeetingTimes: VueTypes.func.isRequired,
   },
   methods: {
     copyInviteLink(event) {
@@ -152,7 +108,7 @@ export default {
       selection.empty();
       const range = document.createRange();
       range.setStart(this.$refs.inviteLink, 0);
-      range.setEnd(this.$refs.inviteLink, 2);
+      range.setEnd(this.$refs.inviteLink, 1);
       selection.addRange(range);
     },
   },

@@ -7,7 +7,7 @@
             Resume your meeting plan
           </span>
           <span slot="body">
-            You started a meeting plan with
+            You started a meeting plan {{ lastMeetingPlan.users.length ? 'with' : '' }}
             {{ Object.values(lastMeetingPlan.users).map(x => x.profile.given_name) | list }}
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
@@ -25,7 +25,7 @@
         <mdc-list ripple>
           <template v-for="action in actions">
             <mdc-list-item v-if="!action" separator />
-            <router-link v-else-if="action.route" :to="action.route.path">
+            <router-link v-else-if="action.route" :to="{ name: action.route.name }">
               <mdc-list-item ripple>
                 {{ action.text }}
               </mdc-list-item>

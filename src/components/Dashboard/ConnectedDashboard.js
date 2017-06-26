@@ -1,9 +1,9 @@
-// import { mapState } from 'vuex';
 import R from 'ramda';
 import Dashboard from './Dashboard';
 import store from '@/store';
 import calendars from '@/router/calendars';
 import meetingPlanRoute from '@/router/meet/current';
+import newMeetingPlanRoute from '@/router/meet/new';
 
 export default {
   name: 'ConnectedDashboard',
@@ -13,14 +13,11 @@ export default {
   },
   render(h) {
     return h(Dashboard, {
-      props: {
-        lastMeetingPlan: this.lastMeetingPlan,
-        actions: this.actions,
-        meetingPlanRoute,
-      },
+      props: R.pick(['meetingPlanRoute', 'lastMeetingPlan', 'actions'], this),
     });
   },
   computed: {
+    meetingPlanRoute: R.always(meetingPlanRoute),
     lastMeetingPlan() {
       if (store.getters.isInSession) {
         return {
@@ -36,11 +33,11 @@ export default {
     },
     actions() {
       return [
-        { text: 'Start a meeting plan' },
-        { text: 'Join a meeting plan' },
+        { text: 'Start a meeting plan', route: newMeetingPlanRoute },
+        // { text: 'Join a meeting plan' },
         null,
         { text: 'My calendars', route: calendars },
-        { text: 'Past meeting plans' },
+        // { text: 'Past meeting plans' },
       ];
     },
   },

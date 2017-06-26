@@ -6,6 +6,7 @@
           v-for="calendar of calendars"
           class="menu-item"
           :text="calendar.summary"
+          :key="calendar.id"
           truncate
         >
           <div
