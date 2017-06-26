@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <layout-section class="footer_section-beta">
+    <layout-section class="footer_section-beta" padding="normal">
       <layout-container padding="less">
         <type-container>
           <type-text tag="h3" type="body2" class="footer_subheading">
@@ -40,7 +40,7 @@
         </type-text>
       </type-container>
     </layout-container> -->
-    <layout-section>
+    <layout-section padding="less">
       <layout-container padding="less">
         <type-container>
           <type-text tag="p" type="body2">

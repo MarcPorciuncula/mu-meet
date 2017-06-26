@@ -1,24 +1,26 @@
 <template>
   <layout-section class="section-signin">
-    <layout-container class="container-signin" padding="less">
-      <type-container>
-        <type-text tag="h3" type="headline">
-          Sign in with Google to continue to MUmeet.
-        </type-text>
-        <type-text tag="p" type="body2">
-          MUmeet uses Google Calendar to determine your schedule and find meeting times.
-        </type-text>
-        <type-text tag="p" type="body2">
-          You may be asked to give MUmeet permission to read your calendars. We'll never show anyone your calendars without your permission.
-        </type-text>
-        <div class="signin-action-container">
-        <google-signin-button v-on:click="signIn" :disabled="isPendingSignIn || isSignedIn" />
-          <type-text tag="p" type="body2" class="help-text">
-            This will pop up a new tab.
+    <layout-section tag="div" class="container-signin" padding="normal">
+      <layout-container class="" padding="less">
+        <type-container>
+          <type-text tag="h3" type="headline">
+            Sign in with Google to continue to MUmeet.
           </type-text>
-        </div>
-      </type-container>
-    </layout-container>
+          <type-text tag="p" type="body2">
+            MUmeet uses Google Calendar to determine your schedule and find meeting times.
+          </type-text>
+          <type-text tag="p" type="body2">
+            You may be asked to give MUmeet permission to read your calendars. We'll never show anyone your calendars without your permission.
+          </type-text>
+          <div class="signin-action-container">
+          <google-signin-button v-on:click="signIn" :disabled="isPendingSignIn || isSignedIn" />
+            <type-text tag="p" type="body2" class="help-text">
+              This will pop up a new tab.
+            </type-text>
+          </div>
+        </type-container>
+      </layout-container>
+    </layout-section>
   </layout-section>
 </template>
 

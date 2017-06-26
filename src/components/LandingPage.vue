@@ -53,8 +53,8 @@
         MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll automatically find and sync your timetable to Google Calendar. (Coming soon)
       </span>
     </landing-section>
-    <layout-section class="section-get-started">
-      <div padding="normal" class="call-to-action">
+    <layout-section class="section-get-started" padding="more">
+      <div class="call-to-action">
         <type-container>
           <type-text tag="h2" type="display1">
             Round up your team and find a better meeting time, it's easy with MUmeet.
@@ -93,7 +93,7 @@ const LandingSection = {
     LayoutSection,
   },
   template: `
-    <layout-section tag="section">
+    <layout-section tag="section" padding="more">
       <layout-container padding="more">
         <type-container>
           <type-text tag="h2" type="headline">
@@ -179,11 +179,6 @@ export default {
   .section-splash {
     min-height: 100vh;
   }
-}
-
-.section-get-started {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
 }
 
 .section-graphic {

@@ -1,7 +1,7 @@
 <template>
   <component
     :is="tag"
-    :class="[{ 'mdc-list-item': !separator, 'mdc-list-divider': separator, 'mdc-list-item--ripple': ripple }]"
+    :class="[{ 'mdc-list-item': !separator, 'mdc-list-divider': separator, 'mdc-list-item--ripple': ripple, 'mdc-list-item--multiline': multiline }]"
     :role="separator ? 'separator' : false"
     @click="$emit('click', $event)"
   >
@@ -11,11 +11,23 @@
     <span class="mdc-list-item__start-detail avatar" v-if="$slots['avatar']">
       <slot name="avatar"></slot>
     </span>
-    <span class="mdc-list-item__text">
-      <slot></slot>
+    <span
+      :class="['mdc-list-item__text', {
+        'mdc-list-item__text--with-detail-1':
+          ($slots['start-detail'] && !$slots['end-detail']) || ($slots['end-detail'] && !$slots['start-detail']),
+        'mdc-list-item__text--with-detail-2':
+          $slots['start-detail'] && $slots['end-detail']
+      }]"
+    >
+      <slot>
+        <span :class="['mdc-list-item__text__primary', { 'mdc-list-item__text__primary--truncate': truncate }]">{{ text }}</span>
+      </slot>
       <span class="mdc-list-item__text__secondary" v-if="$slots['secondary-text']">
         <slot name="secondary-text"></slot>
       </span>
+    </span>
+    <span class="mdc-list-item__end-detail" v-if="$slots['end-detail']">
+      <slot name="end-detail"></slot>
     </span>
   </component>
 </template>
@@ -29,6 +41,9 @@ export default {
     tag: VueTypes.string.def('li'),
     separator: VueTypes.bool.def(false),
     ripple: VueTypes.bool.def(false),
+    text: VueTypes.string,
+    truncate: VueTypes.bool.def(false),
+    multiline: VueTypes.bool.def(false),
   },
   mounted() {
     if (this.ripple) {
@@ -56,23 +71,17 @@ export default {
 <style scoped lang="scss">
 @import './mdc-variables';
 @import '@material/ripple/mixins';
-@import '@material/list/mdc-list'; // FIXME this means styles are included twice, once here and once in List
 
 .mdc-list-item {
-  height: auto;
-  align-items: flex-start;
   color: #424242;
 }
 
-.mdc-list-item,
-.mdc-list-item.mdc-ripple-upgraded {
+.mdc-list-item--multiline,
+.mdc-list-item--multiline.mdc-ripple-upgraded {
+  height: auto;
+  align-items: flex-start;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.mdc-list-item.mdc-ripple-upgraded {
-  // HACK when the list item is given a ripple, the list item is moved left and given padding, so the ripple bleeds over to the edge of the list, however it gives the list item the wrong width
-  width: calc(100% + 2 * #{$mdc-list-side-padding}) !important;
 }
 
 .mdc-list-item--ripple {
@@ -85,12 +94,15 @@ export default {
 
 .mdc-list-item__start-detail {
   margin-right: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mdc-list-item__start-detail.avatar {
-  margin-top: 0.4rem;
-  margin-left: -0.1rem;
-  margin-right: 1.1rem;
+  // margin-left: -0.1rem;
+  // margin-right: 1.2rem;
+  margin-right: 1rem;
   height: 2rem;
   width: 2rem;
 
@@ -99,5 +111,20 @@ export default {
     height: 2rem;
     border-radius: 50%;
   }
+}
+
+.mdc-list-item__text__primary--truncate {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.mdc-list-item__text--with-detail-1 {
+  max-width: calc(100% - 3rem);
+}
+
+.mdc-list-item__text--with-detail-2 {
+  max-width: calc(100% - 6rem);
 }
 </style>

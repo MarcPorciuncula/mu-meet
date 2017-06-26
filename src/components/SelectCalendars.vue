@@ -1,15 +1,19 @@
 <template>
   <layout-section>
-    <layout-container padding="less">
+    <layout-container padding="min">
       <mdc-list>
-        <mdc-list-item v-for="calendar of calendars" class="menu-item">
+        <mdc-list-item
+          v-for="calendar of calendars"
+          class="menu-item"
+          :text="calendar.summary"
+          truncate
+        >
           <div
-            class="mdc-list-item__start-detail calendar-dot"
+            slot="start-detail"
+            class="calendar-dot"
             :style="`background-color: ${calendar.backgroundColor}`"
-          >
-          </div>
-          <span class="calendar-name">{{ calendar.summary }}</span>
-          <div class="mdc-list-item__end-detail">
+          ></div>
+          <div slot="end-detail">
             <mdc-checkbox
               :value="calendar.selected"
               @change="updateCalendarSelected({ id: calendar.id, selected: $event })"
@@ -17,9 +21,9 @@
           </div>
         </mdc-list-item>
       </mdc-list>
-      <div style="text-align: right">
+      <layout-container padding="min" style="text-align: right">
         <mdc-button class="confirm-button" @click="confirm">Confirm</mdc-button>
-      </div>
+      </layout-container>
     </layout-container>
   </layout-section>
 </template>
@@ -66,21 +70,21 @@ export default {
   overflow: visible;
 }
 
-.confirm-button {
-  margin-top: 3rem;
-}
-
-.mdc-list-item__start-detail.calendar-dot {
-  height: 1rem;
-  width: 1rem;
-  border-radius: 50%;
-  margin-right: 1rem;
+.mdc-list-item__text {
+  max-width: calc(100% - 10rem) !important;
 }
 
 .calendar-name {
   text-overflow: ellipsis;
   overflow-y: hidden;
   white-space: nowrap;
-  max-width: calc(100% - 5rem);
+  // max-width: 100%;
+  // width: 100%;
+}
+
+.calendar-dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
 }
 </style>

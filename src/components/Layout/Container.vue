@@ -33,18 +33,18 @@ export default {
 }
 
 .layout-container--pad-min {
-  padding: 0.5rem;
+  padding: 0 0.5rem;
 }
 
 .layout-container--pad-less {
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 .layout-container--pad-normal {
-  padding: 1.5rem;
+  padding: 0 1.5rem;
 }
 
 .layout-container--pad-more {
-  padding: 2.5rem;
+  padding: 0 2.5rem;
 }
 </style>
