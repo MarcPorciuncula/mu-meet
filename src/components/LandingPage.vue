@@ -11,18 +11,18 @@
         </transition>
       </div>
     </header-bar>
+
     <layout-section class="section-splash">
-      <layout-container class="section-vertical-align" ref="splash">
-        <div>
-          <type-text tag="h1" type="display1">
-            MUmeet finds meeting times based on your team's calendars.
-          </type-text>
-          <router-link :to="links.signin">
-            <mdc-button hero raised class="get-started">Find a time</mdc-button>
-          </router-link>
-        </div>
-      </layout-container>
+      <div class="call-to-action" ref="splash">
+        <type-text tag="h1" type="display1">
+          MUmeet finds meeting times based on your team's calendars.
+        </type-text>
+        <router-link :to="links.signin" class="call-to-action_action">
+          <mdc-button hero raised class="get-started">Find a time</mdc-button>
+        </router-link>
+      </div>
     </layout-section>
+
     <landing-section>
       <span slot="headline">
         Find meeting times that suit you and your team's calendars.
@@ -54,20 +54,20 @@
       </span>
     </landing-section>
     <layout-section class="section-get-started">
-      <layout-container padding="normal">
+      <div padding="normal" class="call-to-action">
         <type-container>
           <type-text tag="h2" type="display1">
             Round up your team and find a better meeting time, it's easy with MUmeet.
           </type-text>
         </type-container>
         <div style="text-align: center" ref="getStarted">
-          <router-link :to="links.signin">
+          <router-link :to="links.signin" class="call-to-action_action">
             <mdc-button hero raised class="get-started">
               Find a time
             </mdc-button>
           </router-link>
         </div>
-      </layout-container>
+      </div>
     </layout-section>
     <page-footer></page-footer>
   </div>
@@ -132,7 +132,7 @@ export default {
         threshold: THRESHOLD,
       },
     );
-    this.observer.observe(this.$refs.splash.$el);
+    this.observer.observe(this.$refs.splash);
     this.observer.observe(this.$refs.getStarted);
   },
   methods: {
@@ -152,13 +152,32 @@ export default {
   position: relative;
 }
 
+.call-to-action {
+  max-width: 34rem;
+  padding: 1.5rem
+}
+
+.call-to-action_action {
+  display: block;
+  margin: 2rem auto;
+}
+
 .section-splash {
   min-height: calc(100vh - 3.475rem);
   height: 0;
   background: #ECEFF1;
+  justify-content: center;
+}
 
-  .get-started {
-    margin-top: 2rem;
+@media (min-width: 28rem) {
+  .call-to-action_action {
+    width: 10rem;
+  }
+}
+
+@media (min-width: 46rem) {
+  .section-splash {
+    min-height: 100vh;
   }
 }
 
@@ -173,12 +192,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.section-vertical-align {
-  display: flex;
-  align-items: center;
-  height: 100%;
 }
 
 .get-started {

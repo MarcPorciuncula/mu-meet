@@ -79,7 +79,7 @@ export default {
 .app-shell {
   min-height: 100vh;
   position: relative;
-  background-color: rgba(#ECEFF1, 0.2);
+  background-color: #F5F5F5;
 }
 
 .section-title {
@@ -97,5 +97,10 @@ export default {
 
 .hidden {
   opacity: 0;
+}
+
+.content {
+  min-height: 72vh;
+  height: 0;
 }
 </style>

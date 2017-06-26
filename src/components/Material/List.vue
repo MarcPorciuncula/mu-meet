@@ -18,9 +18,3 @@ export default {
 @import './mdc-variables';
 @import '@material/list/mdc-list';
 </style>
-
-<style scoped lang="scss">
-.mdc-list {
-  font-family: "Open Sans", sans-serif;
-}
-</style>

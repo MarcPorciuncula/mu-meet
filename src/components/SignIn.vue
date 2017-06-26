@@ -1,6 +1,6 @@
 <template>
   <layout-section class="section-signin">
-    <layout-container>
+    <layout-container class="container-signin" padding="less">
       <type-container>
         <type-text tag="h3" type="headline">
           Sign in with Google to continue to MUmeet.
@@ -13,7 +13,7 @@
         </type-text>
         <div class="signin-action-container">
         <google-signin-button v-on:click="signIn" :disabled="isPendingSignIn || isSignedIn" />
-          <type-text tag="p" type="body2" class="help-text" v-show="!(isPendingSignIn || isSignedIn)">
+          <type-text tag="p" type="body2" class="help-text">
             This will pop up a new tab.
           </type-text>
         </div>
@@ -58,6 +58,8 @@ export default {
 .section-signin {
   min-height: 72vh;
   height: 0;
+  justify-content: center;
+  padding: 1rem 1rem 3.475rem 1rem;
 }
 
 .help-text {
@@ -69,5 +71,13 @@ export default {
 .signin-action-container {
   text-align: center;
   margin: 3rem;
+}
+
+.container-signin {
+  max-width: 30rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.2rem;
+  background-color: #fff;
+  // TODO utilise a callout intead of using the same style
 }
 </style>
