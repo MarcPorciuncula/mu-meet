@@ -5,7 +5,7 @@ import resolvers from './resolvers';
 const schema = makeExecutableSchema({
   typeDefs: types,
   resolvers,
-  logger: { log: err => console.err(err) },
+  logger: { log: err => console.error(err) },
   allowUndefinedInResolve: false,
   resolverValidationOptions: {
     requireResolversForArgs: true,

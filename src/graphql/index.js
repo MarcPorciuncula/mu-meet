@@ -2,30 +2,35 @@ import { execute, parse, validate, specifiedRules } from 'graphql';
 import schema from './schema';
 import invariant from 'invariant';
 
-class GraphQLErrors extends Error {
+class ValidationError extends Error {
+  errors: Array<Error>;
+  message: string;
+
   constructor(errors) {
-    super(errors.map(err => err.message).join('\n'));
+    super();
     this.errors = errors;
+    this.message = 'GraphQL query has validation errors';
   }
 }
 
+// Queries the Firebase database according to the GraphQL schema defined in ./schema.js
+// The root can either be a root database reference or a JSON object that mirrors the
+// structure of the Firebase database
 export async function query({ query: queryString, vars = {}, root }) {
-  invariant(queryString);
-  invariant(root, 'Must supply root ref');
+  invariant(queryString, 'must supply querystring');
+  invariant(root, 'Must supply root ref or database object');
+
   const doc = parse(queryString);
   const errors = validate(schema, doc, specifiedRules);
   if (errors.length) {
-    if (errors.length === 1) {
-      throw errors[0];
-    } else {
-      throw new GraphQLErrors(errors);
-    }
+    throw new ValidationError(errors);
   }
+
   const result = await execute(
     schema,
     doc,
     root,
-    {} /* context */,
+    { root } /* context */,
     vars,
     /* operationName */
   );
