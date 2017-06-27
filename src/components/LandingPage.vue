@@ -1,108 +1,128 @@
 <template>
   <div class="wrapper">
-    <header class="header">
-      <div style="flex-grow: 1">
-        <mumeet-logo class="header_logo"></mumeet-logo>
-      </div>
-      <transition name="drop-in">
-        <router-link to="/login" v-show="showHeaderGetStarted">
-          <mdc-button class="get-started">
-            Find a time
-          </mdc-button>
-        </router-link>
-      </transition>
-    </header>
-    <section class="section--splash" ref="splash">
-      <div class="section_centered section_vertical-align">
-        <div>
-          <h1 class="section_headline">
-            A quick and easy meeting scheduler
-          </h1>
-          <router-link to="/login">
-            <mdc-button class="get-started">Find a time</mdc-button>
+    <header-bar title="helo">
+      <div slot="controls">
+        <transition name="drop-in">
+          <router-link :to="links.signin" v-show="showHeaderGetStarted" style="display: block">
+            <mdc-button raised class="get-started">
+              Find a time
+            </mdc-button>
           </router-link>
-        </div>
+        </transition>
       </div>
-    </section>
-    <section>
-      <div class="copy">
-        <h2 class="section_headline">
-          Find meeting times that suit you and your team's calendars.
-        </h2>
-        <p>
-          Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
-        </p>
+    </header-bar>
+
+    <layout-section class="section-splash">
+      <div class="call-to-action" ref="splash">
+        <type-text tag="h1" type="display1">
+          MUmeet finds meeting times based on your team's calendars.
+        </type-text>
+        <router-link :to="links.signin" class="call-to-action_action">
+          <mdc-button hero raised class="get-started">Find a time</mdc-button>
+        </router-link>
       </div>
-    </section>
-    <section class="section--graphic">
+    </layout-section>
+
+    <landing-section>
+      <span slot="headline">
+        Find meeting times that suit you and your team's calendars.
+      </span>
+      <span slot="body">
+        Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
+      </span>
+    </landing-section>
+    <section class="section-graphic">
 
     </section>
-    <section>
-      <div class="copy">
-        <h2 class="section_headline">
-          Powered by Google Calendar
-        </h2>
-        <p>
-          MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar.
-        </p>
-      </div>
-    </section>
-    <div class="section--graphic">
-
-    </div>
-    <section>
-      <div class="copy">
-        <h2 class="section_headline">
-          Sync your uni timetable with one click
-        </h2>
-        <p>
-          MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll automatically find and sync your timetable to Google Calendar. (Coming soon)
-        </p>
-      </div>
-    </section>
+    <landing-section>
+      <span slot="headline">
+        Powered by Google Calendar
+      </span>
+      <span slot="body">
+        MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar.
+      </span>
+    </landing-section>
     <div class="section-graphic">
 
     </div>
-    <section class="section--get-started" ref="getStarted">
-      <div class="section_centered">
-        <div>
-          <h2 class="section_headline">
-            What are you waiting for?
-          </h2>
-          <p>Find a meeting time with your team</p>
-          <router-link to="/login">
-            <mdc-button class="get-started">
+    <landing-section>
+      <span slot="headline">
+        Sync your uni timetable with one click
+      </span>
+      <span slot="body">
+        MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll automatically find and sync your timetable to Google Calendar. (Coming soon)
+      </span>
+    </landing-section>
+    <layout-section class="section-get-started" padding="more">
+      <div class="call-to-action">
+        <type-container>
+          <type-text tag="h2" type="display1">
+            Round up your team and find a better meeting time, it's easy with MUmeet.
+          </type-text>
+        </type-container>
+        <div style="text-align: center" ref="getStarted">
+          <router-link :to="links.signin" class="call-to-action_action">
+            <mdc-button hero raised class="get-started">
               Find a time
             </mdc-button>
           </router-link>
         </div>
       </div>
-    </section>
-    <div class="footer">
-      <p>
-        Design and development by<br/> <a class="author-link" href="https://github.com/MarcoThePoro">Marc Porciuncula</a> and <a class="author-link">Kalana Vithana</a><br/>
-        Second runner up in <b>Unihack Mini 2017</b><br/>
-        Made with &lt;3 in Melbourne Australia<br/>
-        <a href="https://github.com/MarcoThePoro/mu-meet">View source on GitHub</a>
-      </p>
-    </div>
+    </layout-section>
+    <page-footer></page-footer>
   </div>
 </template>
 
 <script>
-import MdcButton from './MdcButton';
-import MumeetLogo from './MumeetLogo';
+import './Material/typography.scss';
+import MdcButton from './Material/Button';
+import { TypeText, TypeContainer } from './Material/Typography';
+import LayoutContainer from './Layout/Container';
+import HeaderBar from './HeaderBar';
+import PageFooter from './Footer';
+import LayoutSection from './Layout/Section';
+import signin from '@/router/signin';
 
 const THRESHOLD = 0.1;
+
+const LandingSection = {
+  components: {
+    LayoutContainer,
+    TypeText,
+    TypeContainer,
+    LayoutSection,
+  },
+  template: `
+    <layout-section tag="section" padding="more">
+      <layout-container padding="more">
+        <type-container>
+          <type-text tag="h2" type="headline">
+            <slot name="headline"></slot>
+          </type-text>
+          <type-text tag="p" type="body1">
+            <slot name="body"></slot>
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
+  `,
+};
 
 export default {
   components: {
     MdcButton,
-    MumeetLogo,
+    TypeText,
+    TypeContainer,
+    LandingSection,
+    LayoutContainer,
+    HeaderBar,
+    PageFooter,
+    LayoutSection,
   },
   data() {
     return {
       showHeaderGetStarted: false,
+      links: { signin: signin.path },
     };
   },
   mounted() {
@@ -132,106 +152,49 @@ export default {
   position: relative;
 }
 
-.header {
-  @include mdc-elevation(2);
-
-  height: 5.8rem;
-  position: fixed;
-  z-index: 1;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  background-color: rgba(#fff, 0.95);
-  width: 100%;
+.call-to-action {
+  max-width: 34rem;
+  padding: 1.5rem
 }
 
-.header_logo {
-  font-size: 2.4rem;
+.call-to-action_action {
+  display: block;
+  margin: 2rem auto;
 }
 
-section {
-  padding: 3rem 4rem 2rem 4rem;
-}
-
-.section_headline {
-  font-weight: 300;
-}
-
-.section--splash {
-  top: 0;
-  width: 100%;
-  min-height: 100vh;
+.section-splash {
+  min-height: calc(100vh - 3.475rem);
   height: 0;
   background: #ECEFF1;
+  justify-content: center;
+}
 
-  .section_headline {
-    font-size: 3.6rem;
-  }
-
-  .get-started {
-    margin-top: 2rem;
+@media (min-width: 28rem) {
+  .call-to-action_action {
+    width: 10rem;
   }
 }
 
-.section--get-started {
-  padding-bottom: 12rem;
-
-  .section_headline {
-    font-size: 2.6rem;
-    margin-bottom: 0;
-  }
-  p {
-    font-size: 1.6rem;
-  }
-  .get-started {
-    margin-top: 2rem;
+@media (min-width: 46rem) {
+  .section-splash {
+    min-height: 100vh;
   }
 }
 
-.section--graphic {
+.section-graphic {
   background: #ECEFF1;
-  height: 32rem;
+  height: 20rem;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.section_centered {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.section_vertical-align {
-  display: flex;
-  align-items: center;
-  height: 100%;
 }
 
 .get-started {
   background-color: #2196F3;
   color: white;
-  line-height: 2.6rem;
-}
-
-.footer {
-  color: #FFFFFF;
-  background-color: #4F4F4F;
-  padding: 1rem 1rem 2rem 1rem;
-  font-size: 1rem;
-  text-transform: uppercase;
-  text-align: center;
-  font-weight: 300;
-}
-
-.author-link, b {
-  font-weight: 500;
 }
 
 .drop-in {
-
   &-enter-active, &-leave-active {
     will-change: transform, opacity;
   }

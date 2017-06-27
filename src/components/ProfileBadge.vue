@@ -15,17 +15,31 @@
         <img v-if="user" class="header_profile-picture" :src="user.profile.picture"/>
       </transition>
     </div>
-    <overflow-menu/>
+    <mdc-menu>
+      <router-link v-show="isSignedIn && $route.name !== dashboardRoute.name" :to="{ name: dashboardRoute.name }">
+        <mdc-menu-item>
+          Return to dashboard
+        </mdc-menu-item>
+      </router-link>
+      <router-link v-show="isSignedIn" to="/signout">
+        <mdc-menu-item>
+          Sign out
+        </mdc-menu-item>
+      </router-link>
+    </mdc-menu>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import OverflowMenu from './OverflowMenu';
+import MdcMenu from './Material/Menu';
+import MdcMenuItem from './Material/MenuItem';
+import dashboardRoute from '@/router/dashboard';
 
 export default {
   components: {
-    OverflowMenu,
+    MdcMenu,
+    MdcMenuItem,
   },
   data() {
     return {
@@ -47,6 +61,7 @@ export default {
       isSignedIn: state => state.auth.isSignedIn,
       user: state => state.users.users[state.auth.uid],
     }),
+    dashboardRoute: () => dashboardRoute,
   },
   watch: {
     user(value, old) {
@@ -81,14 +96,14 @@ export default {
 }
 
 .profile-badge {
-  padding: 0 0.5rem;
+  // padding: 0 0.5rem;
 }
 
 .header_profile-picture {
-  height: 3rem;
+  height: 2rem;
   width: auto;
   border-radius: 50%;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 .slide-up {

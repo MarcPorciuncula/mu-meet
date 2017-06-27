@@ -1,4 +1,3 @@
-import Meet from '@/components/Meet';
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
 
@@ -19,9 +18,9 @@ export default {
   path: ':code',
   name: 'meet-current-session',
   components: {
-    default: Meet,
+    default: () => import('@/Components/Meet').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
   beforeEnter: beforeEnter,
-  meta: { shell: true },
+  meta: { shell: true, title: 'Meeting Planner' },
 };

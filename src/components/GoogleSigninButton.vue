@@ -12,6 +12,9 @@ export default {};
 .google-signin-button {
   background: url("../assets/google_signin_buttons/btn_google_signin_light_normal_web.png");
   width: 191px;
+  margin-left: -4px;
+  margin-right: -4px;
+  padding: 0;
   height: 46px;
   border: none;
   border-radius: 2px;

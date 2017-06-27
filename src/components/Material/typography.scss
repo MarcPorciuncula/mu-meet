@@ -1,0 +1,23 @@
+@import 'mdc-variables';
+@import '@material/typography/variables';
+@import '@material/typography/mixins';
+
+.type-container {
+  padding-top: 0.75rem;
+}
+
+.type {
+  @include mdc-typography-base;
+  color: #424242;
+}
+
+@each $style in map-keys($mdc-typography-styles) {
+  .type--#{$style} {
+    @include mdc-typography($style);
+  }
+
+  .type-container > .type--#{$style},
+  .type--#{$style}.type--adjust-margin {
+    @include mdc-typography-adjust-margin($style);
+  }
+}

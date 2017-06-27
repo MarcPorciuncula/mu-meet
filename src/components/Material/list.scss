@@ -1,0 +1,11 @@
+@import './mdc-variables';
+@import '@material/list/mdc-list';
+
+.mdc-list-item.mdc-ripple-upgraded {
+  // HACK when the list item is given a ripple, the list item is moved left and given padding, so the ripple bleeds over to the edge of the list, however it gives the list item the wrong width
+  width: calc(100% + 2 * #{$mdc-list-side-padding}) !important;
+}
+
+.mdc-list-group {
+  width: 100%;
+}

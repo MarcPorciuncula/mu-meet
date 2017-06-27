@@ -12,11 +12,11 @@ async function beforeEnter(to, from, next) {
 }
 
 export default {
-  path: '/login',
+  path: '/signin',
   components: {
     default: SignIn,
     'app-bar-control': ProfileBadge,
   },
-  meta: { shell: true },
+  meta: { shell: true, title: 'Sign in' },
   beforeEnter,
 };

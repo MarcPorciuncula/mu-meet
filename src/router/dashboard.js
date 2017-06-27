@@ -1,4 +1,3 @@
-import Dashboard from '@/components/Dashboard';
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
 
@@ -11,9 +10,10 @@ export default {
   name: 'dashboard',
   path: '/dashboard',
   components: {
-    default: Dashboard,
+    default: () =>
+      import('@/components/Dashboard').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
-  meta: { shell: true },
+  meta: { shell: true, title: 'Dashboard' },
   beforeEnter,
 };
