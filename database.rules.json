@@ -4,20 +4,20 @@
       "$id": {
         "config": {
           ".write": false,
-          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
+          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()"
         },
         "host": {
           ".write": "data.val() === auth.uid",
-          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
+          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()"
         },
         "result": {
           ".write": false,
-          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
+          ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()"
         },
         "users": {
           ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
           "$uid": {
-            ".write": "$uid === auth.uid",
+            ".write": "$uid === auth.uid"
           }
         },
         "startedAt": {
