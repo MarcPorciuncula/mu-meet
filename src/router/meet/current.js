@@ -18,7 +18,7 @@ export default {
   path: ':code',
   name: 'meet-current-session',
   components: {
-    default: () => import('@/Components/Meet').then(exports => exports.default),
+    default: () => import('@/components/Meet').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
   beforeEnter: beforeEnter,

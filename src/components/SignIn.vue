@@ -26,7 +26,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import GoogleSigninButton from './GooglesigninButton';
+import GoogleSigninButton from './GoogleSigninButton';
 import LayoutContainer from './Layout/Container';
 import LayoutSection from './Layout/Section';
 import { TypeContainer, TypeText } from './Material/Typography';
