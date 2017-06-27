@@ -12,7 +12,7 @@
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
           <div slot="actions">
-            <mdc-button disabled>
+            <mdc-button @click="archiveLastMeetingPlan()">
               Archive
             </mdc-button>
             <router-link :to="{ name: meetingPlanRoute.name, params: { code: lastMeetingPlan.id } }">
@@ -47,7 +47,7 @@ import LayoutSection from '@/components/Layout/Section';
 import MdcButton from '@/components/Material/Button';
 import MdcList from '@/components/Material/List';
 import MdcListItem from '@/components/Material/ListItem';
-import Callout from '@/components/Components/Callout';
+import Callout from '@/components/Callout';
 import distanceInWords from 'date-fns/distance_in_words';
 
 export default {
@@ -69,13 +69,17 @@ export default {
     }),
     meetingPlanRoute: VueTypes.shape({
       name: VueTypes.string,
-    }),
+    }).loose,
+    archiveLastMeetingPlan: VueTypes.func.isRequired,
     actions: VueTypes.arrayOf(
       VueTypes.oneOfType([
+        VueTypes.oneOf([null]),
         VueTypes.shape({
           text: VueTypes.string.isRequired,
+          route: VueTypes.shape({
+            name: VueTypes.string,
+          }),
         }),
-        VueTypes.oneOf([null]),
       ]),
     ),
   },

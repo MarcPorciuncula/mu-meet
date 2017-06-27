@@ -10,7 +10,7 @@ import './index.scss';
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
-new Vue({
+let vm = new Vue({
   el: '#app',
   store,
   router,
@@ -21,5 +21,5 @@ new Vue({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  window.store = store;
+  window.vm = vm;
 }

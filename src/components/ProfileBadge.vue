@@ -16,6 +16,11 @@
       </transition>
     </div>
     <mdc-menu>
+      <router-link v-show="isSignedIn && $route.name !== dashboardRoute.name" :to="{ name: dashboardRoute.name }">
+        <mdc-menu-item>
+          Return to dashboard
+        </mdc-menu-item>
+      </router-link>
       <router-link v-show="isSignedIn" to="/signout">
         <mdc-menu-item>
           Sign out
@@ -27,13 +32,12 @@
 
 <script>
 import { mapState } from 'vuex';
-import OverflowMenu from './OverflowMenu';
 import MdcMenu from './Material/Menu';
 import MdcMenuItem from './Material/MenuItem';
+import dashboardRoute from '@/router/dashboard';
 
 export default {
   components: {
-    OverflowMenu,
     MdcMenu,
     MdcMenuItem,
   },
@@ -57,6 +61,7 @@ export default {
       isSignedIn: state => state.auth.isSignedIn,
       user: state => state.users.users[state.auth.uid],
     }),
+    dashboardRoute: () => dashboardRoute,
   },
   watch: {
     user(value, old) {

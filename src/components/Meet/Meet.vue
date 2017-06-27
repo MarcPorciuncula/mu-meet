@@ -57,6 +57,21 @@
     </layout-section>
     <team-list />
     <meeting-times />
+    <layout-section padding="normal">
+      <layout-container padding="min">
+        <mdc-list-group>
+          <mdc-list-group-divider />
+          <mdc-list>
+            <mdc-list-item ripple @click="archive()">
+              <span slot="start-detail" class="material-icons">
+                archive
+              </span>
+              Archive meeting plan
+            </mdc-list-item>
+          </mdc-list>
+        </mdc-list-group>
+      </layout-container>
+    </layout-section>
   </div>
 </template>
 
@@ -97,6 +112,7 @@ export default {
     calendarsRoute: VueTypes.shape({ name: VueTypes.string.isRequired }).loose
       .isRequired,
     findMeetingTimes: VueTypes.func.isRequired,
+    archive: VueTypes.func.isRequired,
   },
   methods: {
     copyInviteLink(event) {
