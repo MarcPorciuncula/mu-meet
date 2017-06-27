@@ -3,6 +3,7 @@ import firebase from 'firebase';
 import R from 'ramda';
 import { functions } from '@/functions';
 import addSeconds from 'date-fns/add_seconds';
+import { query } from '@/graphql';
 
 type EmptySessionState = {
   id: null,
@@ -149,10 +150,26 @@ async function joinMeetSession(
   });
 
   const sessionRef = database.ref(`/sessions/${id}`);
-  const startedAt = await sessionRef
-    .child('startedAt')
-    .once('value')
-    .then(s => s.val());
+
+  const res = await query({
+    query: gql`
+      query SessionExistenceQuery($id: ID!) {
+        session(id: $id) {
+          startedAt
+        }
+      }
+    `,
+    vars: { id },
+    root: database.ref(),
+  });
+
+  console.log(res);
+  const startedAt = R.path(['data', 'session', 'startedAt'])(res);
+
+  // const startedAt = await sessionRef
+  //   .child('startedAt')
+  //   .once('value')
+  //   .then(s => s.val());
   if (startedAt === null) {
     throw new Error('session does not exist');
   }

@@ -9,6 +9,9 @@ module.exports = {
   env: {
     browser: true,
   },
+  globals: {
+    gql: false,
+  },
   // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
   extends: ['standard', 'prettier'],
   // required to lint *.vue files
