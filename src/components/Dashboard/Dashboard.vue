@@ -7,7 +7,7 @@
             Resume your meeting plan
           </span>
           <span slot="body">
-            You started a meeting plan {{ lastMeetingPlan.users.length ? 'with' : '' }}
+            You started a meeting plan {{ Object.keys(lastMeetingPlan.users).length ? 'with' : '' }}
             {{ Object.values(lastMeetingPlan.users).map(x => x.profile.given_name) | list }}
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
