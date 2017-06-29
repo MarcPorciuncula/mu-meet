@@ -19,8 +19,9 @@ class LeafLiveQuery implements LiveQuery {
   _observable: Observable<any>;
   isActive: boolean;
   _handleValueSnapshot: (snapshot: any) => void;
+  transform: (value: any) => any;
 
-  constructor(ref: Reference) {
+  constructor(ref: Reference, transform: (value: any) => any = x => x) {
     invariant(
       ref && ref instanceof Reference,
       'Must supply a Firebase reference',
@@ -29,6 +30,7 @@ class LeafLiveQuery implements LiveQuery {
     this.value = null;
     this._observable = new Observable();
     this.isActive = false;
+    this.transform = transform;
 
     this._handleValueSnapshot = this._handleValueSnapshot.bind(this);
   }
@@ -64,7 +66,7 @@ class LeafLiveQuery implements LiveQuery {
   }
 
   _handleValueSnapshot(snapshot: any) {
-    this.value = snapshot.val();
+    this.value = this.transform(snapshot.val());
     this._observable.next(this.value);
   }
 }

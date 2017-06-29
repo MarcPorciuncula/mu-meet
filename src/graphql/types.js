@@ -48,6 +48,7 @@ type Query {
 
 schema {
   query: Query
+  subscription: Query
 }
 `;
 

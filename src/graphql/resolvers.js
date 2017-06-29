@@ -2,47 +2,52 @@
 // Contains resolver functions for the GraphQL schema types defined in schema.js
 // Maps these types to their actual Firebase database locations
 
-import { compose } from 'ramda';
 import { GraphQLScalarType, Kind } from 'graphql';
-import { leaf, getKey, child, doesExist, getRoot } from './resolver-utils';
+import { leaf, child } from './resolver';
 
 const GraphQLDateType = new GraphQLScalarType({
   name: 'Date',
-  // String to date
   serialize(date) {
     return new Date(date);
   },
-  // FIXME not sure which way this is supposed to convert
   parseValue(date) {
-    console.log('parseValue', date);
     return date.toString();
   },
-  // FIXME not sure which way this is supposed to convert
   parseLiteral(ast) {
-    console.log('parseLiteral', ast);
     if (ast.kind === Kind.STRING) {
-      return new Date(ast.value);
+      return ast.value;
+    }
+    if (ast.kind === Kind.INT || ast.kind === Kind.FLOAT) {
+      return new Date(ast.value).toString();
     }
     return null;
   },
 });
 
 const Session = {
-  id: getKey,
+  // id: getKey,
   startedAt: leaf('startedAt'),
   config: child('config'),
-  host: async ref => {
-    const id = await leaf('host')(ref);
-    return compose(child(`/users/${id}`), getRoot)(ref);
+  host: (ref, args, context, info) => {
+    if (context.isSubscription) {
+      return {
+        source: leaf('host')(ref, args, context, info),
+        target: value => {
+          return context.root.child('/users/' + value);
+        },
+      };
+    }
+    return leaf('host')(ref, args, context, info).then(id =>
+      child(`/users/${id}`)(context.root, args, context, info),
+    );
   },
-  users: async ref => {
-    const ids = Object.keys(await leaf('users')(ref));
-    const root = getRoot(ref);
-    return Promise.all(ids.map(id => child(`/users/${id}`)(root)));
-  },
-  result: (ref, vars, context, info) => {
-    return child('result')(ref);
-  },
+  users: () => null,
+  // users: async ref => {
+  //   const ids = Object.keys(await leaf('users')(ref));
+  //   const root = getRoot(ref);
+  //   return Promise.all(ids.map(id => child(`/users/${id}`)(root)));
+  // },
+  result: child('result'),
 };
 
 const SessionConfig = {
@@ -57,13 +62,11 @@ const SessionConfig = {
 
 const SessionResult = {
   pending: leaf('pending'),
-  meetings: async ref => {
-    return (await leaf('meetings')(ref)) || [];
-  },
+  meetings: leaf('meetings'),
 };
 
 const User = {
-  id: getKey,
+  // id: getKey,
   profile: child('profile'),
 };
 
@@ -74,13 +77,9 @@ const UserProfile = {
 };
 
 const Query = {
-  async session(ref, args, context, info) {
-    const session = child(`sessions/${args.id}`)(ref);
-
-    // We're using startedAt as an existence check, but maybe use an _exists field or something
-    const exists = await doesExist('startedAt')(session);
-
-    return exists ? session : null;
+  session(ref, args, context, info) {
+    const sessionRef = child(`sessions/${args.id}`)(ref, args, context);
+    return sessionRef;
   },
 };
 

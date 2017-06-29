@@ -4,6 +4,7 @@ import {
   LeafLiveQuery,
   ObjectLiveQuery,
   ListLiveQuery,
+  RedirectLiveQuery,
 } from './FirebaseLiveQuery';
 import type { Reference } from 'firebase/database';
 import type Observable from './Observable';
@@ -16,6 +17,8 @@ export default function execute(
   context: any = {},
   vars: { [key: string]: any } = {},
 ): Observable<any> {
+  Object.assign(context, { isSubscription: true, root: rootRef });
+
   const ast = visit(doc, {
     Field: {
       enter(node, key, parent, path, ancestors) {
@@ -35,10 +38,14 @@ export default function execute(
         const innerType = unwrapNonNullType(
           unwrapListType(unwrapNonNullType(type)),
         );
-        let getSubscription;
+        const args = {};
+        node.arguments.forEach(
+          argument => (args[argument.name.value] = argument.value.value),
+        );
+        let getInnerSubscription;
 
         if (innerType instanceof GraphQLObjectType) {
-          getSubscription = ref => {
+          getInnerSubscription = ref => {
             const children = {};
             node.selectionSet.selections.forEach(field => {
               children[field.name.value] = field.__getSubscription(ref);
@@ -46,21 +53,26 @@ export default function execute(
             return new ObjectLiveQuery(ref, children);
           };
         } else {
-          getSubscription = ref => {
-            return new LeafLiveQuery(ref);
+          getInnerSubscription = ref => {
+            return new LeafLiveQuery(ref, innerType._scalarConfig.serialize);
           };
         }
 
+        let getSubscription;
         if (isListType) {
-          const getInnerSubscription = getSubscription;
           getSubscription = parentRef => {
-            const ref = node.__field.resolve(parentRef);
+            const ref = node.__field.resolve(parentRef, args, context);
             return new ListLiveQuery(ref, getInnerSubscription);
           };
         } else {
-          const getInnerSubscription = getSubscription;
           getSubscription = parentRef => {
-            const ref = node.__field.resolve(parentRef);
+            const ref = node.__field.resolve(parentRef, args, context);
+            if (typeof ref.target === 'function') {
+              // this is a redirect
+              return new RedirectLiveQuery(ref.source, (_ref, value) => {
+                return getInnerSubscription(ref.target(value));
+              });
+            }
             return getInnerSubscription(ref);
           };
         }
