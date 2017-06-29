@@ -1,57 +1,30 @@
 // @flow
-import type { Reference } from 'firebase/database';
+/* eslint-disable no-duplicate-imports */
+import invariant from 'invariant';
 import R from 'ramda';
+import { Reference } from 'firebase/database';
+import Observable from './Observable';
+import type { Observer } from './Observable';
 
-type Observer = {
-  next: (value: any) => void,
-  error: (err: Error) => void,
-  complete: () => void,
-};
-
-class Observable {
-  _observers: Set<Observer>;
-
-  constructor() {
-    this._observers = new Set();
-  }
-
-  subscribe(observer: Observer) {
-    this._observers.add(observer);
-    return () => this._unsubscribe(observer);
-  }
-
-  _unsubscribe(observer: Observer) {
-    this._observers.delete(observer);
-  }
-
-  next(value: any) {
-    this._observers.forEach(observer => {
-      observer.next(value);
-    });
-  }
-
-  error(err: Error) {
-    this._observers.forEach(observer => {
-      observer.error(err);
-    });
-  }
-
-  complete() {
-    this._observers.forEach(observer => {
-      observer.complete();
-      this._unsubscribe(observer);
-    });
-  }
+interface LiveQuery {
+  subscribe(observer: Observer<*>): () => void,
 }
 
-class LeafSubscription {
+/*
+ * A live query for a leaf value of the Firebase database.
+ */
+class LeafLiveQuery implements LiveQuery {
   ref: Reference;
   value: any;
-  _observable: Observable;
+  _observable: Observable<any>;
   isActive: boolean;
   _handleValueSnapshot: (snapshot: any) => void;
 
   constructor(ref: Reference) {
+    invariant(
+      ref && ref instanceof Reference,
+      'Must supply a Firebase reference',
+    );
     this.ref = ref;
     this.value = null;
     this._observable = new Observable();
@@ -77,7 +50,7 @@ class LeafSubscription {
     this._observable.complete();
   }
 
-  subscribe(observer: Observer) {
+  subscribe(observer: Observer<any>) {
     if (!this.isActive) {
       this.execute();
     }
@@ -96,19 +69,22 @@ class LeafSubscription {
   }
 }
 
-type _ObjectSubscriptionChild = {
-  subscription: LeafSubscription,
+type _ObjectLiveQueryChild = {
+  subscription: LiveQuery,
   unsubscribe: () => void,
 };
 
-class ObjectSubscription {
+/**
+ * A container for other nested live queries, returning its value as a structured object.
+ */
+class ObjectLiveQuery implements LiveQuery {
   ref: Reference;
-  children: Map<string, _ObjectSubscriptionChild>;
+  children: Map<string, _ObjectLiveQueryChild>;
   value: { [prop: string]: any };
-  _observable: Observable;
+  _observable: Observable<any>;
   isActive: boolean;
 
-  constructor(ref: Reference, children: { [name: string]: LeafSubscription }) {
+  constructor(ref: Reference, children: { [name: string]: LiveQuery }) {
     this.ref = ref;
     this.children = new Map();
     this.value = {};
@@ -116,6 +92,7 @@ class ObjectSubscription {
     this.isActive = false;
 
     Object.entries(children).forEach(([key, subscription]) => {
+      this.value[key] = null;
       this.children.set(key, ({ subscription, unsubscribe: () => {} }: any));
     });
   }
@@ -142,7 +119,7 @@ class ObjectSubscription {
     // complete observers
   }
 
-  subscribe(observer: Observer) {
+  subscribe(observer: Observer<any>) {
     if (!this.isActive) {
       this.execute();
     }
@@ -168,12 +145,16 @@ type _ListSubscriptionChild = {
   value: any,
 };
 
-class ListSubscription {
+/**
+ * A container for other live queries, created dynamically for each child of the
+ * reference, returns its value as an ordered list.
+ */
+class ListLiveQuery implements LiveQuery {
   ref: Reference;
   value: Array<any>;
-  _observable: Observable;
+  _observable: Observable<any>;
   isActive: boolean;
-  makeChildSubscription: (ref: Reference) => any; // TODO Make subscription union type/interface
+  makeChildSubscription: (ref: Reference) => LiveQuery;
   children: Map<string | number, _ListSubscriptionChild>;
   _handleChildAdded: (snapshot: any) => void;
   _handleChildRemoved: (snapshot: any) => void;
@@ -211,7 +192,7 @@ class ListSubscription {
     this._observable.complete();
   }
 
-  subscribe(observer: Observer) {
+  subscribe(observer: Observer<any>) {
     if (!this.isActive) {
       this.execute();
     }
@@ -260,12 +241,16 @@ class ListSubscription {
   }
 }
 
-class RedirectSubscription {
+/**
+ * A live query that takes it's value from some other part of the firebase database, where
+ * the path is based on the leaf value of the given reference
+ */
+class RedirectLiveQuery implements LiveQuery {
   ref: Reference;
   value: Array<any>;
-  _observable: Observable;
+  _observable: Observable<any>;
   isActive: boolean;
-  makeChildSubscription: (ref: Reference, value: any) => any; // TODO Make subscription union type/interface
+  makeChildSubscription: (ref: Reference, value: any) => LiveQuery;
   child: { subscription: any, unsubscribe: () => void };
   _handleChildValue: (value: any) => void;
   _handleValueSnapshot: (snapshot: any) => void;
@@ -303,7 +288,7 @@ class RedirectSubscription {
     this._observable.complete();
   }
 
-  subscribe(observer: Observer) {
+  subscribe(observer: Observer<any>) {
     if (!this.isActive) {
       this.execute();
     }
@@ -336,9 +321,4 @@ class RedirectSubscription {
   }
 }
 
-export {
-  LeafSubscription,
-  ObjectSubscription,
-  ListSubscription,
-  RedirectSubscription,
-};
+export { LeafLiveQuery, ObjectLiveQuery, ListLiveQuery, RedirectLiveQuery };

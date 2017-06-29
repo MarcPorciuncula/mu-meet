@@ -12,6 +12,7 @@ class ValidationError extends Error {
     this.message = 'GraphQL query has validation errors';
   }
 }
+import './test2';
 
 // Queries the Firebase database according to the GraphQL schema defined in ./schema.js
 // The root can either be a root database reference or a JSON object that mirrors the
