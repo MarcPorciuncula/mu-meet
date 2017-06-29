@@ -260,4 +260,85 @@ class ListSubscription {
   }
 }
 
-export { LeafSubscription, ObjectSubscription, ListSubscription };
+class RedirectSubscription {
+  ref: Reference;
+  value: Array<any>;
+  _observable: Observable;
+  isActive: boolean;
+  makeChildSubscription: (ref: Reference, value: any) => any; // TODO Make subscription union type/interface
+  child: { subscription: any, unsubscribe: () => void };
+  _handleChildValue: (value: any) => void;
+  _handleValueSnapshot: (snapshot: any) => void;
+
+  constructor(
+    ref: Reference,
+    makeChildSubscription: (ref: Reference, value: any) => any,
+  ) {
+    this.ref = ref;
+    this.child = { subscription: null, unsubscribe: () => {} };
+    this.value = [];
+    this._observable = new Observable();
+    this.makeChildSubscription = makeChildSubscription;
+    this.isActive = false;
+
+    this._handleChildValue = this._handleChildValue.bind(this);
+    this._handleValueSnapshot = this._handleValueSnapshot.bind(this);
+  }
+
+  async execute() {
+    // This will only work when the client has read access to the list and all children
+    try {
+      await this.ref.once('value');
+      this.ref.on('value', this._handleValueSnapshot);
+    } catch (err) {
+      this._observable.error(err);
+    }
+  }
+
+  cancel() {
+    this.child.unsubscribe();
+    this.child = { subscription: null, unsubscribe: () => {} };
+    this.ref.off('value', this._handleValueSnapshot);
+    this.isActive = false;
+    this._observable.complete();
+  }
+
+  subscribe(observer: Observer) {
+    if (!this.isActive) {
+      this.execute();
+    }
+    const unsubscribe = this._observable.subscribe(observer);
+    return () => {
+      unsubscribe();
+      if (this._observable._observers.size === 0 && this.isActive) {
+        this.cancel();
+      }
+    };
+  }
+
+  _handleValueSnapshot(snapshot: any) {
+    const value = snapshot.val();
+    if (this.child) {
+      this.child.unsubscribe();
+    }
+    const subscription = this.makeChildSubscription(this.ref, value);
+    const unsubscribe = subscription.subscribe({
+      next: this._handleChildValue,
+      error: err => this._observable.error(err),
+      complete: () => {}, // TODO
+    });
+    this.child = { subscription, unsubscribe };
+  }
+
+  _handleChildValue(value: any) {
+    this.value = value;
+    this._observable.next(this.value);
+  }
+}
+
+export {
+  LeafSubscription,
+  ObjectSubscription,
+  ListSubscription,
+  RedirectSubscription,
+};
