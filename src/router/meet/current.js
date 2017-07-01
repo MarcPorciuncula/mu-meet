@@ -1,5 +1,7 @@
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
+import { IS_SUBSCRIBED_CALENDARS } from '@/store/getters';
+import { SUBSCRIBE_CALENDARS } from '@/store/actions';
 
 async function beforeEnter(to, from, next) {
   if (!store.getters.isInSession) {
@@ -8,8 +10,8 @@ async function beforeEnter(to, from, next) {
   if (store.state.meet.session.id !== to.params.code) {
     await store.dispatch('joinMeetSession', to.params.code);
   }
-  if (!Object.values(store.state.calendars).length) {
-    await store.dispatch('fetchCalendars');
+  if (!store.getters[IS_SUBSCRIBED_CALENDARS]) {
+    await store.dispatch(SUBSCRIBE_CALENDARS);
   }
   next();
 }

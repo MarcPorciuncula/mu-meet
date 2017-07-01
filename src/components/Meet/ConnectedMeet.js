@@ -1,8 +1,9 @@
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import R from 'ramda';
 import calendarsRoute from '@/router/calendars';
 import dashboardRoute from '@/router/dashboard';
 import Meet from './Meet';
+import { SELECTED_CALENDARS } from '@/store/getters';
 
 export default {
   name: 'ConnectedMeet',
@@ -26,10 +27,9 @@ export default {
       );
     },
     calendarsRoute: R.always(calendarsRoute),
-    ...mapState({
-      calendars: state =>
-        Object.values(state.calendars).filter(calendar => calendar.selected),
-    }),
+    calendars() {
+      return Object.values(this.$store.getters[SELECTED_CALENDARS]);
+    },
   },
   methods: {
     async findMeetingTimes() {

@@ -337,4 +337,11 @@ class RedirectLiveQuery implements LiveQuery {
   }
 }
 
+export default {
+  Leaf: LeafLiveQuery,
+  Object: ObjectLiveQuery,
+  List: ListLiveQuery,
+  Redirect: RedirectLiveQuery,
+};
+
 export { LeafLiveQuery, ObjectLiveQuery, ListLiveQuery, RedirectLiveQuery };

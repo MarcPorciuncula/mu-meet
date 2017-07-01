@@ -1,61 +1,120 @@
 import Vue from 'vue';
 import * as firebase from 'firebase';
+import invariant from 'invariant';
+import { omit, pickBy, prop } from 'ramda';
+import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
+import {
+  UPDATE_CALENDAR,
+  UPDATE_CALENDARS_SUBSCRIPTION,
+} from '@/store/mutations';
+import { SUBSCRIBE_CALENDARS, SET_CALENDAR_SELECTED } from '@/store/actions';
+import {
+  CALENDARS,
+  SELECTED_CALENDARS,
+  IS_SUBSCRIBED_CALENDARS,
+} from '@/store/getters';
 
-const state = {};
+const database = firebase.database();
 
-function hasCalendarsSelected(state, getters) {
-  return !!Object.values(state).filter(calendar => calendar.selected).length;
-}
+const state = {
+  _subscription: null,
+};
 
-function updateCalendar(state, calendar) {
-  Vue.set(state, encodeId(calendar.id), calendar);
-  if (typeof state[encodeId(calendar.id)].selected === 'undefined') {
-    Vue.set(state[encodeId(calendar.id)], 'selected', false);
-  }
-}
+const mutations = {
+  [UPDATE_CALENDAR](state, calendar) {
+    invariant(calendar, 'must supply calendar data patch, got %s', calendar);
+    invariant(
+      calendar && typeof calendar.id === 'string',
+      'must supply calendar.id, got %s',
+      calendar.id,
+    );
 
-function _updateCalendarSelected(state, { id, selected }) {
-  state[encodeId(id)].selected = selected;
-}
+    if (!state[calendar.id]) {
+      Vue.set(state, calendar.id, calendar);
+    } else {
+      Object.assign(state[calendar.id], omit(['id'], calendar));
+    }
+  },
+  [UPDATE_CALENDARS_SUBSCRIPTION](state, { unsubscribe }) {
+    state._subscription = { unsubscribe };
+  },
+};
 
-async function fetchCalendars({ commit, dispatch, state, rootState }) {
-  dispatch('addProgressItem', {
-    id: 'calendars/fetch',
-    message: 'Fetching your calendars',
-  });
-  const database = firebase.database();
-  const userRef = database.ref(`/users/${rootState.auth.uid}`);
+const actions = {
+  [SUBSCRIBE_CALENDARS]({ commit, rootState, state }) {
+    invariant(
+      !state._subscription,
+      'attempted to subscribe to calendars but already subscribed',
+    );
 
-  const calendars = await userRef
-    .child('calendars')
-    .once('value')
-    .then(s => s.val());
-  const selected = await userRef
-    .child('selected-calendars')
-    .once('value')
-    .then(s => s.val() || {});
+    const uid = rootState.auth.uid;
+    const root = database.ref();
+    const user = root.child(`users/${uid}`);
 
-  for (const calendar of calendars) {
-    commit('updateCalendar', calendar);
-    commit('updateCalendarSelected', {
-      id: calendar.id,
-      selected: !!selected[encodeId(calendar.id)],
+    // Construct the root subscription
+    const subscription = new LiveQuery.List(user.child('calendars'), ref => {
+      const query = new LiveQuery.Object(ref, {
+        id: new LiveQuery.Leaf(ref.child('id')),
+        summary: new LiveQuery.Leaf(ref.child('summary')),
+        backgroundColor: new LiveQuery.Leaf(ref.child('backgroundColor')),
+        selected: new LiveQuery.Redirect(
+          ref.child('id'),
+          (_, value) =>
+            new LiveQuery.Leaf(
+              user.child(`selected-calendars/${encodeId(value)}`),
+            ),
+        ),
+      });
+
+      // Subscribe to value updates on each child so we only have
+      // to update that child instead of all of them
+      query.subscribe({
+        next: value => commit(UPDATE_CALENDAR, value),
+        error: err => console.error(err),
+        complete: () => {},
+      });
+
+      return query;
     });
-  }
-  dispatch('removeProgressItem', 'calendars/fetch');
-}
 
-async function updateCalendarSelected(
-  { commit, state, rootState },
-  { id, selected },
-) {
-  const database = firebase.database();
+    subscription.execute();
 
-  await database
-    .ref(`/users/${rootState.auth.uid}/selected-calendars/${encodeId(id)}`)
-    .set(selected);
-  commit('updateCalendarSelected', { id, selected });
-}
+    commit(UPDATE_CALENDARS_SUBSCRIPTION, {
+      unsubscribe: () => subscription.cancel(),
+    });
+  },
+  async [SET_CALENDAR_SELECTED](
+    { commit, state, rootState },
+    { id, selected },
+  ) {
+    invariant(id, 'must supply calendar.id, got %s', id);
+    invariant(
+      typeof selected !== 'undefined',
+      'must supply calendar.selected, got %s',
+      selected,
+    );
+    invariant(state[id], 'there was no calendar in the state with id %s', id);
+
+    commit(UPDATE_CALENDAR, { id, selected });
+    const uid = rootState.auth.uid;
+    const root = database.ref();
+    const user = root.child(`users/${uid}`);
+
+    await user.child(`selected-calendars/${encodeId(id)}`).set(selected);
+  },
+};
+
+const getters = {
+  [CALENDARS](state, getters) {
+    return omit(['_subscription'], state);
+  },
+  [SELECTED_CALENDARS](state, getters) {
+    return pickBy(prop('selected'), getters[CALENDARS]);
+  },
+  [IS_SUBSCRIBED_CALENDARS](state, getters) {
+    return !!state._subscription;
+  },
+};
 
 function encodeId(id) {
   return btoa(id);
@@ -67,15 +126,7 @@ function encodeId(id) {
 
 export default {
   state,
-  getters: {
-    hasCalendarsSelected,
-  },
-  mutations: {
-    updateCalendar,
-    updateCalendarSelected: _updateCalendarSelected,
-  },
-  actions: {
-    fetchCalendars,
-    updateCalendarSelected,
-  },
+  getters,
+  mutations,
+  actions,
 };

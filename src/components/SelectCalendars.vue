@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import LayoutSection from './Layout/Section';
 import LayoutContainer from './Layout/Container';
 import MdcList from './Material/List';
@@ -38,6 +38,8 @@ import MdcListItem from './Material/ListItem';
 import MdcCheckbox from './MdcCheckbox';
 import MdcButton from './Material/Button';
 import dashboard from '@/router/dashboard';
+import { CALENDARS } from '@/store/getters';
+import { SET_CALENDAR_SELECTED } from '@/store/actions';
 
 export default {
   components: {
@@ -48,12 +50,12 @@ export default {
     MdcList,
     MdcListItem,
   },
-  computed: mapState({
-    calendars: state => state.calendars,
+  computed: mapGetters({
+    calendars: CALENDARS,
   }),
   methods: {
     updateCalendarSelected({ id, selected }) {
-      this.$store.dispatch('updateCalendarSelected', { id, selected });
+      this.$store.dispatch(SET_CALENDAR_SELECTED, { id, selected });
     },
     confirm() {
       this.$router.push(this.$route.query.callback || dashboard.path);

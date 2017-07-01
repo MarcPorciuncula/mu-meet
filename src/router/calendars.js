@@ -1,9 +1,12 @@
 import ProfileBadge from '@/components/ProfileBadge';
+import { IS_SUBSCRIBED_CALENDARS } from '@/store/getters';
+import { SUBSCRIBE_CALENDARS } from '@/store/actions';
 import store from '@/store';
 
 async function beforeEnter(to, from, next) {
-  if (!Object.keys(store.state.calendars).length) {
-    await store.dispatch('fetchCalendars');
+  if (!Object.keys(store.getters[IS_SUBSCRIBED_CALENDARS]).length) {
+    // await store.dispatch('fetchCalendars');
+    await store.dispatch(SUBSCRIBE_CALENDARS);
   }
   next();
 }
