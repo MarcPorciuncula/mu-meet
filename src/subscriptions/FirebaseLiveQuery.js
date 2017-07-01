@@ -8,6 +8,7 @@ import type { Observer } from './Observable';
 
 interface LiveQuery {
   subscribe(observer: Observer<*>): () => void,
+  cancel(): void,
 }
 
 /*
@@ -114,6 +115,7 @@ class ObjectLiveQuery implements LiveQuery {
   cancel() {
     [...this.children.values()].forEach(child => {
       child.unsubscribe();
+      child.subscription.cancel();
     });
     this.isActive = false;
     this._observable.complete();
@@ -197,6 +199,7 @@ class ListLiveQuery implements LiveQuery {
   cancel() {
     [...this.children.values()].forEach(child => {
       child.unsubscribe();
+      child.cancel();
     });
     this.ref.off('child_added', this._handleChildAdded);
     this.ref.off('child_removed', this._handleChildRemoved);
@@ -243,8 +246,8 @@ class ListLiveQuery implements LiveQuery {
 
   _handleChildRemoved(snapshot: any) {
     const key = snapshot.key;
-    const { unsubscribe } = (this.children.get(key): any);
-    unsubscribe();
+    const child = (this.children.get(key): any);
+    child.subscription.cancel();
     this.children.delete(key);
     this.value = R.sortBy(R.prop('key'), [...this.children.values()])
       .map(R.prop('value'))
@@ -294,6 +297,7 @@ class RedirectLiveQuery implements LiveQuery {
 
   cancel() {
     this.child.unsubscribe();
+    this.child.subscription.cancel();
     this.child = { subscription: null, unsubscribe: () => {} };
     this.ref.off('value', this._handleValueSnapshot);
     this.isActive = false;
