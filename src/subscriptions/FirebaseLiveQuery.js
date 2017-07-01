@@ -83,6 +83,7 @@ class ObjectLiveQuery implements LiveQuery {
   value: { [prop: string]: any };
   _observable: Observable<any>;
   isActive: boolean;
+  _timeout: number | null;
 
   constructor(ref: Reference, children: { [name: string]: LiveQuery }) {
     this.ref = ref;
@@ -134,7 +135,18 @@ class ObjectLiveQuery implements LiveQuery {
 
   _handleChildValue(key: string, value: any) {
     this.value = Object.assign({}, this.value, { [key]: value });
-    this._observable.next(this.value);
+    this._update();
+  }
+
+  _update() {
+    if (this._timeout) {
+      return;
+    } else {
+      this._timeout = setTimeout(() => {
+        this._observable.next(this.value);
+        this._timeout = null;
+      }, 1);
+    }
   }
 }
 
