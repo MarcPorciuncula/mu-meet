@@ -1,4 +1,3 @@
-import { mapGetters } from 'vuex';
 import R from 'ramda';
 import calendarsRoute from '@/router/calendars';
 import dashboardRoute from '@/router/dashboard';

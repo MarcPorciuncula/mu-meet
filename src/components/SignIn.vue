@@ -25,13 +25,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import GoogleSigninButton from './GoogleSigninButton';
 import LayoutContainer from './Layout/Container';
 import LayoutSection from './Layout/Section';
 import { TypeContainer, TypeText } from './Material/Typography';
 import dashboard from '@/router/dashboard';
-import { PENDING_SIGN_IN } from '@/store/modules/auth';
+import { IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
+import { SIGN_IN } from '@/store/actions';
 
 export default {
   components: {
@@ -41,13 +42,13 @@ export default {
     LayoutContainer,
     LayoutSection,
   },
-  computed: mapState({
-    isSignedIn: state => state.auth.isSignedIn,
-    isPendingSignIn: state => state.auth.pending === PENDING_SIGN_IN,
+  computed: mapGetters({
+    isSignedIn: IS_SIGNED_IN,
+    isPendingSignIn: SIGN_IN_PENDING,
   }),
   methods: {
     async signIn() {
-      await this.$store.dispatch('signIn');
+      await this.$store.dispatch(SIGN_IN);
       // HACK wait for the profile to pop up in the corner, should coordinate this properly
       await new Promise(resolve => setTimeout(resolve, 2000));
       this.$router.push(this.$route.query.callback || dashboard.path);
