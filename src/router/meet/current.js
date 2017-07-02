@@ -1,11 +1,17 @@
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
-import { IS_SUBSCRIBED_CALENDARS } from '@/store/getters';
-import { SUBSCRIBE_CALENDARS } from '@/store/actions';
+import {
+  IS_SUBSCRIBED_CALENDARS,
+  IS_SUBSCRIBED_PLANNER_SESSION,
+} from '@/store/getters';
+import {
+  SUBSCRIBE_CALENDARS,
+  SUBSCRIBE_PLANNER_SESSION,
+} from '@/store/actions';
 
 async function beforeEnter(to, from, next) {
-  if (!store.getters.isInSession) {
-    await store.dispatch('refreshMeetSession');
+  if (!store.getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
+    await store.dispatch(SUBSCRIBE_PLANNER_SESSION);
   }
   if (store.state.meet.session.id !== to.params.code) {
     await store.dispatch('joinMeetSession', to.params.code);

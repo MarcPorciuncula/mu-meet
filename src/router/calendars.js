@@ -5,7 +5,6 @@ import store from '@/store';
 
 async function beforeEnter(to, from, next) {
   if (!Object.keys(store.getters[IS_SUBSCRIBED_CALENDARS]).length) {
-    // await store.dispatch('fetchCalendars');
     await store.dispatch(SUBSCRIBE_CALENDARS);
   }
   next();

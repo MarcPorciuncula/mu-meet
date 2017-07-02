@@ -9,6 +9,7 @@ import {
 } from '@/store/mutations';
 import { SUBSCRIBE_CALENDARS, SET_CALENDAR_SELECTED } from '@/store/actions';
 import {
+  USER_UID,
   CALENDARS,
   SELECTED_CALENDARS,
   IS_SUBSCRIBED_CALENDARS,
@@ -41,13 +42,13 @@ const mutations = {
 };
 
 const actions = {
-  [SUBSCRIBE_CALENDARS]({ commit, rootState, state }) {
+  [SUBSCRIBE_CALENDARS]({ commit, rootState, state, getters }) {
     invariant(
       !state._subscription,
       'attempted to subscribe to calendars but already subscribed',
     );
 
-    const uid = rootState.auth.uid;
+    const uid = getters[USER_UID];
     const root = database.ref();
     const user = root.child(`users/${uid}`);
 

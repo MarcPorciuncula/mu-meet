@@ -31,7 +31,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
+import { IS_SIGNED_IN, USER_UID } from '@/store/getters';
 import MdcMenu from './Material/Menu';
 import MdcMenuItem from './Material/MenuItem';
 import dashboardRoute from '@/router/dashboard';
@@ -48,7 +49,7 @@ export default {
   },
   created() {
     if (this.isSignedIn) {
-      this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+      this.$store.dispatch('ensureUserProfile', this.$store.getters[USER_UID]);
     }
   },
   mounted() {
@@ -57,8 +58,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      isSignedIn: IS_SIGNED_IN,
+    }),
     ...mapState({
-      isSignedIn: state => state.auth.isSignedIn,
       user: state => state.users.users[state.auth.uid],
     }),
     dashboardRoute: () => dashboardRoute,
@@ -71,7 +74,10 @@ export default {
     },
     isSignedIn(value) {
       if (value) {
-        this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+        this.$store.dispatch(
+          'ensureUserProfile',
+          this.$store.getters[USER_UID],
+        );
       }
     },
   },

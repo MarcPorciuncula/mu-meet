@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable no-duplicate-imports */
 import invariant from 'invariant';
-import R from 'ramda';
+import R, { identity } from 'ramda';
 import { Reference } from 'firebase/database';
 import Observable from './Observable';
 import type { Observer } from './Observable';
@@ -20,8 +20,12 @@ class LeafLiveQuery implements LiveQuery {
   _observable: Observable<any>;
   isActive: boolean;
   _handleValueSnapshot: (snapshot: any) => void;
+  _transform: (val: any) => any;
 
-  constructor(ref: Reference) {
+  constructor(
+    ref: Reference,
+    { transform = identity }: { transform: (val: any) => any } = {},
+  ) {
     invariant(
       ref && ref instanceof Reference,
       'Must supply a Firebase reference',
@@ -30,6 +34,7 @@ class LeafLiveQuery implements LiveQuery {
     this.value = null;
     this._observable = new Observable();
     this.isActive = false;
+    this._transform = transform;
 
     this._handleValueSnapshot = this._handleValueSnapshot.bind(this);
   }
@@ -66,7 +71,7 @@ class LeafLiveQuery implements LiveQuery {
 
   _handleValueSnapshot(snapshot: any) {
     this.value = snapshot.val();
-    this._observable.next(this.value);
+    this._observable.next(this._transform(this.value));
   }
 }
 
@@ -92,6 +97,10 @@ class ObjectLiveQuery implements LiveQuery {
     this.value = {};
     this._observable = new Observable();
     this.isActive = false;
+
+    if (typeof children === 'function') {
+      children = children(ref);
+    }
 
     Object.entries(children).forEach(([key, subscription]) => {
       this.value[key] = null;
@@ -147,7 +156,7 @@ class ObjectLiveQuery implements LiveQuery {
       this._timeout = setTimeout(() => {
         this._observable.next(this.value);
         this._timeout = null;
-      }, 1);
+      }, 200);
     }
   }
 }
@@ -321,6 +330,10 @@ class RedirectLiveQuery implements LiveQuery {
     const value = snapshot.val();
     if (this.child) {
       this.child.unsubscribe();
+    }
+    if (value === null) {
+      this._handleChildValue(null);
+      return;
     }
     const subscription = this.makeChildSubscription(this.ref, value);
     const unsubscribe = subscription.subscribe({

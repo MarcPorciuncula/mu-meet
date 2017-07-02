@@ -72,7 +72,7 @@ const actions = {
       uid: firebase.auth().currentUser.uid,
       pending: null,
     });
-    dispatch('removeProgressItem', 'auth/sign-in');
+    dispatch('removeProgressItem', SIGN_IN);
   },
   async [SIGN_OUT]({ commit }) {
     commit(UPDATE_AUTH_STATE, {
