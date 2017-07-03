@@ -8,19 +8,25 @@ import calendars from './calendars';
 import meet from './meet';
 import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
-import { REFRESH_AUTH_STATUS } from '@/store/actions';
+import {
+  REFRESH_AUTH_STATUS,
+  START_PROGRESS_ITEM,
+  FINISH_PROGRESS_ITEM,
+} from '@/store/actions';
 
 Vue.use(VueRouter);
 
+const ROUTER_TRANSITION = 'router/ROUTER_TRANSITION';
+
 function addRouteTransitionProgressItem(to, from, next) {
-  store.dispatch('addProgressItem', {
-    id: 'router/transition',
+  store.dispatch(START_PROGRESS_ITEM, {
+    type: ROUTER_TRANSITION,
   });
   next();
 }
 
 function clearRouteTransitionProgressItem(route) {
-  store.dispatch('removeProgressItem', 'router/transition');
+  store.dispatch(FINISH_PROGRESS_ITEM, { type: ROUTER_TRANSITION });
 }
 
 async function verifyAuth(to, from, next) {

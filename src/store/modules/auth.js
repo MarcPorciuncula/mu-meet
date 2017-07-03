@@ -2,7 +2,14 @@ import firebase from '@/firebase';
 import getGoogle, { SCOPE } from '@/gapi';
 import { functions } from '@/functions';
 import { UPDATE_AUTH_STATE } from '@/store/mutations';
-import { REFRESH_AUTH_STATUS, SIGN_IN, SIGN_OUT } from '@/store/actions';
+import {
+  REFRESH_AUTH_STATUS,
+  SIGN_IN,
+  SIGN_OUT,
+  START_PROGRESS_ITEM,
+  INCREMENT_PROGRESS_ITEM,
+  FINISH_PROGRESS_ITEM,
+} from '@/store/actions';
 import { USER_UID, IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 
 const PENDING_INITIAL_REFRESH = 'PENDING_INITIAL_REFRESH';
@@ -38,8 +45,8 @@ const actions = {
     commit(UPDATE_AUTH_STATE, {
       pending: PENDING_SIGN_IN,
     });
-    dispatch('addProgressItem', {
-      id: SIGN_IN,
+    dispatch(START_PROGRESS_ITEM, {
+      type: SIGN_IN,
       message: 'Signing in (Step 1/3)',
     });
 
@@ -48,10 +55,11 @@ const actions = {
       .getAuthInstance()
       .grantOfflineAccess({ scope: SCOPE });
 
-    dispatch('updateProgressItem', {
-      id: SIGN_IN,
+    dispatch(INCREMENT_PROGRESS_ITEM, {
+      type: SIGN_IN,
       message: 'Signing in (Step 2/3)',
     });
+
     const { data } = await functions('getGoogleOAuth2Authorization', {
       data: { code, redirect_uri: location.origin },
     });
@@ -60,10 +68,11 @@ const actions = {
     );
     await firebase.auth().signInWithCredential(credential);
 
-    dispatch('updateProgressItem', {
-      id: SIGN_IN,
+    dispatch(INCREMENT_PROGRESS_ITEM, {
+      type: SIGN_IN,
       message: 'Signing in (Step 3/3)',
     });
+
     await functions('linkGoogleOAuthToFirebaseUser', {
       data: { credential_link_code: data.credential_link_code },
     });
@@ -72,7 +81,8 @@ const actions = {
       uid: firebase.auth().currentUser.uid,
       pending: null,
     });
-    dispatch('removeProgressItem', SIGN_IN);
+
+    dispatch(FINISH_PROGRESS_ITEM, { type: SIGN_IN });
   },
   async [SIGN_OUT]({ commit }) {
     commit(UPDATE_AUTH_STATE, {

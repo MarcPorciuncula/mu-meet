@@ -33,6 +33,7 @@ import PageFooter from './Footer';
 import { TypeContainer, TypeText } from './Material/Typography';
 import LayoutSection from './Layout/Section';
 import LayoutContainer from './Layout/Container';
+import { PROGRESS_MESSAGE } from '@/store/getters';
 
 export default {
   components: {
@@ -59,7 +60,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      loadingMessage: 'getLoadingMessage',
+      loadingMessage: PROGRESS_MESSAGE,
     }),
   },
   methods: {
