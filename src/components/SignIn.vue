@@ -1,5 +1,5 @@
 <template>
-  <layout-section class="section-signin">
+  <section class="section-signin">
     <layout-section tag="div" class="container-signin" padding="normal">
       <layout-container class="" padding="less">
         <type-container>
@@ -21,7 +21,7 @@
         </type-container>
       </layout-container>
     </layout-section>
-  </layout-section>
+  </section>
 </template>
 
 <script>
