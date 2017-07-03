@@ -28,9 +28,7 @@ export default {
   width: 100%;
 }
 
-.layout-container--pad-none {
-  padding: 0;
-}
+.layout-container--pad-none {}
 
 .layout-container--pad-min {
   padding: 0 0.5rem;

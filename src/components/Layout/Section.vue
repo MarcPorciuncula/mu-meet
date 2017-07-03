@@ -29,9 +29,7 @@ export default {
   align-items: center;
 }
 
-.layout-section--pad-none {
-  padding: 0;
-}
+.layout-section--pad-none {}
 
 .layout-section--pad-min {
   padding: 0.5rem 0;

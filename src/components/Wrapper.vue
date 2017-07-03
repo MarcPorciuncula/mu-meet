@@ -4,20 +4,23 @@
       <router-view slot="header-bar-control" name="app-bar-control"></router-view>
       <router-view />
     </component>
+    <error-dialog />
   </div>
 </template>
 
 <script>
 import nprogress from 'nprogress';
+import AppShell from './AppShell';
+import ErrorDialog from '@/components/ErrorDialog';
 import {
   SHOW_PROGRESS_BAR_AT,
   WATCH_PROGRESS_INCREMENT,
 } from '@/store/getters';
-import AppShell from './AppShell';
 
 export default {
   components: {
     AppShell,
+    ErrorDialog,
   },
   data() {
     return {
