@@ -15,3 +15,7 @@ export const UPDATE_PLANNER_SUBSCRIPTION =
 export const UPDATE_PROFILE = 'profile/UPDATE_PROFILE';
 export const UPDATE_PROFILE_SUBSCRIPTION =
   'profile/UPDATE_PROFILE_SUBSCRIPTION';
+
+// progress
+export const UPDATE_PROGRESS_ITEM = 'progress/UPDATE_PROGRESS_ITEM';
+export const INCREMENT_PROGRESS = 'progress/INCREMENT_PROGRESS';

@@ -15,6 +15,8 @@ import {
   JOIN_PLANNER_SESSION,
   ARCHIVE_PLANNER_SESSION,
   REQUEST_PLANNER_RESULT,
+  START_PROGRESS_ITEM,
+  FINISH_PROGRESS_ITEM,
 } from '@/store/actions';
 import {
   USER_UID,
@@ -101,6 +103,11 @@ const actions = {
     getters,
     dispatch,
   }) {
+    dispatch(START_PROGRESS_ITEM, {
+      type: CREATE_PLANNER_SESSION,
+      message: 'Creating meeting plan',
+    });
+
     if (!getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
       dispatch(SUBSCRIBE_PLANNER_SESSION);
     }
@@ -116,8 +123,17 @@ const actions = {
     });
     // wait for the subscription to pick up the new session id
     await watch(() => state.session && state.session.id);
+
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: CREATE_PLANNER_SESSION,
+    });
   },
   async [JOIN_PLANNER_SESSION]({ state, getters, dispatch }, { id }) {
+    dispatch(START_PROGRESS_ITEM, {
+      type: JOIN_PLANNER_SESSION,
+      message: 'Joining meeting plan ' + id,
+    });
+
     if (!getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
       dispatch(SUBSCRIBE_PLANNER_SESSION);
     }
@@ -141,6 +157,10 @@ const actions = {
 
     // wait for the subscription to pick up the new session id
     await watch(() => state.session && state.session.id);
+
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: JOIN_PLANNER_SESSION,
+    });
   },
   async [ARCHIVE_PLANNER_SESSION]({ state, getters }) {
     const id = state.session.id;
@@ -154,9 +174,18 @@ const actions = {
       predicate: session => session === null,
     });
   },
-  async [REQUEST_PLANNER_RESULT]() {
+  async [REQUEST_PLANNER_RESULT]({ dispatch }) {
+    dispatch(START_PROGRESS_ITEM, {
+      type: REQUEST_PLANNER_RESULT,
+      message: 'Finding meeting times',
+    });
+
     await functions('findMeetingTimes');
     await watch(() => state.session.result.meetings);
+
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: REQUEST_PLANNER_RESULT,
+    });
   },
 };
 

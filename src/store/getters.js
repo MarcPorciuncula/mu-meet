@@ -17,3 +17,8 @@ export const CURRENT_PLANNER_SESSION = 'planner/CURRENT_PLANNER_SESSION';
 // profile
 export const USER_PROFILE = 'profile/USER_PROFILE';
 export const IS_SUBSCRIBED_USER_PROFILE = 'profile/IS_SUBSCRIBED_USER_PROFILE';
+
+// progress
+export const PROGRESS_MESSAGE = 'progress/PROGRESS_MESSAGE';
+export const SHOW_PROGRESS_BAR_AT = 'progress/SHOW_PROGRESS_BAR_AT';
+export const WATCH_PROGRESS_INCREMENT = 'progress/WATCH_PROGRESS_INCREMENT';
