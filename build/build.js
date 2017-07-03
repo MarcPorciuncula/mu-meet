@@ -41,6 +41,11 @@ Promise.resolve()
       '  Tip: built files are meant to be served over an HTTP server.\n' +
       '  Opening index.html over file:// won\'t work.\n'
     ))
+
+    return fs.outputFile(path.join(__dirname, 'stats.json'), JSON.stringify(stats.toJson()));
+  })
+  .then(() => {
+    console.log(chalk.cyan('  Build stats saved to stats.json\n'));
   })
   .catch(err => {
     spinner.stop();
