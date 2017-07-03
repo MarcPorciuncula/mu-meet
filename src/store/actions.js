@@ -1,0 +1,20 @@
+// auth
+export const REFRESH_AUTH_STATUS = 'auth/REFRESH_AUTH_STATUS';
+export const SIGN_IN = 'auth/SIGN_IN';
+export const SIGN_OUT = 'auth/SIGN_OUT';
+
+// calendars
+export const SUBSCRIBE_CALENDARS = 'calendars/SUBSCRIBE_CALENDARS';
+export const SET_CALENDAR_SELECTED = 'calendars/SET_CALENDAR_SELECTED';
+
+// planner
+export const SUBSCRIBE_PLANNER_SESSION = 'planner/SUBSCRIBE_PLANNER_SESSION';
+export const CREATE_PLANNER_SESSION = 'planner/CREATE_PLANNER_SESSION';
+export const JOIN_PLANNER_SESSION = 'planner/JOIN_PLANNER_SESSION';
+export const ARCHIVE_PLANNER_SESSION = 'planner/ARCHIVE_PLANNER_SESSION';
+export const REQUEST_PLANNER_RESULT = 'planner/REQUEST_PLANNER_RESULT';
+
+// profile
+export const SUBSCRIBE_USER_PROFILE = 'profile/SUBSCRIBE_PROFILE';
+export const UPDATE_PROFILE_SUBSCRIPTION =
+  'profile/UPDATE_PROFILE_SUBSCRIPTION';

@@ -7,8 +7,8 @@
             Resume your meeting plan
           </span>
           <span slot="body">
-            You started a meeting plan {{ Object.keys(lastMeetingPlan.users).length ? 'with' : '' }}
-            {{ Object.values(lastMeetingPlan.users).map(x => x.profile.given_name) | list }}
+            You started a meeting plan {{ lastMeetingPlan.users.length ? 'with' : '' }}
+            {{ lastMeetingPlan.users.map(x => x.profile.givenName) | list }}
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
           <div slot="actions">
@@ -63,10 +63,12 @@ export default {
     lastMeetingPlan: VueTypes.shape({
       startedAt: VueTypes.instanceOf(Date).isRequired,
       id: VueTypes.string.isRequired,
-      users: VueTypes.shape({
-        profile: VueTypes.shape({ given_name: VueTypes.string }),
-      }).loose.isRequired,
-    }),
+      users: VueTypes.arrayOf(
+        VueTypes.shape({
+          profile: VueTypes.shape({ givenName: VueTypes.string }).loose,
+        }).loose,
+      ).isRequired,
+    }).loose,
     meetingPlanRoute: VueTypes.shape({
       name: VueTypes.string,
     }).loose,

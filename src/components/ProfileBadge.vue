@@ -31,7 +31,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
+import {
+  IS_SIGNED_IN,
+  IS_SUBSCRIBED_USER_PROFILE,
+  USER_PROFILE,
+} from '@/store/getters';
+import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
 import MdcMenu from './Material/Menu';
 import MdcMenuItem from './Material/MenuItem';
 import dashboardRoute from '@/router/dashboard';
@@ -47,8 +53,8 @@ export default {
     };
   },
   created() {
-    if (this.isSignedIn) {
-      this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+    if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
+      this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
     }
   },
   mounted() {
@@ -57,10 +63,17 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      isSignedIn: state => state.auth.isSignedIn,
-      user: state => state.users.users[state.auth.uid],
+    ...mapGetters({
+      isSignedIn: IS_SIGNED_IN,
     }),
+    user() {
+      if (this.$store.getters[USER_PROFILE].name) {
+        return {
+          profile: this.$store.getters[USER_PROFILE],
+        };
+      }
+      return null;
+    },
     dashboardRoute: () => dashboardRoute,
   },
   watch: {
@@ -70,8 +83,8 @@ export default {
       }
     },
     isSignedIn(value) {
-      if (value) {
-        this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+      if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
+        this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
       }
     },
   },

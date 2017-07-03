@@ -2,9 +2,10 @@ import SignIn from '@/components/SignIn';
 import ProfileBadge from '@/components/ProfileBadge';
 import dashboard from '@/router/dashboard';
 import store from '@/store';
+import { IS_SIGNED_IN } from '@/store/getters';
 
 async function beforeEnter(to, from, next) {
-  if (store.state.auth.isSignedIn) {
+  if (store.getters[IS_SIGNED_IN]) {
     next(dashboard.path);
   } else {
     next();

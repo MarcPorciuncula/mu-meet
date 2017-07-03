@@ -1,8 +1,12 @@
-import { mapState } from 'vuex';
 import R from 'ramda';
 import calendarsRoute from '@/router/calendars';
 import dashboardRoute from '@/router/dashboard';
 import Meet from './Meet';
+import { SELECTED_CALENDARS } from '@/store/getters';
+import {
+  ARCHIVE_PLANNER_SESSION,
+  REQUEST_PLANNER_RESULT,
+} from '@/store/actions';
 
 export default {
   name: 'ConnectedMeet',
@@ -26,17 +30,16 @@ export default {
       );
     },
     calendarsRoute: R.always(calendarsRoute),
-    ...mapState({
-      calendars: state =>
-        Object.values(state.calendars).filter(calendar => calendar.selected),
-    }),
+    calendars() {
+      return Object.values(this.$store.getters[SELECTED_CALENDARS]);
+    },
   },
   methods: {
     async findMeetingTimes() {
-      await this.$store.dispatch('requestMeetResult');
+      await this.$store.dispatch(REQUEST_PLANNER_RESULT);
     },
     async archive() {
-      await this.$store.dispatch('archiveMeetSession');
+      await this.$store.dispatch(ARCHIVE_PLANNER_SESSION);
       await this.$router.push({ name: dashboardRoute.name });
     },
   },

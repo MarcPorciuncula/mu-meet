@@ -42,6 +42,9 @@ export default {
     disabled(value) {
       this.checkbox.disabled = value;
     },
+    value(checked) {
+      this.checkbox.checked = checked;
+    },
   },
   methods: {
     getInnerValue() {

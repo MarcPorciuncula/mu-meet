@@ -7,6 +7,8 @@ import dashboard from './dashboard';
 import calendars from './calendars';
 import meet from './meet';
 import store from '@/store';
+import { IS_SIGNED_IN } from '@/store/getters';
+import { REFRESH_AUTH_STATUS } from '@/store/actions';
 
 Vue.use(VueRouter);
 
@@ -22,13 +24,14 @@ function clearRouteTransitionProgressItem(route) {
 }
 
 async function verifyAuth(to, from, next) {
-  if (store.state.auth.isSignedIn === null) {
-    await store.dispatch('refreshAuthStatus');
+  if (store.getters[IS_SIGNED_IN] === null) {
+    // Auth state is currently indeterminate
+    await store.dispatch(REFRESH_AUTH_STATUS);
   }
 
   if (
     to.matched.some(route => route.meta.requiresAuth) &&
-    !store.state.auth.isSignedIn
+    !store.getters[IS_SIGNED_IN]
   ) {
     next({ path: signin.path, query: { callback: to.fullPath } });
   } else {
