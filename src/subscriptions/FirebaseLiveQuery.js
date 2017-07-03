@@ -2,6 +2,7 @@
 /* eslint-disable no-duplicate-imports */
 import invariant from 'invariant';
 import R, { identity } from 'ramda';
+import debounce from 'lodash/debounce';
 import { Reference } from 'firebase/database';
 import Observable from './Observable';
 import type { Observer } from './Observable';
@@ -157,7 +158,7 @@ class ObjectLiveQuery implements LiveQuery {
 }
 
 type _ListSubscriptionChild = {
-  subscription: any,
+  subscription: LiveQuery,
   unsubscribe: () => void,
   key: number | string,
   value: any,
@@ -187,6 +188,7 @@ class ListLiveQuery implements LiveQuery {
 
     this._handleChildAdded = this._handleChildAdded.bind(this);
     this._handleChildRemoved = this._handleChildRemoved.bind(this);
+    this._update = debounce(this._update.bind(this), 100);
   }
 
   async execute() {
@@ -203,7 +205,7 @@ class ListLiveQuery implements LiveQuery {
   cancel() {
     [...this.children.values()].forEach(child => {
       child.unsubscribe();
-      child.cancel();
+      child.subscription.cancel();
     });
     this.ref.off('child_added', this._handleChildAdded);
     this.ref.off('child_removed', this._handleChildRemoved);
@@ -245,7 +247,7 @@ class ListLiveQuery implements LiveQuery {
     this.value = R.sortBy(R.prop('key'), [...this.children.values()])
       .map(R.prop('value'))
       .filter(value => value !== null);
-    this._observable.next(this.value);
+    this._update();
   }
 
   _handleChildRemoved(snapshot: any) {
@@ -256,6 +258,10 @@ class ListLiveQuery implements LiveQuery {
     this.value = R.sortBy(R.prop('key'), [...this.children.values()])
       .map(R.prop('value'))
       .filter(value => value !== null);
+    this._update();
+  }
+
+  _update() {
     this._observable.next(this.value);
   }
 }
