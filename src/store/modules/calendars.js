@@ -2,6 +2,7 @@ import Vue from 'vue';
 import * as firebase from 'firebase';
 import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
+import debounce from 'lodash/debounce';
 import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
 import {
   UPDATE_CALENDAR,
@@ -42,12 +43,13 @@ const mutations = {
 };
 
 const actions = {
-  [SUBSCRIBE_CALENDARS]({ commit, rootState, state, getters }) {
+  [SUBSCRIBE_CALENDARS]({ commit: _commit, rootState, state, getters }) {
     invariant(
       !state._subscription,
       'attempted to subscribe to calendars but already subscribed',
     );
 
+    const commit = batch(_commit, 200);
     const uid = getters[USER_UID];
     const root = database.ref();
     const user = root.child(`users/${uid}`);
@@ -117,6 +119,13 @@ const getters = {
   },
 };
 
+export default {
+  state,
+  getters,
+  mutations,
+  actions,
+};
+
 function encodeId(id) {
   return btoa(id);
 }
@@ -125,9 +134,16 @@ function encodeId(id) {
 //   return atob(id);
 // }
 
-export default {
-  state,
-  getters,
-  mutations,
-  actions,
-};
+function batch(fn, freq) {
+  const queue = [];
+  const flush = () => {
+    while (queue.length) {
+      fn(...queue.shift());
+    }
+  };
+  const apply = debounce(flush, freq);
+  return (...args) => {
+    queue.push([...args]);
+    apply();
+  };
+}
