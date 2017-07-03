@@ -1,4 +1,5 @@
 import firebase from '@/firebase';
+import firebaseAuth from 'firebase/auth';
 import getGoogle, { SCOPE } from '@/gapi';
 import { functions } from '@/functions';
 import { UPDATE_AUTH_STATE } from '@/store/mutations';
@@ -55,7 +56,7 @@ const actions = {
     const { data } = await functions('getGoogleOAuth2Authorization', {
       data: { code, redirect_uri: location.origin },
     });
-    const credential = firebase.auth.GoogleAuthProvider.credential(
+    const credential = firebaseAuth.GoogleAuthProvider.credential(
       data.id_token,
     );
     await firebase.auth().signInWithCredential(credential);
