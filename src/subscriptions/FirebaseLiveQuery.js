@@ -222,9 +222,9 @@ class ListLiveQuery implements LiveQuery {
       this.execute();
     }
     const unsubscribe = this._observable.subscribe(observer);
-    return () => {
+    return (cancel = true) => {
       unsubscribe();
-      if (this._observable._observers.size === 0 && this.isActive) {
+      if (this._observable._observers.size === 0 && this.isActive && cancel) {
         this.cancel();
       }
     };

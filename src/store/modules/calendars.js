@@ -8,7 +8,12 @@ import {
   UPDATE_CALENDAR,
   UPDATE_CALENDARS_SUBSCRIPTION,
 } from '@/store/mutations';
-import { SUBSCRIBE_CALENDARS, SET_CALENDAR_SELECTED } from '@/store/actions';
+import {
+  SUBSCRIBE_CALENDARS,
+  SET_CALENDAR_SELECTED,
+  START_PROGRESS_ITEM,
+  FINISH_PROGRESS_ITEM,
+} from '@/store/actions';
 import {
   USER_UID,
   CALENDARS,
@@ -43,11 +48,22 @@ const mutations = {
 };
 
 const actions = {
-  [SUBSCRIBE_CALENDARS]({ commit: _commit, rootState, state, getters }) {
+  [SUBSCRIBE_CALENDARS]({
+    commit: _commit,
+    rootState,
+    state,
+    getters,
+    dispatch,
+  }) {
     invariant(
       !state._subscription,
       'attempted to subscribe to calendars but already subscribed',
     );
+
+    dispatch(START_PROGRESS_ITEM, {
+      type: SUBSCRIBE_CALENDARS,
+      message: 'Fetching your calendars',
+    });
 
     const commit = batch(_commit, 200);
     const uid = getters[USER_UID];
@@ -82,8 +98,22 @@ const actions = {
 
     subscription.execute();
 
-    commit(UPDATE_CALENDARS_SUBSCRIPTION, {
+    _commit(UPDATE_CALENDARS_SUBSCRIPTION, {
       unsubscribe: () => subscription.cancel(),
+    });
+
+    return new Promise((resolve, reject) => {
+      const unsubscribe = subscription.subscribe({
+        next: () => {
+          dispatch(FINISH_PROGRESS_ITEM, {
+            type: SUBSCRIBE_CALENDARS,
+          });
+          resolve();
+          unsubscribe(false);
+        },
+        error: reject,
+        complete: () => {},
+      });
     });
   },
   async [SET_CALENDAR_SELECTED](
