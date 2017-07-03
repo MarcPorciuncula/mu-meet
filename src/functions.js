@@ -1,6 +1,5 @@
 import axios from 'axios';
-import firebase from 'firebase';
-import { config } from '@/firebase.config';
+import firebase, { config } from '@/firebase';
 
 const FUNCTIONS_URI = `https://us-central1-${config.projectId}.cloudfunctions.net/`;
 

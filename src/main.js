@@ -4,7 +4,6 @@ import Vue from 'vue';
 import router from './router';
 import store from './store';
 import Wrapper from './components/Wrapper';
-import './firebase.config.js';
 import './index.scss';
 
 Vue.config.productionTip = false;

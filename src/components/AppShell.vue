@@ -10,7 +10,7 @@
         <slot name="header-bar-control"></slot>
       </div>
     </header-bar>
-    <layout-section class="section-title" ref="title">
+    <section class="section-title" ref="title">
       <layout-container class="section-title_inner">
         <type-container>
           <type-text tag="h2" type="title" :class="{ hidden: showTitle }">
@@ -18,7 +18,7 @@
           </type-text>
         </type-container>
       </layout-container>
-    </layout-section>
+    </section>
     <div class="content">
       <slot></slot>
     </div>
@@ -86,8 +86,8 @@ export default {
   padding-top: 3.625rem;
 
   &_inner {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
   }
 
   .type {
