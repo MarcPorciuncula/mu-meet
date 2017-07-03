@@ -89,7 +89,6 @@ class ObjectLiveQuery implements LiveQuery {
   value: { [prop: string]: any };
   _observable: Observable<any>;
   isActive: boolean;
-  _timeout: number | null;
 
   constructor(ref: Reference, children: { [name: string]: LiveQuery }) {
     this.ref = ref;
@@ -103,7 +102,7 @@ class ObjectLiveQuery implements LiveQuery {
     }
 
     Object.entries(children).forEach(([key, subscription]) => {
-      this.value[key] = null;
+      this.value[key] = undefined;
       this.children.set(key, ({ subscription, unsubscribe: () => {} }: any));
     });
   }
@@ -150,13 +149,9 @@ class ObjectLiveQuery implements LiveQuery {
   }
 
   _update() {
-    if (this._timeout) {
-      return;
-    } else {
-      this._timeout = setTimeout(() => {
-        this._observable.next(this.value);
-        this._timeout = null;
-      }, 200);
+    const isDefined = value => typeof value !== 'undefined';
+    if (Object.values(this.value).every(isDefined)) {
+      this._observable.next(this.value);
     }
   }
 }

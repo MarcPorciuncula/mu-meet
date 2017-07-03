@@ -21,7 +21,7 @@ export default {
     meetingPlanRoute: R.always(meetingPlanRoute),
     lastMeetingPlan() {
       const session = this.$store.getters[CURRENT_PLANNER_SESSION];
-      if (session && session.startedAt && session.host && session.users) {
+      if (session) {
         return session;
       }
       return null;
