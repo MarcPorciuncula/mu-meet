@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+import firebase from '@/firebase';
 import getGoogle, { SCOPE } from '@/gapi';
 import { functions } from '@/functions';
 import { UPDATE_AUTH_STATE } from '@/store/mutations';

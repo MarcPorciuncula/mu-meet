@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import * as firebase from 'firebase';
+import firebase from '@/firebase';
 import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
 import debounce from 'lodash/debounce';

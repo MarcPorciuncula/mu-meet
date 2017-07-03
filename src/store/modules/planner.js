@@ -1,5 +1,5 @@
 import invariant from 'invariant';
-import firebase from 'firebase';
+import firebase from '@/firebase';
 import { functions } from '@/functions';
 import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
 import { identity } from 'ramda';

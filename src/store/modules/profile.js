@@ -8,7 +8,7 @@ import {
   USER_UID,
   IS_SUBSCRIBED_USER_PROFILE,
 } from '@/store/getters';
-import * as firebase from 'firebase';
+import firebase from '@/firebase';
 
 const database = firebase.database();
 

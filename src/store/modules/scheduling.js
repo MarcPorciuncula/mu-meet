@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+import firebase from '@/firebase';
 import R from 'ramda';
 import invariant from 'invariant';
 import { functions } from '@/functions';
