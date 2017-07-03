@@ -4,6 +4,7 @@ import calendarsRoute from '@/router/calendars';
 import meetingPlanRoute from '@/router/meet/current';
 import newMeetingPlanRoute from '@/router/meet/new';
 import { CURRENT_PLANNER_SESSION } from '@/store/getters';
+import { ARCHIVE_PLANNER_SESSION } from '@/store/actions';
 
 export default {
   name: 'ConnectedDashboard',
@@ -38,7 +39,7 @@ export default {
   },
   methods: {
     async archiveLastMeetingPlan() {
-      await this.$store.dispatch('archiveMeetSession');
+      await this.$store.dispatch(ARCHIVE_PLANNER_SESSION);
     },
   },
 };

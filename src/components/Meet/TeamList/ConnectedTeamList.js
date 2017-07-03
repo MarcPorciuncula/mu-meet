@@ -1,6 +1,5 @@
-import { mapState } from 'vuex';
-import R from 'ramda';
 import TeamList from './TeamList';
+import { CURRENT_PLANNER_SESSION } from '@/store/getters';
 
 export default {
   name: 'ConnectedTeamList',
@@ -12,16 +11,9 @@ export default {
     });
   },
   computed: {
-    ...mapState({
-      members: state =>
-        R.compose(
-          R.map(([uid, user]) =>
-            Object.assign({}, user, state.users.users[uid], { id: uid }),
-          ),
-          R.filter(([uid]) => state.users.users[uid]),
-          R.toPairs,
-          R.path(['meet', 'session', 'users']),
-        )(state),
-    }),
+    members() {
+      const session = this.$store.getters[CURRENT_PLANNER_SESSION];
+      return (session && session.users) || [];
+    },
   },
 };

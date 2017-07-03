@@ -3,6 +3,10 @@ import calendarsRoute from '@/router/calendars';
 import dashboardRoute from '@/router/dashboard';
 import Meet from './Meet';
 import { SELECTED_CALENDARS } from '@/store/getters';
+import {
+  ARCHIVE_PLANNER_SESSION,
+  REQUEST_PLANNER_RESULT,
+} from '@/store/actions';
 
 export default {
   name: 'ConnectedMeet',
@@ -32,10 +36,10 @@ export default {
   },
   methods: {
     async findMeetingTimes() {
-      await this.$store.dispatch('requestMeetResult');
+      await this.$store.dispatch(REQUEST_PLANNER_RESULT);
     },
     async archive() {
-      await this.$store.dispatch('archiveMeetSession');
+      await this.$store.dispatch(ARCHIVE_PLANNER_SESSION);
       await this.$router.push({ name: dashboardRoute.name });
     },
   },

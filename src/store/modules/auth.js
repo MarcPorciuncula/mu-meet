@@ -103,20 +103,11 @@ const getters = {
   },
 };
 
-function getAuthUid(state) {
-  console.warn(
-    'the authUid getter is deprecated\n' +
-      new Error().stack.split('\n').slice(1).join('\n'),
-  );
-  return state.uid;
-}
-
 export default {
   state,
   mutations,
   actions,
   getters: {
-    authUid: getAuthUid,
     ...getters,
   },
 };

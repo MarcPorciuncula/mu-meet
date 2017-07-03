@@ -9,6 +9,7 @@ import type { Observer } from './Observable';
 
 interface LiveQuery {
   subscribe(observer: Observer<*>): () => void,
+  execute(): Promise<void>,
   cancel(): void,
 }
 
@@ -41,11 +42,11 @@ class LeafLiveQuery implements LiveQuery {
   }
 
   async execute() {
+    this.isActive = true;
     try {
       // Attempt to access the ref to check if we have permission
       await this.ref.once('value');
       this.ref.on('value', this._handleValueSnapshot);
-      this.isActive = true;
     } catch (err) {
       this._observable.error(err);
     }
@@ -109,6 +110,7 @@ class ObjectLiveQuery implements LiveQuery {
   }
 
   execute() {
+    this.isActive = true;
     [...this.children.entries()].forEach(([key, child]) => {
       const observer = {
         next: value => this._handleChildValue(key, value),
@@ -177,6 +179,7 @@ class ListLiveQuery implements LiveQuery {
   children: Map<string | number, _ListSubscriptionChild>;
   _handleChildAdded: (snapshot: any) => void;
   _handleChildRemoved: (snapshot: any) => void;
+  _update: () => void;
 
   constructor(ref: Reference, makeChildSubscription: (ref: Reference) => any) {
     this.ref = ref;
@@ -192,6 +195,7 @@ class ListLiveQuery implements LiveQuery {
   }
 
   async execute() {
+    this.isActive = true;
     // This will only work when the client has read access to the list and all children
     try {
       await this.ref.once('value');
@@ -262,6 +266,7 @@ class ListLiveQuery implements LiveQuery {
   }
 
   _update() {
+    // console.log('debounced list update', this);
     this._observable.next(this.value);
   }
 }
@@ -297,6 +302,7 @@ class RedirectLiveQuery implements LiveQuery {
 
   async execute() {
     // This will only work when the client has read access to the list and all children
+    this.isActive = true;
     try {
       await this.ref.once('value');
       this.ref.on('value', this._handleValueSnapshot);
@@ -306,9 +312,11 @@ class RedirectLiveQuery implements LiveQuery {
   }
 
   cancel() {
-    this.child.unsubscribe();
-    this.child.subscription.cancel();
-    this.child = { subscription: null, unsubscribe: () => {} };
+    if (this.child.subscription) {
+      this.child.unsubscribe();
+      this.child.subscription.cancel();
+      this.child = { subscription: null, unsubscribe: () => {} };
+    }
     this.ref.off('value', this._handleValueSnapshot);
     this.isActive = false;
     this._observable.complete();
@@ -328,15 +336,16 @@ class RedirectLiveQuery implements LiveQuery {
   }
 
   _handleValueSnapshot(snapshot: any) {
-    const value = snapshot.val();
+    const target = snapshot.val();
     if (this.child) {
       this.child.unsubscribe();
     }
-    if (value === null) {
+    // There is
+    if (target === null) {
       this._handleChildValue(null);
       return;
     }
-    const subscription = this.makeChildSubscription(this.ref, value);
+    const subscription = this.makeChildSubscription(this.ref, target);
     const unsubscribe = subscription.subscribe({
       next: this._handleChildValue,
       error: err => this._observable.error(err),
@@ -351,11 +360,37 @@ class RedirectLiveQuery implements LiveQuery {
   }
 }
 
+class KeyLiveQuery implements LiveQuery {
+  ref: Reference;
+  value: Array<any>;
+
+  constructor(ref: Reference) {
+    this.ref = ref;
+  }
+
+  subscribe(observer: Observer<any>) {
+    observer.next(this.ref.key);
+    return () => {};
+    // TODO should we complete here?
+  }
+
+  async execute() {}
+
+  cancel() {}
+}
+
 export default {
   Leaf: LeafLiveQuery,
   Object: ObjectLiveQuery,
   List: ListLiveQuery,
   Redirect: RedirectLiveQuery,
+  Key: KeyLiveQuery,
 };
 
-export { LeafLiveQuery, ObjectLiveQuery, ListLiveQuery, RedirectLiveQuery };
+export {
+  LeafLiveQuery,
+  ObjectLiveQuery,
+  ListLiveQuery,
+  RedirectLiveQuery,
+  KeyLiveQuery,
+};
