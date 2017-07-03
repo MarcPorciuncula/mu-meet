@@ -55,7 +55,7 @@ export default {
         threshold: [0.5, 0],
       },
     );
-    this.intersectionObserver.observe(this.$refs.title.$el);
+    this.intersectionObserver.observe(this.$refs.title);
   },
   computed: {
     ...mapGetters({
