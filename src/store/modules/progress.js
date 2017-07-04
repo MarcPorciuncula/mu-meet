@@ -1,75 +1,95 @@
-import nprogress from 'nprogress';
-import R from 'ramda';
+import Vue from 'vue';
+import { filter, both, prop, reduce, maxBy, minBy } from 'ramda';
+import { UPDATE_PROGRESS_ITEM, INCREMENT_PROGRESS } from '@/store/mutations';
+import {
+  START_PROGRESS_ITEM,
+  INCREMENT_PROGRESS_ITEM,
+  FINISH_PROGRESS_ITEM,
+} from '@/store/actions';
+import {
+  PROGRESS_MESSAGE,
+  SHOW_PROGRESS_BAR_AT,
+  WATCH_PROGRESS_INCREMENT,
+} from '@/store/getters';
 
 const state = {
-  pending: [],
+  items: {},
+  delay: 500,
+  incremented: 0,
 };
 
-function updateProgressState(state, data) {
-  Object.assign(state, data);
-}
-
-async function addProgressItem(context, item) {
-  const { commit, state } = context;
-  if (!state.pending.length) {
-    nprogress.start();
-  }
-  if (state.pending.find(R.propEq('type', item.type))) {
-    return;
-  }
-  commit('updateProgressState', {
-    pending: [...state.pending, item],
-  });
-  if (item.done) {
-    await item.done;
-    removeProgressItem(context, item.id);
-  }
-}
-
-function removeProgressItem({ commit, state }, id) {
-  commit('updateProgressState', {
-    pending: state.pending.filter(R.complement(R.propEq('id', id))),
-  });
-  if (state.pending.length) {
-    nprogress.inc();
-  } else {
-    nprogress.done();
-  }
-}
-
-function updateProgressItem({ commit, state }, { id, message }) {
-  commit('updateProgressState', {
-    pending: state.pending.map(
-      R.when(
-        R.both(R.propEq('id', id), R.always(message)),
-        R.assoc('message', message),
-      ),
-    ),
-  });
-  nprogress.inc();
-}
-
-function getLoadingMessage(state) {
-  for (let i = state.pending.length - 1; i >= 0; i--) {
-    const message = state.pending[i].message;
-    if (message) {
-      return message;
+const mutations = {
+  [UPDATE_PROGRESS_ITEM](state, item) {
+    if (!state.items[item.type]) {
+      Vue.set(state.items, item.type, item);
+    } else {
+      Object.assign(state.items[item.type], item);
     }
-  }
-  return null;
-}
+  },
+  [INCREMENT_PROGRESS](state) {
+    state.incremented = state.incremented + 1;
+  },
+};
+
+const actions = {
+  [START_PROGRESS_ITEM]({ commit }, { type, message }) {
+    const now = performance.now();
+    commit(UPDATE_PROGRESS_ITEM, {
+      type,
+      message,
+      started: now,
+      pending: true,
+    });
+  },
+  [INCREMENT_PROGRESS_ITEM]({ commit }, { type, message }) {
+    commit(UPDATE_PROGRESS_ITEM, {
+      type,
+      message,
+    });
+    commit(INCREMENT_PROGRESS);
+  },
+  [FINISH_PROGRESS_ITEM]({ commit }, { type }) {
+    commit(UPDATE_PROGRESS_ITEM, {
+      type,
+      message: null,
+      started: null,
+      pending: false,
+    });
+  },
+};
+
+const getters = {
+  [PROGRESS_MESSAGE](state) {
+    const items = Object.values(state.items);
+    const inProgress = filter(both(prop('pending'), prop('message')))(items);
+    if (inProgress.length === 0) {
+      return null;
+    }
+    const latest = reduce(maxBy(prop('started')), { started: -Infinity })([
+      ...inProgress,
+    ]);
+    return latest.message;
+  },
+  [SHOW_PROGRESS_BAR_AT](state) {
+    const items = Object.values(state.items);
+    const inProgress = filter(prop('pending'))(items);
+    if (inProgress.length === 0) {
+      return null;
+    }
+    const earliest = reduce(minBy(prop('started')), { started: Infinity })(
+      inProgress,
+    );
+    // only show the progress bar after the delay to prevent immediate progress bar completion
+    return earliest.started + state.delay;
+  },
+  [WATCH_PROGRESS_INCREMENT](state) {
+    return state.incremented;
+  },
+};
 
 export default {
   state,
-  getters: {
-    getLoadingMessage,
-  },
-  mutations: {
-    updateProgressState,
-  },
-  actions: {
-    addProgressItem,
-    updateProgressItem,
-    removeProgressItem,
-  },
+  mutations,
+  actions,
+  getters,
 };

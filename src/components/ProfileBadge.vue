@@ -15,17 +15,37 @@
         <img v-if="user" class="header_profile-picture" :src="user.profile.picture"/>
       </transition>
     </div>
-    <overflow-menu/>
+    <mdc-menu>
+      <router-link v-show="isSignedIn && $route.name !== dashboardRoute.name" :to="{ name: dashboardRoute.name }">
+        <mdc-menu-item>
+          Return to dashboard
+        </mdc-menu-item>
+      </router-link>
+      <router-link v-show="isSignedIn" to="/signout">
+        <mdc-menu-item>
+          Sign out
+        </mdc-menu-item>
+      </router-link>
+    </mdc-menu>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import OverflowMenu from './OverflowMenu';
+import { mapGetters } from 'vuex';
+import {
+  IS_SIGNED_IN,
+  IS_SUBSCRIBED_USER_PROFILE,
+  USER_PROFILE,
+} from '@/store/getters';
+import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
+import MdcMenu from './Material/Menu';
+import MdcMenuItem from './Material/MenuItem';
+import dashboardRoute from '@/router/dashboard';
 
 export default {
   components: {
-    OverflowMenu,
+    MdcMenu,
+    MdcMenuItem,
   },
   data() {
     return {
@@ -33,8 +53,8 @@ export default {
     };
   },
   created() {
-    if (this.isSignedIn) {
-      this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+    if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
+      this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
     }
   },
   mounted() {
@@ -43,10 +63,18 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      isSignedIn: state => state.auth.isSignedIn,
-      user: state => state.users.users[state.auth.uid],
+    ...mapGetters({
+      isSignedIn: IS_SIGNED_IN,
     }),
+    user() {
+      if (this.$store.getters[USER_PROFILE].name) {
+        return {
+          profile: this.$store.getters[USER_PROFILE],
+        };
+      }
+      return null;
+    },
+    dashboardRoute: () => dashboardRoute,
   },
   watch: {
     user(value, old) {
@@ -55,8 +83,8 @@ export default {
       }
     },
     isSignedIn(value) {
-      if (value) {
-        this.$store.dispatch('ensureUserProfile', this.$store.state.auth.uid);
+      if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
+        this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
       }
     },
   },
@@ -81,14 +109,14 @@ export default {
 }
 
 .profile-badge {
-  padding: 0 0.5rem;
+  // padding: 0 0.5rem;
 }
 
 .header_profile-picture {
-  height: 3rem;
+  height: 2rem;
   width: auto;
   border-radius: 50%;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 .slide-up {

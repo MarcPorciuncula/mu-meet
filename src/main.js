@@ -4,13 +4,12 @@ import Vue from 'vue';
 import router from './router';
 import store from './store';
 import Wrapper from './components/Wrapper';
-import './firebase.config.js';
 import './index.scss';
 
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
-new Vue({
+let vm = new Vue({
   el: '#app',
   store,
   router,
@@ -21,5 +20,5 @@ new Vue({
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  window.store = store;
+  window.vm = vm;
 }

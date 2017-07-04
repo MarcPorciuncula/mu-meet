@@ -1,9 +1,13 @@
-import Dashboard from '@/components/Dashboard';
 import ProfileBadge from '@/components/ProfileBadge';
 import store from '@/store';
 
+import { IS_SUBSCRIBED_PLANNER_SESSION } from '@/store/getters';
+import { SUBSCRIBE_PLANNER_SESSION } from '@/store/actions';
+
 async function beforeEnter(to, from, next) {
-  await store.dispatch('refreshMeetSession');
+  if (!store.getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
+    await store.dispatch(SUBSCRIBE_PLANNER_SESSION);
+  }
   next();
 }
 
@@ -11,9 +15,10 @@ export default {
   name: 'dashboard',
   path: '/dashboard',
   components: {
-    default: Dashboard,
+    default: () =>
+      import('@/components/Dashboard').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
-  meta: { shell: true },
+  meta: { shell: true, title: 'Dashboard' },
   beforeEnter,
 };

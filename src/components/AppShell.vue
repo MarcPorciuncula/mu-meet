@@ -1,41 +1,74 @@
 <template>
-  <div class="app-shell-wrapper">
-    <header class="header">
-      <div class="header_bar">
-        <div style="flex: 1">
-          <transition name="fade-in" mode="out-in">
-            <span v-if="loadingMessage">{{ loadingMessage }}</span>
-            <mumeet-logo v-else class="header_logo"></mumeet-logo>
-          </transition>
-        </div>
+  <div class="app-shell">
+    <header-bar
+      ref="header"
+      :show-title="showTitle"
+      :title="$route.meta.title"
+      :message="loadingMessage"
+    >
+      <div slot="controls">
         <slot name="header-bar-control"></slot>
       </div>
-    </header>
+    </header-bar>
+    <section class="section-title" ref="title">
+      <layout-container class="section-title_inner">
+        <type-container>
+          <type-text tag="h2" type="title" :class="{ hidden: showTitle }">
+            {{ $route.meta.title }}
+          </type-text>
+        </type-container>
+      </layout-container>
+    </section>
     <div class="content">
       <slot></slot>
     </div>
-    <section class="section-beta-disclaimer">
-      <p>You are using MUmeet beta</p>
-      <p>This site is currently under construction, and some features may be missing or unstable. If there's a major problem, or if you want to follow development, you can <a target="_blank" href="https://twitter.com/MarcoThePoro">find me on twitter</a>.</p>
-      <p>
-        Thanks for using MUmeet :)
-      </p>
-    </section>
+    <page-footer></page-footer>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import MumeetLogo from './MumeetLogo';
+import HeaderBar from './HeaderBar';
+import PageFooter from './Footer';
+import { TypeContainer, TypeText } from './Material/Typography';
+import LayoutSection from './Layout/Section';
+import LayoutContainer from './Layout/Container';
+import { PROGRESS_MESSAGE } from '@/store/getters';
 
 export default {
   components: {
-    MumeetLogo,
+    HeaderBar,
+    PageFooter,
+    TypeContainer,
+    TypeText,
+    LayoutSection,
+    LayoutContainer,
+  },
+  data() {
+    return {
+      showTitle: false,
+    };
+  },
+  mounted() {
+    this.intersectionObserver = new IntersectionObserver(
+      this.updateIntersection,
+      {
+        threshold: [0.5, 0],
+      },
+    );
+    this.intersectionObserver.observe(this.$refs.title);
   },
   computed: {
     ...mapGetters({
-      loadingMessage: 'getLoadingMessage',
+      loadingMessage: PROGRESS_MESSAGE,
     }),
+  },
+  methods: {
+    updateIntersection(entries) {
+      entries.forEach(
+        entry => (this.showTitle = entry.intersectionRatio < 0.5),
+      );
+    },
   },
 };
 </script>
@@ -44,74 +77,30 @@ export default {
 @import '@material/animation/functions';
 @import '@material/elevation/mixins';
 
-.app-shell-wrapper {
+.app-shell {
   min-height: 100vh;
   position: relative;
+  background-color: #F5F5F5;
 }
 
-.header {
-  position: fixed;
-  z-index: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.section-title {
+  padding-top: 3.625rem;
+
+  &_inner {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .type {
+    margin-bottom: 0;
+  }
 }
 
-.header_bar {
-  @include mdc-elevation(2);
-
-  height: 5.8rem;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  background-color: rgba(#fff, 0.95);
-  width: 100%;
-}
-
-.header_logo {
-  font-size: 2.4rem;
+.hidden {
+  opacity: 0;
 }
 
 .content {
-  position: relative;
-  padding-top: 5.8rem;
-  min-height: calc(100vh - 5.8rem);
-}
-
-.fade-in {
-  &-enter-active {
-    $duration: 300ms;
-    transition: mdc-animation-enter(opacity, $duration);
-  }
-
-  &-leave-active {
-    $duration: 300ms;
-    transition: mdc-animation-exit(opacity, $duration);
-  }
-
-  &-enter {
-    opacity: 0;
-  }
-
-  &-leave-to {
-    opacity: 0;
-  }
-}
-
-.section-beta-disclaimer {
-  background-color: #212121;
-  color: white;
-  font-family: 'Roboto Mono', monospace;
-  padding: 2rem;
-  margin: 2rem 0 0 0;
-  font-size: 1.4rem;
-
-  a {
-    border-bottom: 1px solid white;
-    &:hover, &:active, &:focus {
-      background-color: white;
-      color: #212121;
-    }
-  }
+  min-height: 72vh;
 }
 </style>

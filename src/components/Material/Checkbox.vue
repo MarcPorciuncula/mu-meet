@@ -42,6 +42,9 @@ export default {
     disabled(value) {
       this.checkbox.disabled = value;
     },
+    value(checked) {
+      this.checkbox.checked = checked;
+    },
   },
   methods: {
     getInnerValue() {
@@ -56,5 +59,4 @@ export default {
 
 <style lang="scss">
 @import '@material/checkbox/mdc-checkbox';
-// TODO coloring
 </style>

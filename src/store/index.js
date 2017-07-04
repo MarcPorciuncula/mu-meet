@@ -2,10 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 import calendars from './modules/calendars';
-import scheduling from './modules/scheduling';
-import users from './modules/users';
 import progress from './modules/progress';
-import meet from './modules/meet';
+import profile from './modules/profile';
+import planner from './modules/planner';
 
 Vue.use(Vuex);
 
@@ -13,10 +12,9 @@ const store = new Vuex.Store({
   modules: {
     auth,
     calendars,
-    scheduling,
-    users,
     progress,
-    meet,
+    profile,
+    planner,
   },
   state: {
     routePending: false,

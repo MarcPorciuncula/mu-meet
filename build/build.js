@@ -1,9 +1,9 @@
 require('./check-versions')()
 
-// process.env.NODE_ENV = 'production'
+process.env.NODE_ENV = 'production'
 
 var ora = require('ora')
-var rm = require('rimraf')
+var fs = require('fs-extra');
 var path = require('path')
 var chalk = require('chalk')
 var webpack = require('webpack')
@@ -13,11 +13,16 @@ var webpackConfig = require('./webpack.prod.conf')
 var spinner = ora(`building for production...`)
 spinner.start()
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
-  if (err) throw err
-  webpack(webpackConfig, function (err, stats) {
+Promise.resolve()
+  .then(() => fs.remove(path.join(config.build.assetsRoot, config.build.assetsSubDirectory)))
+  .then(() => new Promise((resolve, reject) => {
+    webpack(webpackConfig, (err, stats) => {
+      if (err) reject(err);
+      else resolve(stats);
+    })
+  }))
+  .then((stats) => {
     spinner.stop()
-    if (err) throw err
     process.stdout.write(stats.toString({
       colors: true,
       modules: false,
@@ -36,5 +41,14 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       '  Tip: built files are meant to be served over an HTTP server.\n' +
       '  Opening index.html over file:// won\'t work.\n'
     ))
+
+    return fs.outputFile(path.join(__dirname, 'stats.json'), JSON.stringify(stats.toJson()));
   })
-})
+  .then(() => {
+    console.log(chalk.cyan('  Build stats saved to stats.json\n'));
+  })
+  .catch(err => {
+    spinner.stop();
+    console.error(err);
+    process.exit(1);
+  });
