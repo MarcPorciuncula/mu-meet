@@ -10,6 +10,9 @@ import {
   START_PROGRESS_ITEM,
   INCREMENT_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  UNSUBSCRIBE_CALENDARS,
+  UNSUBSCRIBE_USER_PROFILE,
+  UNSUBSCRIBE_PLANNER_SESSION,
 } from '@/store/actions';
 import { USER_UID, IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 
@@ -85,10 +88,14 @@ const actions = {
 
     dispatch(FINISH_PROGRESS_ITEM, { type: SIGN_IN });
   },
-  async [SIGN_OUT]({ commit }) {
+  async [SIGN_OUT]({ commit, dispatch }) {
     commit(UPDATE_AUTH_STATE, {
       pending: PENDING_SIGN_OUT,
     });
+
+    dispatch(UNSUBSCRIBE_CALENDARS);
+    dispatch(UNSUBSCRIBE_PLANNER_SESSION);
+    dispatch(UNSUBSCRIBE_USER_PROFILE);
 
     await firebase.auth().signOut();
 

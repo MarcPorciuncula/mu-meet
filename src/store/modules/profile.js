@@ -2,7 +2,10 @@ import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
 import invariant from 'invariant';
 import { omit } from 'ramda';
 import { UPDATE_PROFILE, UPDATE_PROFILE_SUBSCRIPTION } from '@/store/mutations';
-import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
+import {
+  SUBSCRIBE_USER_PROFILE,
+  UNSUBSCRIBE_USER_PROFILE,
+} from '@/store/actions';
 import {
   USER_PROFILE,
   USER_UID,
@@ -57,6 +60,19 @@ const actions = {
         complete: () => {},
       });
     });
+  },
+  async [UNSUBSCRIBE_USER_PROFILE]({ commit, getters, state }) {
+    if (getters[IS_SUBSCRIBED_USER_PROFILE]) {
+      state._subscription.unsubscribe();
+      commit(UPDATE_PROFILE_SUBSCRIPTION, null);
+      commit(UPDATE_PROFILE, {
+        email: null,
+        name: null,
+        family_name: null,
+        given_name: null,
+        picture: null,
+      });
+    }
   },
 };
 

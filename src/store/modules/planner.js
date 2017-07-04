@@ -11,6 +11,7 @@ import {
 } from '@/store/mutations';
 import {
   SUBSCRIBE_PLANNER_SESSION,
+  UNSUBSCRIBE_PLANNER_SESSION,
   CREATE_PLANNER_SESSION,
   JOIN_PLANNER_SESSION,
   ARCHIVE_PLANNER_SESSION,
@@ -95,6 +96,13 @@ const actions = {
         complete: () => {},
       });
     });
+  },
+  [UNSUBSCRIBE_PLANNER_SESSION]({ commit, getters, state }) {
+    if (getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
+      state._subscription.unsubscribe();
+      commit(UPDATE_PLANNER_SUBSCRIPTION, null);
+      commit(UPDATE_PLANNER_SESSION, null);
+    }
   },
   async [CREATE_PLANNER_SESSION]({
     commit,

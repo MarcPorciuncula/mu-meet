@@ -9,9 +9,11 @@ import a from 'awaiting';
 import {
   UPDATE_CALENDAR,
   UPDATE_CALENDARS_SUBSCRIPTION,
+  CLEAR_CALENDARS,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_CALENDARS,
+  UNSUBSCRIBE_CALENDARS,
   SET_CALENDAR_SELECTED,
   FETCH_CALENDARS_TO_DATABASE,
   START_PROGRESS_ITEM,
@@ -45,8 +47,15 @@ const mutations = {
       Object.assign(state[calendar.id], omit(['id'], calendar));
     }
   },
-  [UPDATE_CALENDARS_SUBSCRIPTION](state, { unsubscribe }) {
-    state._subscription = { unsubscribe };
+  [UPDATE_CALENDARS_SUBSCRIPTION](state, subscription) {
+    state._subscription = subscription;
+  },
+  [CLEAR_CALENDARS](state) {
+    Object.keys(state).forEach(key => {
+      if (key !== '_subscription') {
+        Vue.delete(state, key);
+      }
+    });
   },
 };
 
@@ -124,6 +133,13 @@ const actions = {
     dispatch(FINISH_PROGRESS_ITEM, {
       type: SUBSCRIBE_CALENDARS,
     });
+  },
+  [UNSUBSCRIBE_CALENDARS]({ commit, getters, state }) {
+    if (getters[IS_SUBSCRIBED_CALENDARS]) {
+      state._subscription.unsubscribe();
+      commit(UPDATE_CALENDARS_SUBSCRIPTION, null);
+      commit(CLEAR_CALENDARS);
+    }
   },
   async [SET_CALENDAR_SELECTED](
     { commit, state, rootState },
