@@ -29,7 +29,23 @@ export async function fetchCalendarsIntoDatabase(event) {
   );
 
   const calendars = await fetchCalendars(event.data.uid, oAuth2Client);
-  await database.ref(`/users/${event.data.uid}/calendars`).set(calendars);
+  const user = database.ref(`/users/${event.data.uid}`);
+  await user.child(`calendars`).set(calendars);
+
+  for (let calendar of calendars) {
+    let select = false;
+    if (calendar.summary.toLowerCase().match(/timetable/)) {
+      console.log('Found a calendar named `timetable`, marking it as selected');
+      select = true;
+    } else if (calendar.primary) {
+      console.log('Found the primary calendar, marking it as selected');
+      select = true;
+    }
+
+    if (select) {
+      await user.child(`selected-calendars/${encodeId(calendar.id)}`).set(true);
+    }
+  }
 
   save();
 }
@@ -55,4 +71,8 @@ export async function deleteUserData(event) {
 
   // TODO clean up sessions etc.
   await database.ref(`/users/${uid}`).set(null);
+}
+
+function encodeId(id) {
+  return Buffer.from(id).toString('base64');
 }
