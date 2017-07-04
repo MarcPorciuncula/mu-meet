@@ -42,6 +42,6 @@ export default {
 
 .callout_actions {
   text-align: right;
-  margin: 0 -0.5rem -0.5rem -0.5rem;
+  margin-bottom: -0.5rem;
 }
 </style>

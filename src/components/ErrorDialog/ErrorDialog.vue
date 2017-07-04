@@ -39,7 +39,12 @@ window.onunhandledrejection = event => {
   console.error('Unhandled promise rejection\n', event.reason);
 };
 
-// TODO handle synchronous errors???
+window.addEventListener('error', event => {
+  data.error = event;
+});
+
+// TODO handle synchronous errors properly
+// TODO intercept console.error???
 
 export default {
   components: {

@@ -59,5 +59,4 @@ export default {
 
 <style lang="scss">
 @import '@material/checkbox/mdc-checkbox';
-// TODO coloring
 </style>

@@ -12,11 +12,11 @@
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
           <div slot="actions">
-            <mdc-button @click="archiveLastMeetingPlan()">
+            <mdc-button compact @click="archiveLastMeetingPlan()">
               Archive
             </mdc-button>
             <router-link :to="{ name: meetingPlanRoute.name, params: { code: lastMeetingPlan.id } }">
-              <mdc-button>
+              <mdc-button compact>
                 Resume
               </mdc-button>
             </router-link>

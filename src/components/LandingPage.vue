@@ -47,10 +47,10 @@
     </div>
     <landing-section>
       <span slot="headline">
-        Sync your uni timetable with one click
+        Sync your uni timetable in just a few clicks
       </span>
       <span slot="body">
-        MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll automatically find and sync your timetable to Google Calendar. (Coming soon)
+        MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll help you find and sync your timetable to Google Calendar. (Coming soon)
       </span>
     </landing-section>
     <layout-section class="section-get-started" padding="more">

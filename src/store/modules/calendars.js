@@ -4,6 +4,8 @@ import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
 import debounce from 'lodash/debounce';
 import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
+import { functions } from '@/functions';
+import a from 'awaiting';
 import {
   UPDATE_CALENDAR,
   UPDATE_CALENDARS_SUBSCRIPTION,
@@ -11,6 +13,7 @@ import {
 import {
   SUBSCRIBE_CALENDARS,
   SET_CALENDAR_SELECTED,
+  FETCH_CALENDARS_TO_DATABASE,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
 } from '@/store/actions';
@@ -48,7 +51,7 @@ const mutations = {
 };
 
 const actions = {
-  [SUBSCRIBE_CALENDARS]({
+  async [SUBSCRIBE_CALENDARS]({
     commit: _commit,
     rootState,
     state,
@@ -88,9 +91,11 @@ const actions = {
       // Subscribe to value updates on each child so we only have
       // to update that child instead of all of them
       query.subscribe({
-        next: value => commit(UPDATE_CALENDAR, value),
+        next: value => value && commit(UPDATE_CALENDAR, value),
         error: err => console.error(err),
-        complete: () => {},
+        complete: () => {
+          console.log('Calendar removed');
+        },
       });
 
       return query;
@@ -102,18 +107,22 @@ const actions = {
       unsubscribe: () => subscription.cancel(),
     });
 
-    return new Promise((resolve, reject) => {
-      const unsubscribe = subscription.subscribe({
-        next: () => {
-          dispatch(FINISH_PROGRESS_ITEM, {
-            type: SUBSCRIBE_CALENDARS,
-          });
-          resolve();
-          unsubscribe(false);
-        },
-        error: reject,
-        complete: () => {},
-      });
+    await a.single([
+      new Promise((resolve, reject) => {
+        const unsubscribe = subscription.subscribe({
+          next: () => {
+            resolve();
+            unsubscribe(false);
+          },
+          error: reject,
+          complete: () => {},
+        });
+      }),
+      a.delay(4e3),
+    ]);
+
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: SUBSCRIBE_CALENDARS,
     });
   },
   async [SET_CALENDAR_SELECTED](
@@ -134,6 +143,16 @@ const actions = {
     const user = root.child(`users/${uid}`);
 
     await user.child(`selected-calendars/${encodeId(id)}`).set(selected);
+  },
+  async [FETCH_CALENDARS_TO_DATABASE]({ dispatch }) {
+    dispatch(START_PROGRESS_ITEM, {
+      type: FETCH_CALENDARS_TO_DATABASE,
+      message: 'Syncing your calendars',
+    });
+    await functions('getCalendars');
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: FETCH_CALENDARS_TO_DATABASE,
+    });
   },
 };
 
