@@ -13,8 +13,7 @@ module.exports = {
       // Disable native promises and polyfill them
       // Native promises do not support the unhandledrejection event, so we need to use
       // the polyfilled version to track unhandled promise rejections
-      './src/disableNativePromises',
-      'babel-polyfill',
+      './src/polyfill/Promise',
       // Main entry
       './src/main.js'
     ]

@@ -7,3 +7,6 @@ if (window.Promise) {
   );
   delete window.Promise;
 }
+
+const Promise = require('core-js/library/es6/promise');
+window.Promise = Promise;
