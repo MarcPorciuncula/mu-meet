@@ -66,6 +66,4 @@ production-deploy:
   only:
   - master
   script:
-  - yarn surge -- -p dist -d $SURGE_DOMAIN
-  - yarn deploy-functions -- --project production --token "$FIREBASE_CI_TOKEN"
-  - yarn deploy-database -- --project production --token "$FIREBASE_CI_TOKEN"
+  - yarn deploy-all -- --project production --token "$FIREBASE_CI_TOKEN"
