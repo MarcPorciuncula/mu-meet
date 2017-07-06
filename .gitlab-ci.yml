@@ -10,10 +10,8 @@ staging-build:
     name: staging
   artifacts:
     paths:
-    - node_modules/
     - dist/
     - functions/index.js
-    - functions/node_modules/
   only:
   - next
   script:
@@ -39,6 +37,7 @@ staging-deploy:
   only:
   - next
   script:
+  - npm install firebase-tools
   - yarn deploy-all -- --project staging --token "$FIREBASE_CI_TOKEN"
 
 production-build:
@@ -47,10 +46,8 @@ production-build:
     name: production
   artifacts:
     paths:
-    - node_modules/
     - dist/
     - functions/index.js
-    - functions/node_modules/
   only:
   - master
   script:
@@ -74,4 +71,5 @@ production-deploy:
   only:
   - master
   script:
+  - npm install firebase-tools
   - yarn deploy-all -- --project production --token "$FIREBASE_CI_TOKEN"
