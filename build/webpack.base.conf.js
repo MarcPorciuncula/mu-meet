@@ -14,6 +14,7 @@ module.exports = {
       // Native promises do not support the unhandledrejection event, so we need to use
       // the polyfilled version to track unhandled promise rejections
       './src/polyfill/Promise',
+      './src/google-analytics',
       // Main entry
       './src/main.js'
     ]

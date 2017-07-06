@@ -17,9 +17,13 @@ staging-build:
   only:
   - next
   script:
+  # Disable Google analytics for the staging site
+  - GOOGLE_ANALYTICS_ID=
+  # Build config/secrets
   - mkdir secret
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_STAGING > secret/client.json
   - echo $FIREBASE_CONFIG_STAGING > secret/firebase-config.json
+  # Install and build
   - yarn
   - yarn build
   - cd functions
@@ -49,9 +53,11 @@ production-build:
   only:
   - master
   script:
+  # Build config/secrets
   - mkdir secret
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json
   - echo $FIREBASE_CONFIG_PRODUCTION > secret/firebase-config.json
+  # Install and build
   - yarn
   - yarn build
   - cd functions
