@@ -37,7 +37,8 @@
     "shortid": "^2.2.8",
     "vue": "^2.3.4",
     "vue-router": "^2.7.0",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "webpack-bundle-analyzer": "^2.8.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.1",

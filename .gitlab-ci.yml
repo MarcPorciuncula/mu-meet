@@ -4,28 +4,41 @@ stages:
 - build
 - deploy
 
+before_script:
+- mkdir secret
+- yarn config set cache-folder .yarn-cache
+- yarn
+- cd functions && yarn && cd ..
+
+after_script:
+- rm -rf secret
+
+cache:
+  untracked: true
+  key: "$CI_PROJECT_ID"
+  paths:
+  - .yarn-cache
+
 staging-build:
   stage: build
   environment:
     name: staging
   artifacts:
     paths:
-    - node_modules/
     - dist/
     - functions/index.js
-    - functions/node_modules/
   only:
   - next
   script:
-  - mkdir secret
+  # Disable Google analytics for the staging site
+  - GOOGLE_ANALYTICS_ID=
+  # Build config/secrets
+  - echo $ORIGIN_STAGING > secret/origin.txt
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_STAGING > secret/client.json
   - echo $FIREBASE_CONFIG_STAGING > secret/firebase-config.json
-  - yarn
+  # build
   - yarn build
-  - cd functions
-  - yarn
-  - yarn build
-  - cd ..
+  - cd functions && yarn build && cd ..
 
 staging-deploy:
   stage: deploy
@@ -42,22 +55,18 @@ production-build:
     name: production
   artifacts:
     paths:
-    - node_modules/
     - dist/
     - functions/index.js
-    - functions/node_modules/
   only:
   - master
   script:
-  - mkdir secret
+  # Build config/secrets
+  - scho $ORIGIN_PRODUCTION > secret/origin.txt
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json
   - echo $FIREBASE_CONFIG_PRODUCTION > secret/firebase-config.json
-  - yarn
+  # build
   - yarn build
-  - cd functions
-  - yarn
-  - yarn build
-  - cd ..
+  - cd functions && yarn build && cd ..
 
 production-deploy:
   stage: deploy

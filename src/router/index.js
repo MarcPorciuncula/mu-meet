@@ -46,6 +46,7 @@ async function verifyAuth(to, from, next) {
 }
 
 const router = new VueRouter({
+  mode: 'history',
   routes: [landing, signin, signout, dashboard, calendars, meet],
 });
 
