@@ -45,7 +45,8 @@
         <type-container>
           <type-text tag="p" type="body2">
             MUmeet was built by <a target="_blank" href="https://twitter.com/MarcoThePoro">Marc Porciuncula</a> for <a target="_blank" href="http://unihack.net/">Unihack</a> Mini 2017.<br/>
-            Made with ❤ in Melbourne, Australia.
+            Made with ❤ in Melbourne, Australia.<br/>
+            Not affiliated with Monash University.
           </type-text>
         </type-container>
       </layout-container>
