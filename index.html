@@ -2,8 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>MUmeet</title>
+    <title><%= htmlWebpackPlugin.options.meta.title %></title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="<%= htmlWebpackPlugin.options.meta.descriptionLong %>">
+    <meta name="author" content="<%= htmlWebpackPlugin.options.meta.author %>">
+    <meta name="keywords" content="<%= htmlWebpackPlugin.options.meta.tags %>">
+
+    <meta name="og:url" content="<%= htmlWebpackPlugin.options.meta.url %>">
+    <meta name="og:title" content="<%= htmlWebpackPlugin.options.meta.title %>">
+    <meta name="og:description" content="<%= htmlWebpackPlugin.options.meta.descriptionShort %>">
+    <meta name="og:image" content="<%= htmlWebpackPlugin.options.meta.image %>">
+
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600|Raleway:400,700|Roboto+Mono:400,500" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
