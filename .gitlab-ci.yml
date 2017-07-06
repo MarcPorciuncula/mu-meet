@@ -37,7 +37,10 @@ staging-deploy:
   only:
   - next
   script:
-  - npm install firebase-tools
+  - yarn
+  - cd functions
+  - yarn
+  - cd ..
   - yarn deploy-all -- --project staging --token "$FIREBASE_CI_TOKEN"
 
 production-build:
@@ -71,5 +74,8 @@ production-deploy:
   only:
   - master
   script:
-  - npm install firebase-tools
+  - yarn
+  - cd functions
+  - yarn
+  - cd ..
   - yarn deploy-all -- --project production --token "$FIREBASE_CI_TOKEN"
