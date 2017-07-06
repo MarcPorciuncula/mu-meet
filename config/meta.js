@@ -1,5 +1,7 @@
 const origin = process.env.ORIGIN || 'http://localhost:8080';
 
+console.log(origin, process.env.ORIGIN);
+
 module.exports = {
   title: 'MUmeet: find meeting times',
   author: 'Marc Porciuncula',
