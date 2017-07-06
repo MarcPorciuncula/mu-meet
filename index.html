@@ -10,6 +10,11 @@
     <meta name="author" content="<%= htmlWebpackPlugin.options.meta.author %>">
     <meta name="keywords" content="<%= htmlWebpackPlugin.options.meta.tags %>">
 
+    <!-- Block indexing if this is the staging server -->
+    <% if (htmlWebpackPlugin.options.meta.origin.match(/staging/)) { %>
+      <meta name="robots" content="noindex">
+    <% } %>
+
     <!-- OpenGraph data for rich sharing on Facebook -->
     <meta property="og:url" content="<%= htmlWebpackPlugin.options.meta.url %>">
     <meta property="og:title" content="<%= htmlWebpackPlugin.options.meta.title %>">
