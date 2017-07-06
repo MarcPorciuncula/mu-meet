@@ -1,10 +1,9 @@
-const origin = process.env.SITE_ORIGIN || 'http://localhost:8080';
+const fs = require('fs');
+const path = require('path');
 
-console.log(origin, process.env.SITE_ORIGIN);
-console.log(process.env);
-if (!process.env.SITE_ORIGIN) {
-  throw new Error();
-}
+const origin = fs
+  .readFileSync(path.join(__dirname, '../secret/origin.txt'))
+  .toString();
 
 module.exports = {
   title: 'MUmeet: find meeting times',
