@@ -61,7 +61,7 @@ production-build:
   - master
   script:
   # Build config/secrets
-  - scho $ORIGIN_PRODUCTION > secret/origin.txt
+  - echo $ORIGIN_PRODUCTION > secret/origin.txt
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json
   - echo $FIREBASE_CONFIG_PRODUCTION > secret/firebase-config.json
   # build
