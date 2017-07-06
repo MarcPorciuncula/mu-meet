@@ -18,6 +18,7 @@ staging-build:
   - next
   script:
   - ORIGIN=$ORIGIN_STAGING
+  - echo $ORIGIN
   # Disable Google analytics for the staging site
   - GOOGLE_ANALYTICS_ID=
   # Build config/secrets
