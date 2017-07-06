@@ -11,7 +11,7 @@
     <meta name="keywords" content="<%= htmlWebpackPlugin.options.meta.tags %>">
 
     <!-- Block indexing if this is the staging server -->
-    <% if (htmlWebpackPlugin.options.meta.origin.match(/staging/)) { %>
+    <% if (htmlWebpackPlugin.options.meta.url.match(/staging/)) { %>
       <meta name="robots" content="noindex">
     <% } %>
 
