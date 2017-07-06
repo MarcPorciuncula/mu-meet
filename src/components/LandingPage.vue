@@ -21,6 +21,11 @@
           <mdc-button hero raised class="get-started">Find a time</mdc-button>
         </router-link>
       </div>
+      <div class="section-splash_credit">
+        <type-text tag="a" type="body2" href="https://unsplash.com/photos/FoKO4DpXamQ">
+          Photo by Eric Rothermel on Unsplash
+        </type-text>
+      </div>
     </layout-section>
 
     <landing-section>
@@ -167,6 +172,17 @@ export default {
   height: 0;
   background: #ECEFF1;
   justify-content: center;
+  background-image: url('../assets/eric-rothermel-23788-1080.jpg');
+  background-size: cover;
+  position: relative;
+
+  &_credit {
+    position: absolute;
+    bottom: 0.5rem;
+    .type {
+      color: rgba(#FFF, 0.2);
+    }
+  }
 }
 
 @media (min-width: 28rem) {
