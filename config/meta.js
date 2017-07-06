@@ -3,7 +3,8 @@ const path = require('path');
 
 const origin = fs
   .readFileSync(path.join(__dirname, '../secret/origin.txt'))
-  .toString();
+  .toString()
+  .trim();
 
 module.exports = {
   title: 'MUmeet: find meeting times',
