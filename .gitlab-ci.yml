@@ -17,7 +17,7 @@ staging-build:
   only:
   - next
   script:
-  - ORIGIN=$ORIGIN_STAGING
+  - SITE_ORIGIN=$ORIGIN_STAGING
   # Disable Google analytics for the staging site
   - GOOGLE_ANALYTICS_ID=
   # Build config/secrets
@@ -54,7 +54,7 @@ production-build:
   only:
   - master
   script:
-  - ORIGIN=$ORIGIN_PRODUCTION
+  - SITE_ORIGIN=$ORIGIN_PRODUCTION
   # Build config/secrets
   - mkdir secret
   - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json

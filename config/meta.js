@@ -1,6 +1,6 @@
-const origin = process.env.ORIGIN || 'http://localhost:8080';
+const origin = process.env.SITE_ORIGIN || 'http://localhost:8080';
 
-console.log(origin, process.env.ORIGIN);
+console.log(origin, process.env.SITE_ORIGIN);
 
 module.exports = {
   title: 'MUmeet: find meeting times',
