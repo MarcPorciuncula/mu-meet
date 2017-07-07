@@ -1,6 +1,6 @@
 <template>
-  <header class="header">
-    <div class="header_inner">
+  <layout-section tag="header" class="header">
+    <layout-container class="header_inner">
       <div style="flex-grow: 1">
         <transition name="fade-in" mode="out-in">
           <type-text v-if="message" tag="span" type="body2" key="message">
@@ -23,8 +23,8 @@
         </transition>
       </div>
       <slot name="controls"></slot>
-    </div>
-  </header>
+    </layout-container>
+  </layout-section>
 </template>
 
 <script>

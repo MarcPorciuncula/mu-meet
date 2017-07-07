@@ -10,7 +10,7 @@
         <slot name="header-bar-control"></slot>
       </div>
     </header-bar>
-    <section class="section-title" ref="title">
+    <layout-section class="section-title" ref="title">
       <layout-container class="section-title_inner">
         <type-container>
           <type-text tag="h2" type="title" :class="{ hidden: showTitle }">
@@ -18,7 +18,7 @@
           </type-text>
         </type-container>
       </layout-container>
-    </section>
+    </layout-section>
     <div class="content">
       <slot></slot>
     </div>
@@ -56,7 +56,7 @@ export default {
         threshold: [0.5, 0],
       },
     );
-    this.intersectionObserver.observe(this.$refs.title);
+    this.intersectionObserver.observe(this.$refs.title.$el);
   },
   computed: {
     ...mapGetters({
