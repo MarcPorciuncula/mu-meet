@@ -28,6 +28,7 @@ module.exports = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
+      meta: config.build.meta,
       inject: true
     }),
     new FriendlyErrorsPlugin()
