@@ -55,6 +55,7 @@
         </mdc-list-group>
       </layout-container>
     </layout-section>
+    <parameters />
     <team-list />
     <meeting-times />
     <layout-section padding="normal">
@@ -88,6 +89,7 @@ import {
 } from '@/components/Material/List';
 import TeamList from './TeamList';
 import MeetingTimes from './MeetingTimes';
+import Parameters from './Parameters';
 
 export default {
   components: {
@@ -101,6 +103,7 @@ export default {
     MdcListGroupDivider,
     TeamList,
     MeetingTimes,
+    Parameters,
   },
   props: {
     inviteLink: VueTypes.string.isRequired,
