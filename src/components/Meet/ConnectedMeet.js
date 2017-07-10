@@ -2,7 +2,7 @@ import R from 'ramda';
 import calendarsRoute from '@/router/calendars';
 import dashboardRoute from '@/router/dashboard';
 import Meet from './Meet';
-import { SELECTED_CALENDARS } from '@/store/getters';
+import { SELECTED_CALENDARS, CURRENT_PLANNER_SESSION } from '@/store/getters';
 import {
   ARCHIVE_PLANNER_SESSION,
   REQUEST_PLANNER_RESULT,
@@ -18,6 +18,7 @@ export default {
         'calendarsRoute',
         'findMeetingTimes',
         'archive',
+        'session',
       ])(this),
     });
   },
@@ -32,6 +33,9 @@ export default {
     calendarsRoute: R.always(calendarsRoute),
     calendars() {
       return Object.values(this.$store.getters[SELECTED_CALENDARS]);
+    },
+    session() {
+      return this.$store.getters[CURRENT_PLANNER_SESSION];
     },
   },
   methods: {

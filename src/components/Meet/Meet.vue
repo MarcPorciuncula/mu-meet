@@ -22,13 +22,18 @@
                 {{ inviteLink }}
               </span>
             </mdc-list-item>
-            <mdc-list-item multiline ripple>
+            <mdc-list-item multiline ripple @click="showParameters = true">
               <span slot="start-detail" class="material-icons">
                 tune
               </span>
-              Change parameters (Coming soon)
+              Change parameters
               <span slot="secondary-text">
-                At least 30 min from 9am to 5pm on weekdays, this week.
+                At least 30 min
+                from {{ session.config.searchFromHour | formatHour }}
+                to {{ session.config.searchToHour | formatHour }}
+                on weekdays,
+                over {{ session.config.searchFromDate | format('ddd DD MMM') }}
+                to {{ session.config.searchToDate | format('ddd DD MMM') }}.
               </span>
             </mdc-list-item>
             <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
@@ -56,7 +61,8 @@
       </layout-container>
     </layout-section>
     <team-list />
-    <meeting-times />
+    <parameters v-if="showParameters" :done="hideParameters"/>
+    <meeting-times/>
     <layout-section padding="normal">
       <layout-container padding="min">
         <mdc-list-group>
@@ -77,6 +83,9 @@
 
 <script>
 import VueTypes from 'vue-types';
+import format from 'date-fns/format';
+import setHours from 'date-fns/set_hours';
+import setMinutes from 'date-fns/set_minutes';
 import LayoutSection from '@/components/Layout/Section';
 import LayoutContainer from '@/components/Layout/Container';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
@@ -88,6 +97,7 @@ import {
 } from '@/components/Material/List';
 import TeamList from './TeamList';
 import MeetingTimes from './MeetingTimes';
+import Parameters from './Parameters';
 
 export default {
   components: {
@@ -101,6 +111,7 @@ export default {
     MdcListGroupDivider,
     TeamList,
     MeetingTimes,
+    Parameters,
   },
   props: {
     inviteLink: VueTypes.string.isRequired,
@@ -113,6 +124,12 @@ export default {
       .isRequired,
     findMeetingTimes: VueTypes.func.isRequired,
     archive: VueTypes.func.isRequired,
+    session: VueTypes.shape({
+      config: VueTypes.shape({
+        searchFromDate: VueTypes.oneOfType([Date]).isRequired,
+        searchToDate: VueTypes.oneOfType([Date]).isRequired,
+      }).loose.isRequired,
+    }).loose.isRequired,
   },
   methods: {
     copyInviteLink(event) {
@@ -126,6 +143,25 @@ export default {
       range.setStart(this.$refs.inviteLink, 0);
       range.setEnd(this.$refs.inviteLink, 1);
       selection.addRange(range);
+    },
+    setHours,
+    hideParameters() {
+      this.showParameters = false;
+    },
+  },
+  data() {
+    return {
+      showParameters: false,
+    };
+  },
+  filters: {
+    format,
+    formatHour(hours) {
+      const minutes = hours % 1 * 60;
+      let date = new Date();
+      date = setMinutes(date, minutes);
+      date = setHours(date, hours);
+      return format(date, 'h:mma');
     },
   },
 };

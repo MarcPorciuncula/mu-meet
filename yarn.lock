@@ -82,6 +82,10 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@material/base/-/base-0.2.0.tgz#685e2c344aa037e42be7978e1f365ff183b9f3a1"
 
+"@material/base@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@material/base/-/base-0.2.1.tgz#1206df65da0bcde5df46e78b4d60a1e09fdc41cb"
+
 "@material/button@^0.3.7":
   version "0.3.7"
   resolved "https://registry.yarnpkg.com/@material/button/-/button-0.3.7.tgz#3912791322f7f7129a5a2239c3098e8b10a4ceb8"
@@ -107,6 +111,15 @@
   resolved "https://registry.yarnpkg.com/@material/elevation/-/elevation-0.1.8.tgz#57a1f3541a330d035633db7f5db82c462d0ccad0"
   dependencies:
     "@material/animation" "^0.2.3"
+
+"@material/form-field@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@material/form-field/-/form-field-0.2.8.tgz#5407a371566930eea8ed3295e24ee018dac1c16c"
+  dependencies:
+    "@material/base" "^0.2.1"
+    "@material/rtl" "^0.1.6"
+    "@material/theme" "^0.1.5"
+    "@material/typography" "^0.2.2"
 
 "@material/list@^0.2.9":
   version "0.2.9"
@@ -134,9 +147,31 @@
     "@material/base" "^0.2.0"
     "@material/theme" "^0.1.5"
 
+"@material/ripple@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@material/ripple/-/ripple-0.7.0.tgz#ea784a6c54f8d493d3df21440dcfaba706fb0caa"
+  dependencies:
+    "@material/base" "^0.2.1"
+    "@material/theme" "^0.1.5"
+
 "@material/rtl@^0.1.4":
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/@material/rtl/-/rtl-0.1.4.tgz#03b99a0ff4fae54d271ce7c586b5cf6dee8c60bc"
+
+"@material/rtl@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@material/rtl/-/rtl-0.1.6.tgz#64897f3050b2c53c378c6b4a7d2998cf61b2445b"
+
+"@material/textfield@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@material/textfield/-/textfield-0.3.0.tgz#17f44383e557d329957e824c2bb028376c7b7a34"
+  dependencies:
+    "@material/animation" "^0.2.3"
+    "@material/base" "^0.2.1"
+    "@material/ripple" "^0.7.0"
+    "@material/rtl" "^0.1.6"
+    "@material/theme" "^0.1.5"
+    "@material/typography" "^0.2.2"
 
 "@material/theme@^0.1.5":
   version "0.1.5"
@@ -1187,7 +1222,7 @@ babel-register@^6.22.0, babel-register@^6.24.1:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.18.0, babel-runtime@^6.22.0:
+babel-runtime@^6.0.0, babel-runtime@^6.18.0, babel-runtime@^6.22.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
   dependencies:
@@ -6837,6 +6872,12 @@ vue-types@^1.0.1:
 vue@^2.3.3:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.3.4.tgz#5ec3b87a191da8090bbef56b7cfabd4158038171"
+
+vuejs-datepicker@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/vuejs-datepicker/-/vuejs-datepicker-0.8.5.tgz#0861868c182f78ea2b7e4f892c774af808c9d07a"
+  dependencies:
+    babel-runtime "^6.0.0"
 
 vuex@^2.3.1:
   version "2.3.1"

@@ -2,7 +2,7 @@ import invariant from 'invariant';
 import firebase from '@/firebase';
 import { functions } from '@/functions';
 import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
-import { identity } from 'ramda';
+import { identity, evolve } from 'ramda';
 import Vue from 'vue';
 import parse from 'date-fns/parse';
 import {
@@ -16,6 +16,7 @@ import {
   JOIN_PLANNER_SESSION,
   ARCHIVE_PLANNER_SESSION,
   REQUEST_PLANNER_RESULT,
+  SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
 } from '@/store/actions';
@@ -68,7 +69,9 @@ const actions = {
           users: new LiveQuery.List(session.child('users'), ref => {
             return createUserSubscription(root.child(`/users/${ref.key}`));
           }),
-          config: new LiveQuery.Leaf(session.child('config')),
+          config: new LiveQuery.Leaf(session.child('config'), {
+            transform: evolve({ searchFromDate: parse, searchToDate: parse }),
+          }),
           result: new LiveQuery.Leaf(session.child('result')),
         });
       },
@@ -195,6 +198,29 @@ const actions = {
       type: REQUEST_PLANNER_RESULT,
     });
   },
+  async [SET_PLANNER_CONFIG]({ state, commit, dispatch }, patch) {
+    dispatch(START_PROGRESS_ITEM, {
+      type: SET_PLANNER_CONFIG,
+      message: 'Updating meeting parameters',
+    });
+
+    const config = Object.assign({}, state.session.config, patch);
+    commit(
+      UPDATE_PLANNER_SESSION,
+      Object.assign({}, state.session, { config }),
+    );
+
+    const session = database.ref(`/sessions/${state.session.id}`);
+    await session.child('config').set(
+      evolve({
+        searchFromDate: toString,
+        searchToDate: toString,
+      })(config),
+    );
+    dispatch(FINISH_PROGRESS_ITEM, {
+      type: SET_PLANNER_CONFIG,
+    });
+  },
 };
 
 const getters = {
@@ -254,4 +280,8 @@ function watch(compute, { predicate = identity, timeout = 1000 } = {}) {
     }, timeout);
     handleValue(compute());
   });
+}
+
+function toString(x) {
+  return x.toString();
 }

@@ -21,6 +21,24 @@ test('Timeslot constructor discards milliseconds portion of date', t => {
   t.deepEqual(result, new Timeslot(new Date('2017-06-03T14:00:00.000Z'), 30));
 });
 
+test('Timeslot.fromRange creates a timeslot based on a start and end time', t => {
+  const start = new Date('2017-06-03T14:00:00.000Z');
+  const end = new Date('2017-06-03T15:00:00.000Z');
+
+  const result = Timeslot.fromRange(start, end);
+
+  t.deepEqual(result, new Timeslot(new Date('2017-06-03T14:00:00.002Z'), 60));
+});
+
+test('Timeslot.fromRange works with true end times (ie. 1 second before the hour)', t => {
+  const start = new Date('2017-06-03T14:00:00.000Z');
+  const end = new Date('2017-06-03T14:59:59.000Z');
+
+  const result = Timeslot.fromRange(start, end);
+
+  t.deepEqual(result, new Timeslot(new Date('2017-06-03T14:00:00.002Z'), 60));
+});
+
 test('Timeslot#subdivide splits a timeslot into multiple smaller ones', t => {
   const original = new Timeslot(new Date('2017-06-03T14:00:00.000Z'), 30);
 

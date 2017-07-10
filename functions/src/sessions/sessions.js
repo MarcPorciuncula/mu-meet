@@ -11,6 +11,8 @@ import addMinutes from 'date-fns/add_minutes';
 import { Timeslot, getAvailableTimeslots } from './timeslot';
 import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
 import addHours from 'date-fns/add_hours';
+import isBefore from 'date-fns/is_before';
+import getDay from 'date-fns/get_day';
 
 const SESSION_ERROR_CODES = {
   ALREADY_IN_SESSION: 'session/already-in-session',
@@ -153,7 +155,7 @@ export async function findMeetingTimes(sessionId) {
 
   const restrictedHours = [];
   let current = config.searchFromDate;
-  for (let i = 0; i < 7; i++) {
+  while (isBefore(current, config.searchToDate)) {
     restrictedHours.push(new Timeslot(current, config.searchFromHour * 60));
     restrictedHours.push(
       new Timeslot(
@@ -164,16 +166,16 @@ export async function findMeetingTimes(sessionId) {
     current = addHours(current, 24);
   }
 
+  current = config.searchFromDate;
   const restrictedDays = [];
-  for (let i = 0; i < 7; i++) {
-    if (!config.days[i]) {
-      restrictedDays.push(
-        new Timeslot(addMinutes(config.searchFromDate, 60 * 24 * i), 60 * 24),
-      );
+  while (isBefore(current, config.searchToDate)) {
+    if (!config.days[getDay(addMinutes(current, -config.timezoneOffset))]) {
+      restrictedDays.push(new Timeslot(current, 60 * 24));
     }
+    current = addHours(current, 24);
   }
 
-  const range = new Timeslot(config.searchFromDate, 60 * 24 * 7);
+  const range = Timeslot.fromRange(config.searchFromDate, config.searchToDate);
   const meetings = Timeslot.accumulate(
     getAvailableTimeslots(
       range,
