@@ -3,7 +3,7 @@ import firebase from '@/firebase';
 import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
 import debounce from 'lodash/debounce';
-import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
+import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
 import { functions } from '@/functions';
 import a from 'awaiting';
 import {

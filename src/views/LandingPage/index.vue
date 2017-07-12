@@ -1,17 +1,5 @@
 <template>
   <div class="wrapper">
-    <header-bar title="helo">
-      <div slot="controls">
-        <transition name="drop-in">
-          <router-link :to="links.signin" v-show="showHeaderGetStarted" style="display: block">
-            <mdc-button raised class="get-started">
-              Find a time
-            </mdc-button>
-          </router-link>
-        </transition>
-      </div>
-    </header-bar>
-
     <layout-section class="section-splash">
       <div class="call-to-action" ref="splash">
         <type-text tag="h1" type="display1">
@@ -74,19 +62,18 @@
         </div>
       </div>
     </layout-section>
-    <page-footer></page-footer>
   </div>
 </template>
 
 <script>
-import './Material/typography.scss';
-import MdcButton from './Material/Button';
-import { TypeText, TypeContainer } from './Material/Typography';
-import LayoutContainer from './Layout/Container';
-import HeaderBar from './HeaderBar';
-import PageFooter from './Footer';
-import LayoutSection from './Layout/Section';
+import '@/components/Material/typography.scss';
+import MdcButton from '@/components/Material/Button';
+import { TypeText, TypeContainer } from '@/components/Material/Typography';
+import LayoutContainer from '@/components/Layout/Container';
+import HeaderBar from '@/components/HeaderBar';
+import LayoutSection from '@/components/Layout/Section';
 import signin from '@/router/signin';
+import data from './data';
 
 const THRESHOLD = 0.1;
 
@@ -121,7 +108,7 @@ export default {
     LandingSection,
     LayoutContainer,
     HeaderBar,
-    PageFooter,
+    // PageFooter,
     LayoutSection,
   },
   data() {
@@ -142,7 +129,7 @@ export default {
   },
   methods: {
     handleSplashIntersectionUpdate(entries, observer) {
-      this.showHeaderGetStarted =
+      data.showHeaderGetStarted =
         Math.max(...entries.map(x => x.intersectionRatio)) < THRESHOLD;
     },
   },
@@ -153,9 +140,9 @@ export default {
 @import '@material/animation/functions';
 @import '@material/elevation/mixins';
 
-.wrapper {
-  position: relative;
-}
+// .wrapper {
+//   position: relative;
+// }
 
 .call-to-action {
   max-width: 34rem;
@@ -172,7 +159,7 @@ export default {
   height: 0;
   background: #ECEFF1;
   justify-content: center;
-  background-image: url('../assets/eric-rothermel-23788-1080.jpg');
+  background-image: url('../../assets/eric-rothermel-23788-1080.jpg');
   background-size: cover;
   position: relative;
 
@@ -208,27 +195,5 @@ export default {
 .get-started {
   background-color: #2196F3;
   color: white;
-}
-
-.drop-in {
-  &-enter-active, &-leave-active {
-    will-change: transform, opacity;
-  }
-
-  &-enter-active {
-    $duration: 400ms;
-    $delay: 200ms;
-    transition: mdc-animation-enter(opacity, $duration, $delay), mdc-animation-enter(transform, $duration, $delay);
-  }
-
-  &-leave-active {
-    $duration: 250ms;
-    transition: mdc-animation-exit(opacity, $duration), mdc-animation-exit(transform, $duration);
-  }
-
-  &-enter, &-leave-to {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
 }
 </style>

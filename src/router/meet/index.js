@@ -1,5 +1,5 @@
 import dashboard from '../dashboard';
-import ProfileBadge from '@/components/ProfileBadge';
+import ProfileBadge from '@/views/ProfileBadge';
 import newSession from './new';
 import currentSession from './current';
 
@@ -14,10 +14,10 @@ function beforeEnter(to, from, next) {
 export default {
   name: 'meet-root',
   path: '/meet',
-  meta: { shell: true, requiresAuth: true },
+  meta: { requiresAuth: true },
   components: {
     default: { template: '<router-view/>' },
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
   beforeEnter,
   children: [newSession, currentSession],

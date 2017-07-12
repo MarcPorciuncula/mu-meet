@@ -22,17 +22,17 @@
           </div>
         </transition>
       </div>
-      <slot name="controls"></slot>
+      <slot/>
     </layout-container>
   </layout-section>
 </template>
 
 <script>
 import VueTypes from 'vue-types';
-import { TypeText } from './Material/Typography';
-import MumeetLogo from './MumeetLogo';
-import LayoutSection from './Layout/Section';
-import LayoutContainer from './Layout/Container';
+import { TypeText } from '@/components/Material/Typography';
+import MumeetLogo from '@/components/MumeetLogo';
+import LayoutSection from '@/components/Layout/Section';
+import LayoutContainer from '@/components/Layout/Container';
 
 export default {
   components: {
@@ -55,11 +55,8 @@ export default {
 
 .header {
   @include mdc-elevation(2);
-
-  position: fixed;
   width: 100%;
   background-color: rgba(#fff, 0.95);
-  z-index: 1;
 }
 
 .header_inner {

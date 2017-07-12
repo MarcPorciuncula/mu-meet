@@ -1,7 +1,7 @@
-import Landing from '@/components/LandingPage';
+import Landing from '@/views/LandingPage';
+import HeaderBarControl from '@/views/LandingPage/HeaderBarControl';
 
 export default {
   path: '/',
-  component: Landing,
-  meta: { shell: false },
+  components: { default: Landing, 'header-bar-control': HeaderBarControl },
 };

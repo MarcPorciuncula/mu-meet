@@ -1,5 +1,5 @@
-import SignIn from '@/components/SignIn';
-import ProfileBadge from '@/components/ProfileBadge';
+import SignIn from '@/views/SignIn';
+import ProfileBadge from '@/views/ProfileBadge';
 import dashboard from '@/router/dashboard';
 import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
@@ -16,8 +16,8 @@ export default {
   path: '/signin',
   components: {
     default: SignIn,
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
-  meta: { shell: true, title: 'Sign in' },
+  meta: { title: 'Sign in' },
   beforeEnter,
 };

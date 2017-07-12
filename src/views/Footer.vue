@@ -55,9 +55,9 @@
 </template>
 
 <script>
-import LayoutContainer from './Layout/Container';
-import LayoutSection from './Layout/Section';
-import { TypeContainer, TypeText } from './Material/Typography';
+import LayoutContainer from '@/components/Layout/Container';
+import LayoutSection from '@/components/Layout/Section';
+import { TypeContainer, TypeText } from '@/components/Material/Typography';
 
 export default {
   components: {

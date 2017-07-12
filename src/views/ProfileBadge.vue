@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="profile-badge_outer">
     <div class="profile-badge">
       <transition name="slide-up" appear>
         <span v-show="showGreeting && user" class="header_user-name">
@@ -38,8 +38,8 @@ import {
   USER_PROFILE,
 } from '@/store/getters';
 import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
-import MdcMenu from './Material/Menu';
-import MdcMenuItem from './Material/MenuItem';
+import MdcMenu from '@/components/Material/Menu';
+import MdcMenuItem from '@/components/Material/MenuItem';
 import dashboardRoute from '@/router/dashboard';
 
 export default {
@@ -103,13 +103,9 @@ export default {
 @import '@material/animation/functions';
 
 .profile-badge,
-.wrapper {
+.profile-badge_outer {
   display: flex;
   align-items: center;
-}
-
-.profile-badge {
-  // padding: 0 0.5rem;
 }
 
 .header_profile-picture {

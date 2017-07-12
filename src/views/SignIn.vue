@@ -26,10 +26,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import GoogleSigninButton from './GoogleSigninButton';
-import LayoutContainer from './Layout/Container';
-import LayoutSection from './Layout/Section';
-import { TypeContainer, TypeText } from './Material/Typography';
+import GoogleSigninButton from '@/components/GoogleSigninButton';
+import LayoutContainer from '@/components/Layout/Container';
+import LayoutSection from '@/components/Layout/Section';
+import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import dashboard from '@/router/dashboard';
 import { IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 import { SIGN_IN } from '@/store/actions';
