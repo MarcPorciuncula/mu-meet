@@ -28,11 +28,11 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import HeaderBar from './HeaderBar';
+import HeaderBar from '@/components/HeaderBar';
 import PageFooter from './Footer';
-import { TypeContainer, TypeText } from './Material/Typography';
-import LayoutSection from './Layout/Section';
-import LayoutContainer from './Layout/Container';
+import { TypeContainer, TypeText } from '@/components/Material/Typography';
+import LayoutSection from '@/components/Layout/Section';
+import LayoutContainer from '@/components/Layout/Container';
 import { PROGRESS_MESSAGE } from '@/store/getters';
 
 export default {

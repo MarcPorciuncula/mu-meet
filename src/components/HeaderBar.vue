@@ -29,10 +29,10 @@
 
 <script>
 import VueTypes from 'vue-types';
-import { TypeText } from './Material/Typography';
-import MumeetLogo from './MumeetLogo';
-import LayoutSection from './Layout/Section';
-import LayoutContainer from './Layout/Container';
+import { TypeText } from '@/components/Material/Typography';
+import MumeetLogo from '@/components/MumeetLogo';
+import LayoutSection from '@/components/Layout/Section';
+import LayoutContainer from '@/components/Layout/Container';
 
 export default {
   components: {

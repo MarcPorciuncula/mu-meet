@@ -79,13 +79,13 @@
 </template>
 
 <script>
-import './Material/typography.scss';
-import MdcButton from './Material/Button';
-import { TypeText, TypeContainer } from './Material/Typography';
-import LayoutContainer from './Layout/Container';
-import HeaderBar from './HeaderBar';
+import '@/components/Material/typography.scss';
+import MdcButton from '@/components/Material/Button';
+import { TypeText, TypeContainer } from '@/components/Material/Typography';
+import LayoutContainer from '@/components/Layout/Container';
+import HeaderBar from '@/components/HeaderBar';
 import PageFooter from './Footer';
-import LayoutSection from './Layout/Section';
+import LayoutSection from '@/components/Layout/Section';
 import signin from '@/router/signin';
 
 const THRESHOLD = 0.1;

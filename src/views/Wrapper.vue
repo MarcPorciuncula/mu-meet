@@ -11,7 +11,7 @@
 <script>
 import nprogress from 'nprogress';
 import AppShell from './AppShell';
-import ErrorDialog from '@/components/ErrorDialog';
+import ErrorDialog from '@/views/ErrorDialog';
 import {
   SHOW_PROGRESS_BAR_AT,
   WATCH_PROGRESS_INCREMENT,

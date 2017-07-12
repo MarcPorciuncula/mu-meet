@@ -23,7 +23,7 @@
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
 import LayoutSection from '@/components/Layout/Section';
 import LayoutContainer from '@/components/Layout/Container';
-import Observable from '@/subscriptions/Observable';
+import Observable from '@/util/subscriptions/Observable';
 
 const data = {
   error: null,

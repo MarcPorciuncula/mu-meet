@@ -1,5 +1,5 @@
 import dashboard from '../dashboard';
-import ProfileBadge from '@/components/ProfileBadge';
+import ProfileBadge from '@/views/ProfileBadge';
 import newSession from './new';
 import currentSession from './current';
 

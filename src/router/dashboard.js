@@ -1,4 +1,4 @@
-import ProfileBadge from '@/components/ProfileBadge';
+import ProfileBadge from '@/views/ProfileBadge';
 import store from '@/store';
 
 import { IS_SUBSCRIBED_PLANNER_SESSION } from '@/store/getters';
@@ -16,7 +16,7 @@ export default {
   path: '/dashboard',
   components: {
     default: () =>
-      import('@/components/Dashboard').then(exports => exports.default),
+      import('@/views/Dashboard').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
   meta: { shell: true, title: 'Dashboard' },

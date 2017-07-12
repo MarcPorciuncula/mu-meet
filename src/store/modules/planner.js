@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 import firebase from '@/firebase';
 import { functions } from '@/functions';
-import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
+import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
 import { identity, evolve } from 'ramda';
 import Vue from 'vue';
 import parse from 'date-fns/parse';

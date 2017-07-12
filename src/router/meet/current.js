@@ -1,4 +1,4 @@
-import ProfileBadge from '@/components/ProfileBadge';
+import ProfileBadge from '@/views/ProfileBadge';
 import store from '@/store';
 import {
   IS_SUBSCRIBED_CALENDARS,
@@ -29,7 +29,7 @@ export default {
   path: ':code',
   name: 'meet-current-session',
   components: {
-    default: () => import('@/components/Meet').then(exports => exports.default),
+    default: () => import('@/views/Meet').then(exports => exports.default),
     'app-bar-control': ProfileBadge,
   },
   beforeEnter: beforeEnter,

@@ -38,8 +38,8 @@ import {
   USER_PROFILE,
 } from '@/store/getters';
 import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
-import MdcMenu from './Material/Menu';
-import MdcMenuItem from './Material/MenuItem';
+import MdcMenu from '@/components/Material/Menu';
+import MdcMenuItem from '@/components/Material/MenuItem';
 import dashboardRoute from '@/router/dashboard';
 
 export default {

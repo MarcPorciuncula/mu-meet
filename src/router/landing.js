@@ -1,4 +1,4 @@
-import Landing from '@/components/LandingPage';
+import Landing from '@/views/LandingPage';
 
 export default {
   path: '/',
