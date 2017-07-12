@@ -16,8 +16,8 @@ export default {
   path: '/signin',
   components: {
     default: SignIn,
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
-  meta: { shell: true, title: 'Sign in' },
+  meta: { title: 'Sign in' },
   beforeEnter,
 };

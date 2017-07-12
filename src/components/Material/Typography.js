@@ -31,9 +31,10 @@ export const TypeText = {
 
 export const TypeContainer = {
   render(h) {
-    return h(this.tag, { class: 'type-container' }, this.$slots.default);
+    return h(this.tag, { class: ['type-container', { 'type-container--trim-bottom': this.trimBottom }] }, this.$slots.default);
   },
   props: {
     tag: VueTypes.oneOfType([String, Object, Function]).def('div'),
+    trimBottom: VueTypes.bool.def(false),
   },
 };

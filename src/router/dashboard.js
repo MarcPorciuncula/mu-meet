@@ -17,8 +17,8 @@ export default {
   components: {
     default: () =>
       import('@/views/Dashboard').then(exports => exports.default),
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
-  meta: { shell: true, title: 'Dashboard' },
+  meta: { title: 'Dashboard' },
   beforeEnter,
 };

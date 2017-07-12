@@ -22,7 +22,7 @@
           </div>
         </transition>
       </div>
-      <slot name="controls"></slot>
+      <slot/>
     </layout-container>
   </layout-section>
 </template>
@@ -55,11 +55,8 @@ export default {
 
 .header {
   @include mdc-elevation(2);
-
-  position: fixed;
   width: 100%;
   background-color: rgba(#fff, 0.95);
-  z-index: 1;
 }
 
 .header_inner {

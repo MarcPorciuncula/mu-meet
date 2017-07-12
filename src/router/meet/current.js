@@ -30,8 +30,8 @@ export default {
   name: 'meet-current-session',
   components: {
     default: () => import('@/views/Meet').then(exports => exports.default),
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
   beforeEnter: beforeEnter,
-  meta: { shell: true, title: 'Meeting Planner' },
+  meta: { title: 'Meeting Planner' },
 };

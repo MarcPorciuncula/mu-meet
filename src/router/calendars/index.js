@@ -15,8 +15,8 @@ export default {
   name: 'SelectCalendars',
   components: {
     default: () => import('@/views/Calendars'),
-    'app-bar-control': ProfileBadge,
+    'header-bar-control': ProfileBadge,
   },
-  meta: { shell: true, requiresAuth: true, title: 'My Calendars' },
+  meta: { requiresAuth: true, title: 'My Calendars' },
   beforeEnter,
 };
