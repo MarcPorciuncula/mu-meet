@@ -97,7 +97,7 @@ import {
 } from '@/components/Material/List';
 import TeamList from './TeamList';
 import MeetingTimes from './MeetingTimes';
-import Parameters from './Parameters';
+import Parameters from './MeetingParameters';
 
 export default {
   components: {
