@@ -12,24 +12,15 @@
         <date-range-control
           :start="session.config.searchFromDate"
           :end="session.config.searchToDate"
-          @start-changed="changed('searchFromDate', $event)"
-          @end-changed="changed('searchToDate', $event)"
+          @start-change="change('searchFromDate', $event)"
+          @end-change="change('searchToDate', $event)"
         />
-        <mdc-list-group-header>
-          Time Range (not working)
-        </mdc-list-group-header>
-        <mdc-list>
-          <mdc-list-item>
-            <span slot="start-detail" class="material-icons">
-              access_time
-            </span>
-            9:00am
-          </mdc-list-item>
-          <mdc-list-item>
-            <span slot="start-detail"></span>
-            6:00pm
-          </mdc-list-item>
-        </mdc-list>
+        <time-range-control
+          :start="config.searchFromHour * 60"
+          :end="config.searchToHour * 60"
+          @start-change="change('searchFromHour', $event)"
+          @end-change="change('searchToHour', $event)"
+        />
         <mdc-list-group-header>
           Active Days (not working)
         </mdc-list-group-header>
@@ -72,6 +63,7 @@ import {
   ListGroupHeader as MdcListGroupHeader,
 } from '@/components/Material/List';
 import DateRangeControl from '@/components/DateRangeControl';
+import TimeRangeControl from '@/components/TimeRangeControl';
 import { CURRENT_PLANNER_SESSION } from '@/store/getters';
 import { SET_PLANNER_CONFIG } from '@/store/actions';
 import addSeconds from 'date-fns/add_seconds';
@@ -88,6 +80,7 @@ export default {
     MdcListGroup,
     MdcListGroupHeader,
     DateRangeControl,
+    TimeRangeControl,
   },
   computed: {
     ...mapGetters({
@@ -98,10 +91,13 @@ export default {
     },
   },
   methods: {
-    changed(prop, value) {
+    change(prop, value) {
       // The date picker gives dates on 00:00:00, but we want the end date to be 23:59:59
       if (prop === 'searchToDate') {
         value = addSeconds(addDays(value, 1), -1);
+      }
+      if (prop === 'searchFromHour' || prop === 'searchToHour') {
+        value = value / 60;
       }
       this.$store.dispatch(SET_PLANNER_CONFIG, {
         [prop]: value

@@ -1,7 +1,7 @@
 <template>
   <li
     class="mdc-list-item"
-    role="menuitem"
+    role="option"
     tabindex="0"
     @click="$emit('click', $event)"
   >
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import './menu.scss';
+import './select.scss';
 
 export default {};
 </script>

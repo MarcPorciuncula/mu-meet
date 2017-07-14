@@ -24,6 +24,7 @@
     "@material/list": "^0.2.9",
     "@material/menu": "^0.2.7",
     "@material/ripple": "^0.6.2",
+    "@material/select": "^0.3.10",
     "@material/textfield": "^0.3.0",
     "awaiting": "^2.2.0",
     "axios": "^0.16.1",
