@@ -19,11 +19,10 @@
           :key="calendar.id"
           truncate
         >
-          <div
+          <calendar-dot
             slot="start-detail"
-            class="calendar-dot"
-            :style="`background-color: ${calendar.backgroundColor}`"
-          ></div>
+            :color="calendar.backgroundColor"
+          />
           <div slot="end-detail">
             <mdc-checkbox
               :value="calendar.selected"
@@ -69,6 +68,7 @@ import MdcListItem from '@/components/Material/ListItem';
 import MdcCheckbox from '@/components/Material/Checkbox';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import MdcButton from '@/components/Material/Button';
+import CalendarDot from '@/components/CalendarDot';
 import dashboard from '@/router/dashboard';
 import { CALENDARS, SELECTED_CALENDARS, USER_PROFILE } from '@/store/getters';
 import {
@@ -88,6 +88,7 @@ export default {
     MdcListGroupDivider,
     TypeContainer,
     TypeText,
+    CalendarDot,
   },
   computed: mapGetters({
     calendars: CALENDARS,
@@ -132,11 +133,5 @@ export default {
   text-overflow: ellipsis;
   overflow-y: hidden;
   white-space: nowrap;
-}
-
-.calendar-dot {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
 }
 </style>

@@ -9,3 +9,18 @@
 .mdc-list-group {
   width: 100%;
 }
+
+.mdc-list--separated {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+
+  .mdc-list-item {
+    padding: 0 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .mdc-list-item:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}

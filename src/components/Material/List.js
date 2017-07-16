@@ -4,10 +4,17 @@ import './list.scss';
 
 const List = {
   render(h) {
-    return h(this.tag, { class: 'mdc-list' }, this.$slots.default);
+    return h(
+      this.tag,
+      { class: ['mdc-list', { 'mdc-list--two-line': this.twoLine, 'mdc-list--dense': this.dense, 'mdc-list--separated': this.separated }] },
+      this.$slots.default,
+    );
   },
   props: {
     tag: VueTypes.string.def('ul'),
+    twoLine: VueTypes.bool.def(false),
+    dense: VueTypes.bool.def(false),
+    separated: VueTypes.bool.def(false),
   },
 };
 
