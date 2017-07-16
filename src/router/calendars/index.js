@@ -1,4 +1,5 @@
-import ProfileBadge from '@/views/ProfileBadge';
+const Calendars = () => import('@/views/Calendars');
+const ProfileBadge = () => import('@/views/ProfileBadge');
 import { IS_SUBSCRIBED_CALENDARS } from '@/store/getters';
 import { SUBSCRIBE_CALENDARS } from '@/store/actions';
 import store from '@/store';
@@ -14,7 +15,7 @@ export default {
   path: '/calendars',
   name: 'SelectCalendars',
   components: {
-    default: () => import('@/views/Calendars'),
+    default: Calendars,
     'header-bar-control': ProfileBadge,
   },
   meta: { requiresAuth: true, title: 'My Calendars' },

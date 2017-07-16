@@ -1,5 +1,5 @@
+const ProfileBadge = () => import('@/views/ProfileBadge');
 import dashboard from '../dashboard';
-import ProfileBadge from '@/views/ProfileBadge';
 import newSession from './new';
 import currentSession from './current';
 

@@ -1,6 +1,6 @@
-import ProfileBadge from '@/views/ProfileBadge';
+const Dashboard = () => import('@/views/Dashboard');
+const ProfileBadge = () => import('@/views/ProfileBadge');
 import store from '@/store';
-
 import { IS_SUBSCRIBED_PLANNER_SESSION } from '@/store/getters';
 import { SUBSCRIBE_PLANNER_SESSION } from '@/store/actions';
 
@@ -15,8 +15,7 @@ export default {
   name: 'dashboard',
   path: '/dashboard',
   components: {
-    default: () =>
-      import('@/views/Dashboard').then(exports => exports.default),
+    default: Dashboard,
     'header-bar-control': ProfileBadge,
   },
   meta: { title: 'Dashboard' },

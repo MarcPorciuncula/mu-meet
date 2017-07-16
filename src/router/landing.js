@@ -1,5 +1,5 @@
-import Landing from '@/views/LandingPage';
-import HeaderBarControl from '@/views/LandingPage/HeaderBarControl';
+const Landing = () => import('@/views/LandingPage');
+const HeaderBarControl = () => import('@/views/LandingPage/HeaderBarControl');
 
 export default {
   path: '/',

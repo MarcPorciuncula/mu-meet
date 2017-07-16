@@ -1,5 +1,5 @@
-import SignIn from '@/views/SignIn';
-import ProfileBadge from '@/views/ProfileBadge';
+const SignIn = () => import('@/views/SignIn');
+const ProfileBadge = () => import('@/views/ProfileBadge');
 import dashboard from '@/router/dashboard';
 import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
