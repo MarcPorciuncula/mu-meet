@@ -8,6 +8,9 @@ if (process.env.NODE_ENV === 'production') {
   if (!build) throw new Error('Must supply BUILD_ID env variable');
   if (!dsn) throw new Error('Must supply SENTRY_DSN env variable');
 
+  console.info('Release Version:', build);
+  console.info('Activating Sentry error reporting.');
+
   Raven.config(dsn, {
     release: build,
   })
