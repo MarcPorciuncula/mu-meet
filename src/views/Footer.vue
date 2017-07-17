@@ -48,6 +48,9 @@
             Made with ❤ in Melbourne, Australia.<br/>
             Not affiliated with Monash University.
           </type-text>
+          <type-text tag="p" type="body1" class="build-id">
+            {{ build }}
+          </type-text>
         </type-container>
       </layout-container>
     </layout-section>
@@ -65,6 +68,15 @@ export default {
     LayoutSection,
     TypeContainer,
     TypeText,
+  },
+  computed: {
+    build() {
+      if (process.env.BUILD_ID) {
+        return `Build ${process.env.BUILD_ID}`;
+      } else {
+        return 'Test build';
+      }
+    },
   },
 };
 </script>
@@ -109,5 +121,9 @@ a {
     color: #212121;
     background-color: white;
   }
+}
+
+.build-id {
+  color: #757575;
 }
 </style>
