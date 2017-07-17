@@ -11,16 +11,20 @@ import {
 export default {
   name: 'ConnectedMeet',
   render(h) {
-    return h(Meet, {
-      props: R.pick([
-        'inviteLink',
-        'calendars',
-        'calendarsRoute',
-        'findMeetingTimes',
-        'archive',
-        'session',
-      ])(this),
-    });
+    if (this.session) {
+      return h(Meet, {
+        props: R.pick([
+          'inviteLink',
+          'calendars',
+          'calendarsRoute',
+          'findMeetingTimes',
+          'archive',
+          'session',
+        ])(this),
+      });
+    } else {
+      return null;
+    }
   },
   computed: {
     inviteLink() {
