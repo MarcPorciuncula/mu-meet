@@ -19,7 +19,7 @@
             format="D, d MMM, yyyy"
             :value="start"
             :highlighted="highlighted"
-            @selected="$emit('start-changed', $event)"
+            @selected="$emit('start-change', $event)"
             ref="start"
           />
         </template>
@@ -45,7 +45,7 @@
           :value="end"
           :highlighted="highlighted"
           :disabled="{ to: start }"
-          @selected="$emit('end-changed', $event)"
+          @selected="$emit('end-change', $event)"
           ref="end"
         />
       </mdc-list-item>
@@ -87,8 +87,8 @@ export default {
   },
   created() {
     // Anchor the date range to the start, shifting the end when the start is changed
-    this.$on('start-changed', (start) => {
-      this.$emit('end-changed', addDays(start, getDifferenceInCalendarDays(this.end, this.start)));
+    this.$on('start-change', (start) => {
+      this.$emit('end-change', addDays(start, getDifferenceInCalendarDays(this.end, this.start)));
     });
   },
   methods: {

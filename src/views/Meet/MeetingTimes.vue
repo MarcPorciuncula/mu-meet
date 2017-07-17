@@ -8,7 +8,7 @@
       </type-container>
     </layout-container>
     <layout-container padding="min">
-      <schedule-view :events="events" />
+      <schedule-view v-if="events.length" :events="events" />
     </layout-container>
   </layout-section>
 </template>
