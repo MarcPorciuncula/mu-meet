@@ -2,6 +2,7 @@ const Landing = () => import('@/views/LandingPage');
 const HeaderBarControl = () => import('@/views/LandingPage/HeaderBarControl');
 
 export default {
-  path: '/',
+  name: 'landing-page',
+  path: '',
   components: { default: Landing, 'header-bar-control': HeaderBarControl },
 };

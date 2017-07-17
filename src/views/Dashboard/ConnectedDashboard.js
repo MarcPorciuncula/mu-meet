@@ -1,8 +1,8 @@
 import R from 'ramda';
 import Dashboard from './Dashboard';
-import calendarsRoute from '@/router/calendars';
-import meetingPlanRoute from '@/router/meet/current';
-import newMeetingPlanRoute from '@/router/meet/new';
+import calendarsRoute from '@/router/user/calendars';
+import meetingPlanRoute from '@/router/planner/current';
+import newMeetingPlanRoute from '@/router/planner/new';
 import { CURRENT_PLANNER_SESSION } from '@/store/getters';
 import { ARCHIVE_PLANNER_SESSION } from '@/store/actions';
 

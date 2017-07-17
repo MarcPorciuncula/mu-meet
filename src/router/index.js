@@ -1,11 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import landing from './landing';
-import signin from './signin';
-import signout from './signout';
-import dashboard from './dashboard';
-import calendars from './calendars';
-import meet from './meet';
+import root from './root';
+import signin from './auth/signin';
 import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
 import {
@@ -47,7 +43,9 @@ async function verifyAuth(to, from, next) {
 
 const router = new VueRouter({
   mode: 'history',
-  routes: [landing, signin, signout, dashboard, calendars, meet],
+  routes: [
+    root
+  ],
 });
 
 router.beforeEach(addRouteTransitionProgressItem);

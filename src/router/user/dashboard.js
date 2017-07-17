@@ -1,5 +1,4 @@
 const Dashboard = () => import('@/views/Dashboard');
-const ProfileBadge = () => import('@/views/ProfileBadge');
 import store from '@/store';
 import { IS_SUBSCRIBED_PLANNER_SESSION } from '@/store/getters';
 import { SUBSCRIBE_PLANNER_SESSION } from '@/store/actions';
@@ -13,10 +12,9 @@ async function beforeEnter(to, from, next) {
 
 export default {
   name: 'dashboard',
-  path: '/dashboard',
+  path: 'dashboard',
   components: {
     default: Dashboard,
-    'header-bar-control': ProfileBadge,
   },
   meta: { title: 'Dashboard' },
   beforeEnter,

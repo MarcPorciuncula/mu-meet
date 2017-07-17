@@ -1,12 +1,12 @@
 const SignIn = () => import('@/views/SignIn');
 const ProfileBadge = () => import('@/views/ProfileBadge');
-import dashboard from '@/router/dashboard';
+import dashboard from '@/router/user/dashboard';
 import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
 
 async function beforeEnter(to, from, next) {
   if (store.getters[IS_SIGNED_IN]) {
-    next(dashboard.path);
+    next({ name: dashboard.name });
   } else {
     next();
   }

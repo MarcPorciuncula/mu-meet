@@ -40,7 +40,7 @@ import {
 import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
 import MdcMenu from '@/components/Material/AnchoredMenu';
 import MdcMenuItem from '@/components/Material/MenuItem';
-import dashboardRoute from '@/router/dashboard';
+import dashboardRoute from '@/router/user/dashboard';
 
 export default {
   components: {

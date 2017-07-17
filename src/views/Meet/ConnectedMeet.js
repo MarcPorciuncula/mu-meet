@@ -1,6 +1,6 @@
 import R from 'ramda';
-import calendarsRoute from '@/router/calendars';
-import dashboardRoute from '@/router/dashboard';
+import calendarsRoute from '@/router/user/calendars';
+import dashboardRoute from '@/router/user/dashboard';
 import Meet from './Meet';
 import { SELECTED_CALENDARS, CURRENT_PLANNER_SESSION } from '@/store/getters';
 import {

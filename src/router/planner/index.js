@@ -1,10 +1,11 @@
 const ProfileBadge = () => import('@/views/ProfileBadge');
-import dashboard from '../dashboard';
+import RouterView from '@/router/RouterView';
+import dashboard from '@/router/user/dashboard';
 import newSession from './new';
 import currentSession from './current';
 
 function beforeEnter(to, from, next) {
-  if (to.name === 'meet-root') {
+  if (to.name === 'planner-root') {
     next(dashboard.path);
   } else {
     next();
@@ -12,11 +13,11 @@ function beforeEnter(to, from, next) {
 }
 
 export default {
-  name: 'meet-root',
-  path: '/meet',
+  name: 'planner-root',
+  path: '/plan',
   meta: { requiresAuth: true },
   components: {
-    default: { template: '<router-view/>' },
+    default: RouterView,
     'header-bar-control': ProfileBadge,
   },
   beforeEnter,

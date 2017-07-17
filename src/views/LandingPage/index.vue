@@ -72,7 +72,7 @@ import { TypeText, TypeContainer } from '@/components/Material/Typography';
 import LayoutContainer from '@/components/Layout/Container';
 import HeaderBar from '@/components/HeaderBar';
 import LayoutSection from '@/components/Layout/Section';
-import signin from '@/router/signin';
+import signin from '@/router/auth/signin';
 import data from './data';
 
 const THRESHOLD = 0.1;

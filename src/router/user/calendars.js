@@ -1,5 +1,4 @@
 const Calendars = () => import('@/views/Calendars');
-const ProfileBadge = () => import('@/views/ProfileBadge');
 import { IS_SUBSCRIBED_CALENDARS } from '@/store/getters';
 import { SUBSCRIBE_CALENDARS } from '@/store/actions';
 import store from '@/store';
@@ -12,12 +11,11 @@ async function beforeEnter(to, from, next) {
 }
 
 export default {
-  path: '/calendars',
-  name: 'SelectCalendars',
+  path: 'calendars',
+  name: 'calendars',
   components: {
     default: Calendars,
-    'header-bar-control': ProfileBadge,
   },
-  meta: { requiresAuth: true, title: 'My Calendars' },
+  meta: { title: 'My Calendars' },
   beforeEnter,
 };

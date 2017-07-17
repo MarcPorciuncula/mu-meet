@@ -13,7 +13,7 @@
 <script>
 import MdcButton from '@/components/Material/Button';
 import data from './data';
-import signin from '@/router/signin';
+import signin from '@/router/auth/signin';
 
 export default {
   components: {

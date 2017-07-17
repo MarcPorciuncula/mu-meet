@@ -1,13 +1,14 @@
 import store from '@/store';
-import landing from './landing';
+import landing from '@/router/landing';
 import { SIGN_OUT } from '@/store/actions';
 
 async function beforeEnter(to, from, next) {
   await store.dispatch(SIGN_OUT);
-  next(landing.path);
+  next({ name: landing.name });
 }
 
 export default {
+  name: 'sign-out',
   path: '/signout',
   beforeEnter,
 };

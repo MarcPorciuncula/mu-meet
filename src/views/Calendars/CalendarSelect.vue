@@ -69,7 +69,7 @@ import MdcCheckbox from '@/components/Material/Checkbox';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import MdcButton from '@/components/Material/Button';
 import CalendarDot from '@/components/CalendarDot';
-import dashboard from '@/router/dashboard';
+import dashboard from '@/router/user/dashboard';
 import { CALENDARS, SELECTED_CALENDARS, USER_PROFILE } from '@/store/getters';
 import {
   SET_CALENDAR_SELECTED,

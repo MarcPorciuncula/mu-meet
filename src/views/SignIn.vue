@@ -30,7 +30,7 @@ import GoogleSigninButton from '@/components/GoogleSigninButton';
 import LayoutContainer from '@/components/Layout/Container';
 import LayoutSection from '@/components/Layout/Section';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
-import dashboard from '@/router/dashboard';
+import dashboard from '@/router/user/dashboard';
 import { IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 import { SIGN_IN } from '@/store/actions';
 
@@ -51,7 +51,7 @@ export default {
       await this.$store.dispatch(SIGN_IN);
       // HACK wait for the profile to pop up in the corner, should coordinate this properly
       await new Promise(resolve => setTimeout(resolve, 2000));
-      this.$router.push(this.$route.query.callback || dashboard.path);
+      this.$router.push(this.$route.query.callback || { name: dashboard.name });
     },
   },
 };

@@ -1,5 +1,4 @@
 const Meet = () => import('@/views/Meet');
-const ProfileBadge = () => import('@/views/ProfileBadge');
 import store from '@/store';
 import {
   IS_SUBSCRIBED_CALENDARS,
@@ -28,10 +27,9 @@ async function beforeEnter(to, from, next) {
 
 export default {
   path: ':code',
-  name: 'meet-current-session',
+  name: 'planner-current',
   components: {
     default: Meet,
-    'header-bar-control': ProfileBadge,
   },
   beforeEnter: beforeEnter,
   meta: { title: 'Meeting Planner' },
