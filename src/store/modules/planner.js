@@ -8,6 +8,7 @@ import parse from 'date-fns/parse';
 import {
   UPDATE_PLANNER_SESSION,
   UPDATE_PLANNER_SUBSCRIPTION,
+  UPDATE_PLANNER_EVENTS,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_PLANNER_SESSION,
@@ -19,18 +20,21 @@ import {
   SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  FETCH_PLANNER_EVENTS,
 } from '@/store/actions';
 import {
   USER_UID,
   IS_IN_PLANNER_SESSION,
   IS_SUBSCRIBED_PLANNER_SESSION,
   CURRENT_PLANNER_SESSION,
+  CURRENT_PLANNER_EVENTS,
 } from '@/store/getters';
 
 const database = firebase.database();
 
 const state = {
   session: null,
+  events: [],
   _subscription: null,
 };
 
@@ -41,10 +45,13 @@ const mutations = {
   [UPDATE_PLANNER_SUBSCRIPTION](state, subscription) {
     state._subscription = subscription;
   },
+  [UPDATE_PLANNER_EVENTS](state, events) {
+    state.events = events;
+  },
 };
 
 const actions = {
-  async [SUBSCRIBE_PLANNER_SESSION]({ commit, getters }) {
+  async [SUBSCRIBE_PLANNER_SESSION]({ commit, dispatch, state, getters }) {
     invariant(
       !state._subscription,
       'attempted to subscribe to planner session but already subscribed',
@@ -58,7 +65,7 @@ const actions = {
       user.child('current-session'),
       (source, sessionId) => {
         const session = root.child(`sessions/${sessionId}`);
-        return new LiveQuery.Object(session, {
+        const subscription = new LiveQuery.Object(session, {
           id: new LiveQuery.Leaf(source),
           startedAt: new LiveQuery.Leaf(session.child('startedAt'), {
             transform: parse,
@@ -74,6 +81,18 @@ const actions = {
           }),
           result: new LiveQuery.Leaf(session.child('result')),
         });
+
+        subscription.children.get('config').subscription.subscribe({
+          next: () => {
+            dispatch(FETCH_PLANNER_EVENTS);
+          },
+          error: console.error.bind(console),
+          complete: () => {
+            commit(UPDATE_PLANNER_EVENTS, []);
+          },
+        });
+
+        return subscription;
       },
     );
 
@@ -98,6 +117,8 @@ const actions = {
         error: reject,
         complete: () => {},
       });
+
+      subscription.execute();
     });
   },
   [UNSUBSCRIBE_PLANNER_SESSION]({ commit, getters, state }) {
@@ -221,6 +242,20 @@ const actions = {
       type: SET_PLANNER_CONFIG,
     });
   },
+  async [FETCH_PLANNER_EVENTS]({ commit, dispatch, getters }) {
+    const config = await watch(
+      () => {
+        const session = getters[CURRENT_PLANNER_SESSION];
+        return session && session.config;
+      },
+      { timeout: 5000 },
+    );
+    const { searchFromDate: from, searchToDate: to } = config;
+    const { data: events } = await functions('getEvents', {
+      data: { from, to },
+    });
+    commit(UPDATE_PLANNER_EVENTS, events);
+  },
 };
 
 const getters = {
@@ -232,6 +267,9 @@ const getters = {
   },
   [CURRENT_PLANNER_SESSION](state) {
     return state.session;
+  },
+  [CURRENT_PLANNER_EVENTS](state) {
+    return state.events;
   },
 };
 

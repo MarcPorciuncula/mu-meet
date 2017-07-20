@@ -19,11 +19,15 @@ import LayoutContainer from '@/components/Layout/Container';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import ScheduleView from '@/components/ScheduleView';
 import { mapGetters } from 'vuex';
-import { CURRENT_PLANNER_SESSION } from '@/store/getters';
+import {
+  CURRENT_PLANNER_SESSION,
+  CURRENT_PLANNER_EVENTS,
+  CALENDARS,
+} from '@/store/getters';
 import addSeconds from 'date-fns/add_seconds';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import parse from 'date-fns/parse';
-import { compose, map, defaultTo, path } from 'ramda';
+import { compose, map, defaultTo, path, sortBy, prop } from 'ramda';
 
 export default {
   components: {
@@ -42,22 +46,43 @@ export default {
         map(meeting => {
           const start = parse(meeting.start);
           const end = addSeconds(parse(meeting.end), 1);
-          const duration = getDistanceInWordsStrict(end, start).replace('minute', 'min');
-          return ({
+          const duration = getDistanceInWordsStrict(end, start).replace(
+            'minute',
+            'min',
+          );
+          return {
             summary: `Meeting Slot (${duration})`,
             color: null,
             start,
             end,
-          });
+          };
         }),
         defaultTo([]),
         path(['result', 'meetings']),
       )(this.session);
     },
+    calendarEvents() {
+      if (!this.meetings.length) {
+        return [];
+      }
+      return compose(
+        map(event => {
+          const start = parse(event.start.dateTime);
+          const end = parse(event.end.dateTime);
+          const calendar = this.$store.getters[CALENDARS][event.calendarId];
+          return {
+            summary: event.summary,
+            start,
+            end,
+            color: calendar && calendar.backgroundColor,
+          };
+        }),
+      )(this.$store.getters[CURRENT_PLANNER_EVENTS]);
+    },
     events() {
-      return this.meetings;
-    }
-  }
+      return sortBy(prop('start'))([...this.meetings, ...this.calendarEvents]);
+    },
+  },
 };
 </script>
 
