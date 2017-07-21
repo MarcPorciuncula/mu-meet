@@ -3,13 +3,14 @@ import firebase from '@/firebase';
 import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
 import debounce from 'lodash/debounce';
-import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
+import Query from '@/util/firebase-query';
 import { functions } from '@/functions';
 import a from 'awaiting';
 import {
   UPDATE_CALENDAR,
   UPDATE_CALENDARS_SUBSCRIPTION,
   CLEAR_CALENDARS,
+  REMOVE_CALENDAR,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_CALENDARS,
@@ -57,6 +58,9 @@ const mutations = {
       }
     });
   },
+  [REMOVE_CALENDAR](state, { id }) {
+    Vue.delete(state, id);
+  },
 };
 
 const actions = {
@@ -83,42 +87,48 @@ const actions = {
     const user = root.child(`users/${uid}`);
 
     // Construct the root subscription
-    const subscription = new LiveQuery.List(user.child('calendars'), ref => {
-      const query = new LiveQuery.Object(ref, {
-        id: new LiveQuery.Leaf(ref.child('id')),
-        summary: new LiveQuery.Leaf(ref.child('summary')),
-        backgroundColor: new LiveQuery.Leaf(ref.child('backgroundColor')),
-        selected: new LiveQuery.Redirect(
-          ref.child('id'),
-          (_, value) =>
-            new LiveQuery.Leaf(
-              user.child(`selected-calendars/${encodeId(value)}`),
-            ),
-        ),
+    const prop = (ref, key) => new Query.Leaf(ref.child(key));
+
+    const query = new Query.List(user.child('calendars'), (calendars, key) => {
+      const query = new Query.Object(calendars.child(key), {
+        id: prop,
+        summary: prop,
+        backgroundColor: prop,
+        selected: calendar =>
+          new Query.Redirect(
+            calendar.child('id'),
+            (id, value) =>
+              new Query.Leaf(
+                user.child(`selected-calendars/${encodeId(value)}`),
+                { resolve: (s) => s.val() || false },
+              ),
+          ),
       });
 
       // Subscribe to value updates on each child so we only have
       // to update that child instead of all of them
+      let id;
       query.subscribe({
-        next: value => value && commit(UPDATE_CALENDAR, value),
-        error: err => console.error(err),
-        complete: () => {
-          console.log('Calendar removed');
+        next: value => {
+          id = value.id;
+          commit(UPDATE_CALENDAR, value);
         },
+        error: err => console.error(err),
+        complete: () => commit(REMOVE_CALENDAR, { id }),
       });
 
       return query;
     });
 
-    subscription.execute();
+    query.execute();
 
     _commit(UPDATE_CALENDARS_SUBSCRIPTION, {
-      unsubscribe: () => subscription.cancel(),
+      unsubscribe: () => query.cancel(),
     });
 
     await a.single([
       new Promise((resolve, reject) => {
-        const unsubscribe = subscription.subscribe({
+        const unsubscribe = query.subscribe({
           next: () => {
             resolve();
             unsubscribe(false);

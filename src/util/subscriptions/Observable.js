@@ -46,6 +46,8 @@ class Observable<T> {
   }
 
   error(err: Error) {
+    if (!this._observers.size) throw err;
+
     this._observers.forEach(observer => {
       observer.error(err);
     });
@@ -53,8 +55,8 @@ class Observable<T> {
 
   complete() {
     this._observers.forEach(observer => {
-      observer.complete();
       this._unsubscribe(observer);
+      observer.complete();
     });
   }
 }
