@@ -44,12 +44,13 @@
       <layout-container padding="less">
         <type-container>
           <type-text tag="p" type="body2">
-            MUmeet was built by <a target="_blank" href="https://twitter.com/MarcoThePoro">Marc Porciuncula</a> for <a target="_blank" href="http://unihack.net/">Unihack</a> Mini 2017.<br/>
+            MUmeet was built by <a target="_blank" rel="noopener" href="https://twitter.com/MarcoThePoro">Marc Porciuncula</a> for <a target="_blank" rel="noopener" href="http://unihack.net/">Unihack</a> Mini 2017.<br/>
             Made with ❤ in Melbourne, Australia.<br/>
-            Not affiliated with Monash University.
+            Not affiliated with Unihack or Monash University.
           </type-text>
-          <type-text tag="p" type="body1" class="build-id">
-            {{ build }}
+          <type-text tag="p" type="body2">
+            <span class="build-id">{{ build }}</span><br/>
+            <a target="_blank" rel="noopener" href="https://github.com/MarcoThePoro/mu-meet">View source on GitHub</a>
           </type-text>
         </type-container>
       </layout-container>
