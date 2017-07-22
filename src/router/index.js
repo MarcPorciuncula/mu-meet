@@ -43,9 +43,10 @@ async function verifyAuth(to, from, next) {
 
 const router = new VueRouter({
   mode: 'history',
-  routes: [
-    root
-  ],
+  routes: [root],
+  scrollBehavior(to, from, savedPosition) {
+    return { x: 0, y: 0 };
+  },
 });
 
 router.beforeEach(addRouteTransitionProgressItem);
