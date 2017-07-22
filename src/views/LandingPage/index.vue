@@ -16,36 +16,45 @@
       </div>
     </layout-section>
 
-    <landing-section>
-      <span slot="headline">
-        Find meeting times that suit you and your team's calendars.
-      </span>
-      <span slot="body">
-        Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
-      </span>
-    </landing-section>
-    <section class="section-graphic">
+    <layout-section padding="normal">
+      <layout-container class="features">
+        <grid-container>
+          <grid>
+            <cell span-tablet="4">
+              <type-container>
+                <type-text tag="h2" type="headline">
+                  Find meeting times that suit you and your team's calendars.
+                </type-text>
+                <type-text tag="p" type="body2">
+                  Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
+                </type-text>
+              </type-container>
+            </cell>
+            <cell span-tablet="4">
+              <type-container>
+                <type-text tag="h2" type="headline">
+                  Powered by Google Calendar
+                </type-text>
+                <type-text tag="p" type="body2">
+                  MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar (coming soon).
+                </type-text>
+              </type-container>
+            </cell>
+            <cell span-tablet="4">
+              <type-container>
+                <type-text tag="h2" type="headline">
+                  Find meeting times that suit you and your team's calendars.
+                </type-text>
+                <type-text tag="p" type="body2">
+                  Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
+                </type-text>
+              </type-container>
+            </cell>
+          </grid>
+        </grid-container>
+      </layout-container>
+    </layout-section>
 
-    </section>
-    <landing-section>
-      <span slot="headline">
-        Powered by Google Calendar
-      </span>
-      <span slot="body">
-        MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar.
-      </span>
-    </landing-section>
-    <div class="section-graphic">
-
-    </div>
-    <landing-section>
-      <span slot="headline">
-        Sync your uni timetable in just a few clicks
-      </span>
-      <span slot="body">
-        MUmeet was developed especially for university assignment groups. Sign in to your student account and we'll help you find and sync your timetable to Google Calendar. (Coming soon)
-      </span>
-    </landing-section>
     <layout-section class="section-get-started" padding="more">
       <div class="call-to-action">
         <type-container>
@@ -69,6 +78,11 @@
 import '@/components/Material/typography.scss';
 import MdcButton from '@/components/Material/Button';
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
+import {
+  Container as GridContainer,
+  Grid,
+  Cell,
+} from '@/components/Material/Grid';
 import LayoutContainer from '@/components/Layout/Container';
 import HeaderBar from '@/components/HeaderBar';
 import LayoutSection from '@/components/Layout/Section';
@@ -77,39 +91,17 @@ import data from './data';
 
 const THRESHOLD = 0.1;
 
-const LandingSection = {
-  components: {
-    LayoutContainer,
-    TypeText,
-    TypeContainer,
-    LayoutSection,
-  },
-  template: `
-    <layout-section tag="section" padding="more">
-      <layout-container padding="more">
-        <type-container>
-          <type-text tag="h2" type="headline">
-            <slot name="headline"></slot>
-          </type-text>
-          <type-text tag="p" type="body1">
-            <slot name="body"></slot>
-          </type-text>
-        </type-container>
-      </layout-container>
-    </layout-section>
-  `,
-};
-
 export default {
   components: {
     MdcButton,
     TypeText,
     TypeContainer,
-    LandingSection,
     LayoutContainer,
     HeaderBar,
-    // PageFooter,
     LayoutSection,
+    GridContainer,
+    Grid,
+    Cell,
   },
   data() {
     return {
@@ -139,10 +131,6 @@ export default {
 <style scoped lang="scss">
 @import '@material/animation/functions';
 @import '@material/elevation/mixins';
-
-// .wrapper {
-//   position: relative;
-// }
 
 .call-to-action {
   max-width: 34rem;
