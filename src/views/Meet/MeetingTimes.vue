@@ -5,10 +5,20 @@
         <type-text tag="h3" type="subheading2">
           Meeting times
         </type-text>
+        <type-text tag="p" type="body1">
+          (Press find meeting times to refresh after parameters have changed or a new team member has joined.)
+        </type-text>
       </type-container>
     </layout-container>
     <layout-container padding="min">
       <schedule-view v-if="events.length" :events="events" />
+    </layout-container>
+    <layout-container>
+      <type-container>
+        <type-text tag="p" type="body1">
+          Only you can see your own calendar events.
+        </type-text>
+      </type-container>
     </layout-container>
   </layout-section>
 </template>
