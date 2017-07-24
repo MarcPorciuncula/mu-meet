@@ -46,7 +46,7 @@
                   Sync your uni timetable in just a few clicks
                 </type-text>
                 <type-text tag="p" type="body2">
-                  MUmeet was developed especially for Monash University students. Sign in with your Monash account and we'll help you sync your timetable to Google Calendar. (Coming soon)
+                  MUmeet was developed especially for Monash University students. Sign in with your Monash account and we'll help you sync your timetable to Google Calendar (Coming soon).
                 </type-text>
               </type-container>
             </cell>
