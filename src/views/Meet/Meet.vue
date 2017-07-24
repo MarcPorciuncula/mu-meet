@@ -22,7 +22,7 @@
                 <copy-text :value="inviteLink" ref="inviteLink" />
               </span>
             </mdc-list-item>
-            <mdc-list-item multiline ripple @click="showParameters = true">
+            <mdc-list-item multiline ripple @click="showParameters = true, scrollTo('parameters')">
               <span slot="start-detail" class="material-icons">
                 tune
               </span>
@@ -50,7 +50,7 @@
           </mdc-list>
           <mdc-list-group-divider />
           <mdc-list actionable>
-            <mdc-list-item ripple @click="findMeetingTimes()">
+            <mdc-list-item ripple @click="findMeetingTimes().then(() => scrollTo('meetings'))">
               <span slot="start-detail" class="material-icons">
                 event
               </span>
@@ -61,8 +61,8 @@
       </layout-container>
     </layout-section>
     <team-list />
-    <parameters v-if="showParameters" :done="hideParameters"/>
-    <meeting-times/>
+    <parameters v-show="showParameters" ref="parameters"/>
+    <meeting-times ref="meetings"/>
     <layout-section padding="normal">
       <layout-container padding="min">
         <mdc-list-group>
@@ -82,6 +82,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import VueTypes from 'vue-types';
 import format from 'date-fns/format';
 import setHours from 'date-fns/set_hours';
@@ -138,8 +139,10 @@ export default {
       this.$refs.inviteLink.copy();
     },
     setHours,
-    hideParameters() {
-      this.showParameters = false;
+    scrollTo(name) {
+      Vue.nextTick(() => {
+        this.$refs[name].$el.scrollIntoView({ behavior: 'smooth' });
+      });
     },
   },
   data() {
