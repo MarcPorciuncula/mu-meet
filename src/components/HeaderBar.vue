@@ -1,25 +1,23 @@
 <template>
-  <layout-section tag="header" class="header">
-    <layout-container class="header_inner">
-      <div style="flex-grow: 1">
+  <layout-section tag="header" class="header-bar">
+    <layout-container class="header-bar__inner">
+      <div class="header-bar__main">
         <transition name="fade-in" mode="out-in">
           <type-text v-if="message" tag="span" type="body2" key="message">
             {{ message }}
           </type-text>
-          <div v-else :class="['title', { 'title--show-subtitle': showTitle }]">
-            <div class="title_inner">
-              <div class="title_item">
-                <type-text tag="h1" type="headline" key="logo">
-                  <mumeet-logo></mumeet-logo>
-                </type-text>
-              </div>
-              <div class="title_item">
-                <type-text tag="h2" type="title">
-                  {{ title }}
-                </type-text>
-              </div>
+          <flipper v-else class="title" :show-secondary="this.showTitle">
+            <div class="header-bar__title" slot="primary">
+              <type-text tag="h1" type="headline" key="logo">
+                <mumeet-logo></mumeet-logo>
+              </type-text>
             </div>
-          </div>
+            <div class="header-bar__title" slot="secondary">
+              <type-text tag="h2" type="title">
+                {{ title }}
+              </type-text>
+            </div>
+          </flipper>
         </transition>
       </div>
       <slot/>
@@ -33,6 +31,7 @@ import { TypeText } from '@/components/Material/Typography';
 import MumeetLogo from '@/components/MumeetLogo';
 import LayoutSection from '@/components/Layout/Section';
 import LayoutContainer from '@/components/Layout/Container';
+import Flipper from '@/components/Flipper.vue';
 
 export default {
   components: {
@@ -40,6 +39,7 @@ export default {
     MumeetLogo,
     LayoutSection,
     LayoutContainer,
+    Flipper,
   },
   props: {
     message: VueTypes.string,
@@ -53,13 +53,14 @@ export default {
 @import '@material/elevation/mixins';
 @import '@material/animation/functions';
 
-.header {
+.header-bar {
   @include mdc-elevation(2);
   width: 100%;
   background-color: rgba(#fff, 0.95);
+  height: 3.625rem;
 }
 
-.header_inner {
+.header-bar__inner {
   padding: 0 1.25rem;
   display: flex;
   flex-direction: row;
@@ -68,38 +69,19 @@ export default {
   height: 100%;
 }
 
-.header,
-.title,
-.title_item {
-  height: 3.625rem;
+.header-bar__main {
+  flex-grow: 1;
+  height: 100%;
 }
 
-.title {
-  position: relative;
-  overflow: hidden;
-}
-
-.title_item {
+.header-bar__title {
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
-.title_item .type {
+.header-bar__title .type {
   margin: 0;
-}
-
-.title_inner {
-  height: 200%;
-  position: absolute;
-}
-
-.title_inner {
-  will-change: transform;
-  transition: transform 200ms $mdc-animation-fast-out-slow-in-timing-function;
-}
-
-.title--show-subtitle .title_inner {
-  transform: translateY(-50%);
 }
 
 .fade-in {
