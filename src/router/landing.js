@@ -1,7 +1,8 @@
-import Landing from '@/components/LandingPage';
+const Landing = () => import('@/views/LandingPage');
+const HeaderBarControl = () => import('@/views/LandingPage/HeaderBarControl');
 
 export default {
-  path: '/',
-  component: Landing,
-  meta: { shell: false },
+  name: 'landing-page',
+  path: '',
+  components: { default: Landing, 'header-bar-control': HeaderBarControl },
 };

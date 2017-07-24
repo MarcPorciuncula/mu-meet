@@ -3,7 +3,7 @@
     "sessions": {
       "$id": {
         "config": {
-          ".write": false,
+          ".write": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
           ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()"
         },
         "host": {

@@ -99,10 +99,13 @@ export default {
   justify-content: center;
 }
 
-.mdc-list-item__start-detail.avatar {
-  // margin-left: -0.1rem;
-  // margin-right: 1.2rem;
+.mdc-list--dense .mdc-list-item__start-detail {
   margin-right: 1rem;
+}
+
+.mdc-list-item__start-detail.avatar {
+  margin-left: -0.25rem;
+  margin-right: 1.25rem;
   height: 2rem;
   width: 2rem;
 

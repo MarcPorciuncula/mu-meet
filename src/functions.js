@@ -7,7 +7,7 @@ export async function functions(fnName, options = {}) {
   const headers = Object.assign({}, options.headers);
 
   const currentUser = firebase.auth().currentUser;
-  const firebaseToken = currentUser && (await currentUser.getToken(true));
+  const firebaseToken = currentUser && (await currentUser.getToken(false));
   if (firebaseToken) {
     headers.Authorization = `Bearer ${firebaseToken}`;
   }

@@ -8,3 +8,9 @@
     <slot></slot>
   </li>
 </template>
+
+<script>
+import './menu.scss';
+
+export default {};
+</script>

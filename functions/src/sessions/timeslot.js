@@ -8,6 +8,8 @@ import isBefore from 'date-fns/is_before';
 import isAfter from 'date-fns/is_after';
 import isEqual from 'date-fns/is_equal';
 import compareAsc from 'date-fns/compare_asc';
+import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
+import getSeconds from 'date-fns/get_seconds';
 
 export class Timeslot {
   start: Date;
@@ -16,7 +18,7 @@ export class Timeslot {
 
   constructor(start: Date, duration: number) {
     this.start = setMilliseconds(start, 0);
-    this.duration = duration;
+    this.duration = duration /* in minutes */;
     this.end = addSeconds(addMinutes(this.start, this.duration), -1);
   }
 
@@ -52,6 +54,14 @@ export class Timeslot {
 
   static fromJSON(data) {
     return new Timeslot(new Date(data.start), data.duration);
+  }
+
+  static fromRange(start, end) {
+    if (getSeconds(end) === 59) {
+      end = addSeconds(end, 1);
+    }
+    const duration = getDifferenceInMinutes(end, start);
+    return new Timeslot(start, duration);
   }
 
   toJSON() {

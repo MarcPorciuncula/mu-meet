@@ -1,4 +1,4 @@
-import LiveQuery from '@/subscriptions/FirebaseLiveQuery';
+import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
 import invariant from 'invariant';
 import { omit } from 'ramda';
 import { UPDATE_PROFILE, UPDATE_PROFILE_SUBSCRIPTION } from '@/store/mutations';

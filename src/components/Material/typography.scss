@@ -4,6 +4,10 @@
 
 .type-container {
   padding-top: 0.75rem;
+
+  &--trim-bottom .type:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .type {

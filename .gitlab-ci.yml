@@ -19,60 +19,37 @@ cache:
   paths:
   - .yarn-cache
 
-staging-build:
+variables:
+  COMMIT_SHA: $CI_COMMIT_SHA
+
+build:
   stage: build
   environment:
-    name: staging
+    name: $CI_COMMIT_REF_SLUG
+    url: $ORIGIN
   artifacts:
     paths:
     - dist/
     - functions/index.js
   only:
   - next
+  - master
   script:
-  # Disable Google analytics for the staging site
-  - GOOGLE_ANALYTICS_ID=
   # Build config/secrets
-  - echo $ORIGIN_STAGING > secret/origin.txt
-  - echo $GOOGLEAPI_CLIENT_CREDENTIALS_STAGING > secret/client.json
-  - echo $FIREBASE_CONFIG_STAGING > secret/firebase-config.json
+  - echo $ORIGIN > secret/origin.txt
+  - echo $GOOGLEAPI_CLIENT_CREDENTIALS > secret/client.json
+  - echo $FIREBASE_CONFIG > secret/firebase-config.json
   # build
   - yarn build
   - cd functions && yarn build && cd ..
 
-staging-deploy:
+deploy:
   stage: deploy
   environment:
-    name: staging
+    name: $CI_COMMIT_REF_SLUG
+    url: $ORIGIN
   only:
   - next
-  script:
-  - yarn deploy-all -- --project staging --token "$FIREBASE_CI_TOKEN"
-
-production-build:
-  stage: build
-  environment:
-    name: production
-  artifacts:
-    paths:
-    - dist/
-    - functions/index.js
-  only:
   - master
   script:
-  # Build config/secrets
-  - echo $ORIGIN_PRODUCTION > secret/origin.txt
-  - echo $GOOGLEAPI_CLIENT_CREDENTIALS_PRODUCTION > secret/client.json
-  - echo $FIREBASE_CONFIG_PRODUCTION > secret/firebase-config.json
-  # build
-  - yarn build
-  - cd functions && yarn build && cd ..
-
-production-deploy:
-  stage: deploy
-  environment:
-    name: production
-  only:
-  - master
-  script:
-  - yarn deploy-all -- --project production --token "$FIREBASE_CI_TOKEN"
+  - yarn deploy-all -- --project $CI_ENVIRONMENT_SLUG --token "$FIREBASE_CI_TOKEN"

@@ -11,6 +11,7 @@ export const CLEAR_CALENDARS = 'calendars/CLEAR_CALENDARS';
 export const UPDATE_PLANNER_SESSION = 'planner/UPDATE_PLANNER_SESSION';
 export const UPDATE_PLANNER_SUBSCRIPTION =
   'planner/UPDATE_PLANNER_SUBSCRIPTION';
+export const UPDATE_PLANNER_EVENTS = 'planner/UPDATE_PLANNER_EVENTS';
 
 // profile
 export const UPDATE_PROFILE = 'profile/UPDATE_PROFILE';
