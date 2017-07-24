@@ -6,7 +6,17 @@ const List = {
   render(h) {
     return h(
       this.tag,
-      { class: ['mdc-list', { 'mdc-list--two-line': this.twoLine, 'mdc-list--dense': this.dense, 'mdc-list--separated': this.separated }] },
+      {
+        class: [
+          'mdc-list',
+          {
+            'mdc-list--two-line': this.twoLine,
+            'mdc-list--dense': this.dense,
+            'mdc-list--separated': this.separated,
+            'mdc-list--actionable': this.actionable,
+          },
+        ],
+      },
       this.$slots.default,
     );
   },
@@ -15,6 +25,7 @@ const List = {
     twoLine: VueTypes.bool.def(false),
     dense: VueTypes.bool.def(false),
     separated: VueTypes.bool.def(false),
+    actionable: VueTypes.bool.def(false),
   },
 };
 

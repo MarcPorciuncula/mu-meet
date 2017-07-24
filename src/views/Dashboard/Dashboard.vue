@@ -22,7 +22,7 @@
             </router-link>
           </div>
         </callout>
-        <mdc-list ripple>
+        <mdc-list ripple actionable>
           <template v-for="action in actions">
             <mdc-list-item v-if="!action" separator />
             <router-link v-else-if="action.route" :to="{ name: action.route.name }">

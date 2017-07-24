@@ -12,7 +12,7 @@
     <layout-section>
       <layout-container padding="min">
         <mdc-list-group>
-          <mdc-list>
+          <mdc-list actionable>
             <mdc-list-item multiline ripple @click="copyInviteLink">
               <span slot="start-detail" class="material-icons">
                 group_add
@@ -49,7 +49,7 @@
             </router-link>
           </mdc-list>
           <mdc-list-group-divider />
-          <mdc-list>
+          <mdc-list actionable>
             <mdc-list-item ripple @click="findMeetingTimes()">
               <span slot="start-detail" class="material-icons">
                 event
