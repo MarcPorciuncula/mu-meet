@@ -3,7 +3,7 @@ import Dashboard from './Dashboard';
 import calendarsRoute from '@/router/user/calendars';
 import meetingPlanRoute from '@/router/planner/current';
 import newMeetingPlanRoute from '@/router/planner/new';
-import { CURRENT_PLANNER_SESSION } from '@/store/getters';
+import { CURRENT_PLANNER_SESSION, USER_UID } from '@/store/getters';
 import { ARCHIVE_PLANNER_SESSION } from '@/store/actions';
 
 export default {
@@ -23,7 +23,11 @@ export default {
     lastMeetingPlan() {
       const session = this.$store.getters[CURRENT_PLANNER_SESSION];
       if (session) {
-        return session;
+        return Object.assign({}, session, {
+          users: session.users.filter(
+            user => user.id !== this.$store.getters[USER_UID],
+          ),
+        });
       }
       return null;
     },
