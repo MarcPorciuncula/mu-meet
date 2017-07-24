@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" id="root">
     <progress-bar class="header-bar">
       <header-bar v-show="!hideHeaderBar" :title="title" :show-title="title && !showTitle" :message="progressMessage">
         <router-view name="header-bar-control"></router-view>
