@@ -20,27 +20,27 @@
       <layout-container class="features">
         <grid-container>
           <grid>
-            <cell span-tablet="4">
+            <cell :span-tablet="4">
               <type-container>
                 <type-text tag="h2" type="headline">
-                  Find meeting times that suit you and your team's calendars.
+                  Find meeting times that suit everyone.
                 </type-text>
                 <type-text tag="p" type="body2">
-                  Whatever your schedule, MUmeet finds a meeting time for all of your team so you can spend your time collaborating, not scheduling.
+                  Whatever your schedule, MUmeet finds a meeting time when all of your team are free so you can spend your time collaborating, not scheduling.
                 </type-text>
               </type-container>
             </cell>
-            <cell span-tablet="4">
+            <cell :span-tablet="4">
               <type-container>
                 <type-text tag="h2" type="headline">
                   Powered by Google Calendar
                 </type-text>
                 <type-text tag="p" type="body2">
-                  MUmeet uses your existing Google Calendar events, so you don't need to spend time entering your schedule. Once MUmeet has found a meeting time, you can even save it directly to your Google Calendar (Coming soon).
+                  MUmeet uses your existing Google Calendar, so you don't need to spend time entering your schedule. Once you've decided on a time, save it directly to your Google Calendar (Coming soon).
                 </type-text>
               </type-container>
             </cell>
-            <cell span-tablet="4">
+            <cell :span-tablet="4">
               <type-container>
                 <type-text tag="h2" type="headline">
                   Sync your uni timetable in just a few clicks
