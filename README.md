@@ -1,12 +1,12 @@
 # mu-meet
 
-> Find a meeting time based on your team's calendars. Made for Unihack Mini 2017. Live at [mumeet.surge.sh](mumeet.surge.sh)
+> Find a meeting time based on your team's calendars. Made for Unihack Mini 2017. Live at [mumeet.me](mumeet.me)
 
 ## Build Setup
 
 ``` bash
 # install dependencies
-yarn
+yarn && cd functions && yarn && cd ..
 
 # serve with hot reload at localhost:8080
 yarn dev
@@ -34,8 +34,7 @@ This project was bootstrapped with the Vue Webpack template. For detailed explan
 # make sure you have firebase-tools installed
 npm install -g firebase-tools
 
-# for the staging environment at https://mumeet-staging.herokuapp.com
-
+# for the staging environment at https://mumeet-staging.firebaseapp.com
 firebase use staging
 # ensure you have placed the correct credentials at secret/client.json
 yarn build
@@ -43,17 +42,11 @@ cd functions && yarn build && cd ..
 yarn deploy-all
 
 
-# for production at http://mumeet.surge.sh
+# for production at https://mumeet.me
 firebase use production
 SET NODE_ENV=production
 # ensure you have placed the correct credentials at secret/client.json
-# hosting
 yarn build
-surge -p dist -d https://mumeet.surge.sh
-# database rules
-yarn deploy-database
-# functions
-cd functions
-yarn build
-yarn deploy
+cd functions && yarn build && cd ..
+yarn deploy-all
 ```
