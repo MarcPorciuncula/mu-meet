@@ -28,7 +28,6 @@
     "@material/textfield": "^0.3.0",
     "awaiting": "^2.2.0",
     "axios": "^0.16.1",
-    "clipboard": "^1.7.1",
     "core-js": "^2.4.1",
     "date-fns": "^1.28.3",
     "firebase": "^3.8.0",

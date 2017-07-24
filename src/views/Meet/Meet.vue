@@ -18,8 +18,8 @@
                 group_add
               </span>
               Invite your team
-              <span slot="secondary-text" ref="inviteLink">
-                {{ inviteLink }}
+              <span slot="secondary-text">
+                <copy-text :value="inviteLink" ref="inviteLink" />
               </span>
             </mdc-list-item>
             <mdc-list-item multiline ripple @click="showParameters = true">
@@ -88,6 +88,7 @@ import setHours from 'date-fns/set_hours';
 import setMinutes from 'date-fns/set_minutes';
 import LayoutSection from '@/components/Layout/Section';
 import LayoutContainer from '@/components/Layout/Container';
+import CopyText from '@/components/CopyText';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import {
   List as MdcList,
@@ -112,6 +113,7 @@ export default {
     TeamList,
     MeetingTimes,
     Parameters,
+    CopyText,
   },
   props: {
     inviteLink: VueTypes.string.isRequired,
@@ -133,16 +135,7 @@ export default {
   },
   methods: {
     copyInviteLink(event) {
-      if (event.srcElement === this.$refs.inviteLink) {
-        // The user was likely trying to copy the text manually
-        return;
-      }
-      const selection = window.getSelection();
-      selection.empty();
-      const range = document.createRange();
-      range.setStart(this.$refs.inviteLink, 0);
-      range.setEnd(this.$refs.inviteLink, 1);
-      selection.addRange(range);
+      this.$refs.inviteLink.copy();
     },
     setHours,
     hideParameters() {
@@ -166,6 +159,3 @@ export default {
   },
 };
 </script>
-
-<style scoped lang="scss">
-</style>
