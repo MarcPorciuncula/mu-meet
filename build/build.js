@@ -9,6 +9,7 @@ var chalk = require('chalk')
 var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
+var prerender = require('./prerender')
 
 var spinner = ora(`building for production...`)
 spinner.start()
@@ -47,6 +48,7 @@ Promise.resolve()
   .then(() => {
     console.log(chalk.cyan('  Build stats saved to stats.json\n'));
   })
+  .then(() => prerender())
   .catch(err => {
     spinner.stop();
     console.error(err);
