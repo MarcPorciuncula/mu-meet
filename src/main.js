@@ -9,13 +9,11 @@ import '@/index.scss';
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
-let vm = new Vue(
-  Object.assign({}, Wrapper, {
-    el: '#root',
-    store,
-    router,
-  }),
-);
+let vm = new Vue(Object.assign({}, Wrapper, {
+  el: '#app',
+  store,
+  router,
+}));
 
 if (process.env.NODE_ENV !== 'production') {
   window.vm = vm;
