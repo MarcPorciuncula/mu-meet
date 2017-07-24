@@ -3,7 +3,7 @@
     <layout-container class="header-bar__inner">
       <div class="header-bar__main">
         <transition name="fade-in" mode="out-in">
-          <type-text v-if="message" tag="span" type="body2" key="message">
+          <type-text v-if="message" tag="span" type="body2" class="header-bar__title">
             {{ message }}
           </type-text>
           <flipper v-else class="title" :show-secondary="this.showTitle">
