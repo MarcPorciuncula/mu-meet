@@ -82,7 +82,7 @@ const actions = {
           result: new LiveQuery.Leaf(session.child('result')),
         });
 
-        subscription.children.get('config').subscription.subscribe({
+        subscription.children.get('result').subscription.subscribe({
           next: () => {
             dispatch(FETCH_PLANNER_EVENTS);
           },
