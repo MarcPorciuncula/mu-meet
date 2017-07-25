@@ -79,18 +79,24 @@ const actions = {
           config: new LiveQuery.Leaf(session.child('config'), {
             transform: evolve({ searchFromDate: parse, searchToDate: parse }),
           }),
-          result: new LiveQuery.Leaf(session.child('result')),
+          result: new LiveQuery.Object(session.child('result'), {
+            meetings: new LiveQuery.Leaf(session.child('result/meetings')),
+            status: new LiveQuery.Leaf(session.child('result/status')),
+          }),
         });
 
-        subscription.children.get('result').subscription.subscribe({
-          next: () => {
-            dispatch(FETCH_PLANNER_EVENTS);
-          },
-          error: console.error.bind(console),
-          complete: () => {
-            commit(UPDATE_PLANNER_EVENTS, []);
-          },
-        });
+        subscription.children
+          .get('result')
+          .subscription.children.get('meetings')
+          .subscription.subscribe({
+            next: () => {
+              dispatch(FETCH_PLANNER_EVENTS);
+            },
+            error: console.error.bind(console),
+            complete: () => {
+              commit(UPDATE_PLANNER_EVENTS, []);
+            },
+          });
 
         return subscription;
       },
