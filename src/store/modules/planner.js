@@ -295,7 +295,7 @@ function createUserSubscription(ref) {
 /**
  * Returns a promise that resolves when a Vue reactive value satisfies the predicate
  */
-function watch(compute, { predicate = identity, timeout = 1000 } = {}) {
+function watch(compute, { predicate = identity, timeout = 5000 } = {}) {
   return new Promise((resolve, reject) => {
     let resolved = false;
     let vm;
