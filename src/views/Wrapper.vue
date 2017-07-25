@@ -33,6 +33,7 @@ import PageFooter from '@/views/Footer';
 import ErrorDialog from '@/views/ErrorDialog';
 import { mapGetters } from 'vuex';
 import { PROGRESS_MESSAGE } from '@/store/getters';
+import compat from '@/util/compat';
 
 const getHideHeaderBar = path(['meta', 'hideHeaderBar']);
 const getTitle = path(['meta', 'title']);
@@ -72,10 +73,19 @@ export default {
     ...mapGetters({ progressMessage: PROGRESS_MESSAGE }),
   },
   mounted() {
-    this.observer = new IntersectionObserver(this.update, {
-      threshold: [1],
-    });
-    this.observer.observe(this.$refs.title.$el);
+    if (compat.IntersectionObserver) {
+      this.observer = new IntersectionObserver(this.update, {
+        threshold: [1],
+      });
+      this.observer.observe(this.$refs.title.$el);
+    } else {
+      this.showTitle = true;
+    }
+  },
+  beforeDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   },
   methods: {
     update(entries) {
@@ -104,7 +114,7 @@ export default {
 }
 
 .title-section {
-  margin-top: 3.625rem;
+  margin-top: 3.5rem;
 }
 
 .hidden {

@@ -57,7 +57,7 @@ export default {
   @include mdc-elevation(2);
   width: 100%;
   background-color: rgba(#fff, 0.95);
-  height: 3.625rem;
+  height: 3.5rem;
 }
 
 .header-bar__inner {

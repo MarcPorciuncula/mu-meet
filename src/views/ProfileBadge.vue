@@ -93,7 +93,7 @@ export default {
       this.showGreeting = true;
       setTimeout(() => {
         this.showGreeting = false;
-      }, 2000);
+      }, 3000);
     },
   },
 };
@@ -109,7 +109,7 @@ export default {
 }
 
 .header_profile-picture {
-  height: 2rem;
+  height: 1.5rem;
   width: auto;
   border-radius: 50%;
   margin-left: 0.5rem;

@@ -1,3 +1,7 @@
+## 0.0.4 (Jul 25, 2017)
+* Visual improvements to the header bar
+* Fallbacks if `IntersectionObserver` is not supported
+
 ## 0.0.3 (Jul 24, 2017)
 In preparation for first release to Monash students.
 
