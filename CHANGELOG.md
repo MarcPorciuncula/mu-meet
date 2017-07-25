@@ -1,3 +1,9 @@
+## 0.0.5 (Jul 25, 2017)
+* Make meeting time calculations run faster
+* Show progress of meeting time calculations to all users (not just the one who clicked the button)
+* Update Material Components Web dependencies
+* A few bugfixes and optimisations
+
 ## 0.0.4 (Jul 25, 2017)
 * Visual improvements to the header bar
 * Fallbacks if `IntersectionObserver` is not supported
