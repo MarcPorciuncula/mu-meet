@@ -104,7 +104,7 @@ export default {
 }
 
 .title-section {
-  margin-top: 3.625rem;
+  margin-top: 3.5rem;
 }
 
 .hidden {
