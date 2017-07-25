@@ -88,6 +88,7 @@ import HeaderBar from '@/components/HeaderBar';
 import LayoutSection from '@/components/Layout/Section';
 import signin from '@/router/auth/signin';
 import data from './data';
+import compat from '@/util/compat';
 
 const THRESHOLD = 0.1;
 
@@ -105,19 +106,27 @@ export default {
   },
   data() {
     return {
-      showHeaderGetStarted: false,
       links: { signin: signin.path },
     };
   },
   mounted() {
-    this.observer = new IntersectionObserver(
-      this.handleSplashIntersectionUpdate.bind(this),
-      {
-        threshold: THRESHOLD,
-      },
-    );
-    this.observer.observe(this.$refs.splash);
-    this.observer.observe(this.$refs.getStarted);
+    if (compat.IntersectionObserver) {
+      this.observer = new IntersectionObserver(
+        this.handleSplashIntersectionUpdate.bind(this),
+        {
+          threshold: THRESHOLD,
+        },
+      );
+      this.observer.observe(this.$refs.splash);
+      this.observer.observe(this.$refs.getStarted);
+    } else {
+      data.showHeaderGetStarted = true;
+    }
+  },
+  beforeDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   },
   methods: {
     handleSplashIntersectionUpdate(entries, observer) {
