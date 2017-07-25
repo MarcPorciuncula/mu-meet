@@ -20,6 +20,7 @@ import {
   SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  INCREMENT_PROGRESS_ITEM,
   FETCH_PLANNER_EVENTS,
 } from '@/store/actions';
 import {
@@ -96,6 +97,35 @@ const actions = {
             complete: () => {
               commit(UPDATE_PLANNER_EVENTS, []);
             },
+          });
+
+        subscription.children
+          .get('result')
+          .subscription.children.get('status')
+          .subscription.subscribe({
+            next: status => {
+              switch (status) {
+                case 'FETCH_SCHEDULES':
+                  dispatch(START_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                    message: 'Finding meeting times (Step 1/2)',
+                  });
+                  break;
+                case 'RESOLVE_TIMES':
+                  dispatch(INCREMENT_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                    message: 'Finding meeting times (Step 2/2)',
+                  });
+                  break;
+                case 'DONE':
+                  dispatch(FINISH_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                  });
+                  break;
+              }
+            },
+            error: console.error.bind(console),
+            complete: () => {},
           });
 
         return subscription;
