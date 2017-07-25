@@ -42,7 +42,7 @@ const DEFAULT_STATE = {
     days: [false, true, true, true, true, true, false],
   },
   result: {
-    pending: false,
+    status: false,
     meetings: [],
   },
 };
@@ -110,37 +110,41 @@ export async function findMeetingTimes(sessionId) {
     .then(s => s.val())
     .then(hydrateConfig);
 
-  await sessionRef.child('result/pending').set(true);
-  await sessionRef.child('phase').set('PHASE_RESULT');
+  await sessionRef.child('result/status').set('FETCH_SCHEDULES');
 
-  // FIXME don't do this serially
-  const calendarEvents = [];
-  for (let uid of uids) {
-    let { save, oAuth2Client } = await getOAuth2Client(uid);
+  const fetchUserEventsInRange = async uid => {
+    const { save, oAuth2Client } = await getOAuth2Client(uid);
     const calendarIds = await database
       .ref(`/users/${uid}/selected-calendars`)
       .once('value')
       .then(s => s.val())
       .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
-
-    for (let calendarId of calendarIds) {
-      calendarEvents.push(
-        ...(await fetchEvents(uid, oAuth2Client, {
-          from: config.searchFromDate,
-          to: config.searchToDate,
-          calendarId,
-        })),
-      );
-    }
-
+    const userEvents = R.flatten(
+      await Promise.all(
+        calendarIds.map(calendarId =>
+          fetchEvents(uid, oAuth2Client, {
+            from: config.searchFromDate,
+            to: config.searchToDate,
+            calendarId,
+          }),
+        ),
+      ),
+    );
     save();
-  }
+    return userEvents;
+  };
 
-  console.log(
-    `Fetched ${calendarEvents.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
+  const allUserEvents = R.flatten(
+    await Promise.all(uids.map(uid => fetchUserEventsInRange(uid))),
   );
 
-  const calendarEventTimeslots = calendarEvents.map(
+  console.log(
+    `Fetched ${allUserEvents.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
+  );
+
+  await sessionRef.child('result/status').set('RESOLVE_TIMES');
+
+  const allUserEventTimeslots = allUserEvents.map(
     event =>
       new Timeslot(
         parseDate(event.start.dateTime),
@@ -151,7 +155,7 @@ export async function findMeetingTimes(sessionId) {
       ),
   );
 
-  console.log(calendarEventTimeslots.map(x => x.toJSON()));
+  console.log(allUserEventTimeslots.map(x => x.toJSON()));
 
   const restrictedHours = [];
   let current = config.searchFromDate;
@@ -179,7 +183,7 @@ export async function findMeetingTimes(sessionId) {
   const meetings = Timeslot.accumulate(
     getAvailableTimeslots(
       range,
-      R.flatten([calendarEventTimeslots, restrictedHours, restrictedDays]),
+      R.flatten([allUserEventTimeslots, restrictedHours, restrictedDays]),
       30,
     ),
   );
@@ -189,7 +193,7 @@ export async function findMeetingTimes(sessionId) {
   await sessionRef
     .child('result/meetings')
     .set(meetings.map(timeslot => timeslot.toJSON()));
-  await sessionRef.child('result/pending').set(false);
+  await sessionRef.child('result/status').set('DONE');
 }
 
 // function hydrateSession(session) {
