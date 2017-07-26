@@ -15,7 +15,7 @@
     "cors": "^2.8.3",
     "date-fns": "^1.28.4",
     "firebase-admin": "^4.2.1",
-    "firebase-functions": "^0.5.5",
+    "firebase-functions": "^0.6.0",
     "googleapis": "^19.0.0",
     "ramda": "^0.23.0",
     "request": "^2.81.0",
@@ -25,15 +25,16 @@
   "private": true,
   "devDependencies": {
     "ava": "^0.19.1",
-    "babelrc-rollup": "^3.0.0",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.1",
     "babel-preset-flow": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-register": "^6.24.1",
+    "babelrc-rollup": "^3.0.0",
     "cross-env": "^5.0.0",
     "firebase-tools": "^3.6.1",
     "flow-bin": "^0.47.0",
+    "prettier": "^1.5.3",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
@@ -41,6 +42,8 @@
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "ava": {
-    "require": ["babel-register"]
+    "require": [
+      "babel-register"
+    ]
   }
 }

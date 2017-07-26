@@ -31,3 +31,10 @@
     background-color: rgba(0, 0, 0, 0.05);
   }
 }
+
+.mdc-list--multiline .mdc-list-item {
+  height: auto;
+  align-items: flex-start;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}

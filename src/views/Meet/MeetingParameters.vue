@@ -1,5 +1,5 @@
 <template>
-  <layout-section padding="normal">
+  <layout-section padding="min">
     <layout-container>
       <type-container>
         <type-text tag="h3" type="subheading2">
@@ -24,8 +24,8 @@
         <mdc-list-group-header>
           Active Days (not working)
         </mdc-list-group-header>
-        <mdc-list>
-          <mdc-list-item multiline>
+        <mdc-list multiline>
+          <mdc-list-item>
             <span slot="start-detail" class="material-icons">
               view_week
             </span>
@@ -100,9 +100,9 @@ export default {
         value = value / 60;
       }
       this.$store.dispatch(SET_PLANNER_CONFIG, {
-        [prop]: value
-      })
-    }
-  }
+        [prop]: value,
+      });
+    },
+  },
 };
 </script>

@@ -12,17 +12,14 @@
     <layout-section>
       <layout-container padding="min">
         <mdc-list-group>
-          <mdc-list actionable>
-            <mdc-list-item multiline ripple @click="copyInviteLink">
+          <mdc-list actionable multiline>
+            <mdc-list-item ripple @click="scrollTo('team')">
               <span slot="start-detail" class="material-icons">
                 group_add
               </span>
-              Invite your team
-              <span slot="secondary-text">
-                <copy-text :value="inviteLink" ref="inviteLink" />
-              </span>
+              Invite team members
             </mdc-list-item>
-            <mdc-list-item multiline ripple @click="showParameters = true, scrollTo('parameters')">
+            <mdc-list-item ripple @click="scrollTo('parameters')">
               <span slot="start-detail" class="material-icons">
                 tune
               </span>
@@ -37,7 +34,7 @@
               </span>
             </mdc-list-item>
             <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
-              <mdc-list-item multiline ripple>
+              <mdc-list-item ripple>
                 <span slot="start-detail" class="material-icons">
                   event_note
                 </span>
@@ -50,7 +47,7 @@
           </mdc-list>
           <mdc-list-group-divider />
           <mdc-list actionable>
-            <mdc-list-item ripple @click="findMeetingTimes().then(() => scrollTo('meetings'))">
+            <mdc-list-item ripple @click="scrollTo('meetings')">
               <span slot="start-detail" class="material-icons">
                 event
               </span>
@@ -60,9 +57,31 @@
         </mdc-list-group>
       </layout-container>
     </layout-section>
-    <team-list />
-    <parameters v-show="showParameters" ref="parameters"/>
-    <meeting-times ref="meetings"/>
+    <layout-section padding="min" ref="team">
+      <layout-container>
+        <type-container trim-bottom>
+          <type-text tag="h3" type="subheading2">
+            Team
+          </type-text>
+        </type-container>
+      </layout-container>
+      <layout-container padding="min">
+        <team-list />
+      </layout-container>
+    </layout-section>
+    <parameters ref="parameters"/>
+    <layout-section padding="min" ref="meetings">
+      <layout-container>
+        <type-container trim-bottom>
+          <type-text tag="h3" type="subheading2">
+            Meeting Times
+          </type-text>
+        </type-container>
+      </layout-container>
+      <layout-container padding="min">
+        <meeting-times />
+      </layout-container>
+    </layout-section>
     <layout-section padding="normal">
       <layout-container padding="min">
         <mdc-list-group>

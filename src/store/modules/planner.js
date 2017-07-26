@@ -83,6 +83,7 @@ const actions = {
           result: new LiveQuery.Object(session.child('result'), {
             meetings: new LiveQuery.Leaf(session.child('result/meetings')),
             status: new LiveQuery.Leaf(session.child('result/status')),
+            stale: new LiveQuery.Leaf(session.child('result/stale')),
           }),
         });
 

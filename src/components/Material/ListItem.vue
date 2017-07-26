@@ -76,13 +76,6 @@ export default {
   color: #424242;
 }
 
-.mdc-list-item--multiline {
-  height: auto;
-  align-items: flex-start;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
 .mdc-list-item--ripple {
   @include mdc-ripple-base;
   @include mdc-ripple-bg((pseudo: '::before', base-color: black));
