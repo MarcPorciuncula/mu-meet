@@ -3,6 +3,7 @@ import a from 'awaiting';
 import google from 'googleapis';
 import request from 'request-promise-native';
 import credentials from '../credentials';
+import isPast from 'date-fns/is_past';
 
 const GOOGLE_OAUTH_ERROR_CODES = {
   NO_CREDENTIALS_FOUND: 'google-oauth/no-credentials-found',
@@ -67,6 +68,14 @@ export async function getOAuth2Client(uid) {
     tokens.redirect_uri,
   );
   oAuth2Client.setCredentials(tokens);
+
+  if (isPast(new Date(tokens.expiry_date))) {
+    tokens = await a.callback(
+      oAuth2Client.refreshAccessToken.bind(oAuth2Client),
+    );
+    await tokensRef.transaction(x => Object.assign(x || {}, tokens));
+    console.log(`Updated credentials for user ${uid}`);
+  }
 
   const save = async () => {
     // FIXME this could revive a deleted account
