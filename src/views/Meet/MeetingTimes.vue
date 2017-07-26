@@ -1,5 +1,17 @@
 <template>
   <div>
+    <mdc-list actionable :multiline="done && stale">
+      <mdc-list-item separator />
+      <mdc-list-item ripple @click="search()">
+        <span slot="start-detail" class="material-icons">
+          {{ stale && !status ? 'event' : 'update'}}
+        </span>
+        {{ stale && !status ? 'Search for' : 'Update' }} meeting times
+        <span slot="secondary-text" v-if="done && stale">
+          Parameters have changed since you last refreshed meeting times.
+        </span>
+      </mdc-list-item>
+    </mdc-list>
     <layout-section tag="div" padding="less" v-if="events">
       <layout-container padding="less">
         <schedule-view :events="events"/>
@@ -17,18 +29,6 @@
         </type-text>
       </type-container>
     </layout-container>
-    <mdc-list actionable :multiline="done && stale">
-      <mdc-list-item separator />
-      <mdc-list-item ripple @click="search()">
-        <span slot="start-detail" class="material-icons">
-          {{ stale && !status ? 'event' : 'update'}}
-        </span>
-        {{ stale && !status ? 'Search for' : 'Update' }} meeting times
-        <span slot="secondary-text" v-if="done && stale">
-          Parameters have changed since you last refreshed meeting times.
-        </span>
-      </mdc-list-item>
-    </mdc-list>
   </div>
 </template>
 

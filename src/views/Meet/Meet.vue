@@ -1,63 +1,71 @@
 <template>
   <div>
     <layout-section>
-      <layout-container>
+      <layout-container padding="normal">
         <type-container>
+          <type-text tag="p" type="headline">
+            Find a time to meet in four steps.
+          </type-text>
           <type-text tag="p" type="body1">
-            Invite your team with the link below. Make sure everyone selects their calendars, then press find meeting times. If someone updates their calendar selection or a new member is added, you'll need to manually find meeting times again.
+            Make sure to check you have the right calendars enabled.
           </type-text>
         </type-container>
       </layout-container>
-    </layout-section>
-    <layout-section>
       <layout-container padding="min">
         <mdc-list-group>
-          <mdc-list actionable multiline>
-            <mdc-list-item ripple @click="scrollTo('team')">
-              <span slot="start-detail" class="material-icons">
-                group_add
-              </span>
-              Invite team members
-            </mdc-list-item>
-            <mdc-list-item ripple @click="scrollTo('parameters')">
-              <span slot="start-detail" class="material-icons">
-                tune
-              </span>
-              Change parameters
-              <span slot="secondary-text">
-                At least 30 min
-                from {{ session.config.searchFromHour | formatHour }}
-                to {{ session.config.searchToHour | formatHour }}
-                on weekdays,
-                over {{ session.config.searchFromDate | format('ddd DD MMM') }}
-                to {{ session.config.searchToDate | format('ddd DD MMM') }}.
-              </span>
-            </mdc-list-item>
+          <mdc-list actionable>
             <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
               <mdc-list-item ripple>
-                <span slot="start-detail" class="material-icons">
-                  event_note
+                <span slot="start-detail">
+                  1.
                 </span>
-                Select your calendars
-                <span slot="secondary-text">
-                  {{ calendars.length || 'No' }} calendar{{ calendars.length === 1 ? '' : 's' }} selected
+                <span>
+                  Select your calendars
+                </span>
+                <span class="material-icons" slot="end-detail">
+                  event_note
                 </span>
               </mdc-list-item>
             </router-link>
-          </mdc-list>
-          <mdc-list-group-divider />
-          <mdc-list actionable>
+            <mdc-list-item ripple @click="scrollTo('team')">
+              <span slot="start-detail">
+                2.
+              </span>
+              <span>
+                Invite team members
+              </span>
+              <span class="material-icons" slot="end-detail">
+                group_add
+              </span>
+            </mdc-list-item>
+            <mdc-list-item ripple @click="scrollTo('parameters')">
+              <span slot="start-detail">
+                3.
+              </span>
+              <span>
+                Change parameters
+              </span>
+              <span class="material-icons" slot="end-detail">
+                tune
+              </span>
+            </mdc-list-item>
+            <mdc-list-item separator />
             <mdc-list-item ripple @click="scrollTo('meetings')">
-              <span slot="start-detail" class="material-icons">
+              <span slot="start-detail">
+                4.
+              </span>
+              <span>
+                Find meeting times
+              </span>
+              <span class="material-icons" slot="end-detail">
                 event
               </span>
-              Find meeting times
             </mdc-list-item>
           </mdc-list>
         </mdc-list-group>
       </layout-container>
     </layout-section>
-    <layout-section padding="min" ref="team">
+    <layout-section padding="normal" ref="team">
       <layout-container>
         <type-container trim-bottom>
           <type-text tag="h3" type="subheading2">
@@ -69,12 +77,34 @@
         <team-list />
       </layout-container>
     </layout-section>
-    <parameters ref="parameters"/>
-    <layout-section padding="min" ref="meetings">
+    <layout-section padding="normal" ref="parameters">
+      <layout-container>
+        <type-container trim-bottom>
+          <type-text tag="h3" type="subheading2">
+            Parameters
+          </type-text>
+          <type-text tag="p" type="headline">
+            At least 30 min
+            from {{ session.config.searchFromHour | formatHour }}
+            to {{ session.config.searchToHour | formatHour }}
+            on weekdays,
+            over {{ session.config.searchFromDate | format('ddd DD MMM') }}
+            to {{ session.config.searchToDate | format('ddd DD MMM') }}.
+          </type-text>
+        </type-container>
+      </layout-container>
+      <layout-container padding="min">
+        <parameters ref="parameters"/>
+      </layout-container>
+    </layout-section>
+    <layout-section padding="normal" ref="meetings">
       <layout-container>
         <type-container trim-bottom>
           <type-text tag="h3" type="subheading2">
             Meeting Times
+          </type-text>
+          <type-text tag="p" type="headline">
+            You have 4 possible meeting times.
           </type-text>
         </type-container>
       </layout-container>
@@ -181,3 +211,10 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+.inline-icon {
+  font-size: 120%;
+  transform: translateY(20%);
+}
+</style>
