@@ -103,8 +103,8 @@
           <type-text tag="h3" type="subheading2">
             Meeting Times
           </type-text>
-          <type-text tag="p" type="headline">
-            You have 4 possible meeting times.
+          <type-text tag="p" type="headline" v-if="session.result.status === 'DONE'">
+            You have {{ session.result.meetings.length }} possible meeting times.
           </type-text>
         </type-container>
       </layout-container>
