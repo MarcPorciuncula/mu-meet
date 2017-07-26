@@ -25,9 +25,9 @@ export default {
     },
     links() {
       return { signin };
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -53,7 +53,7 @@ export default {
 
   &-leave-active {
     $duration: 250ms;
-    transition: mdc-animation-exit(opacity, $duration), mdc-animation-exit(transform, $duration);
+    transition: mdc-animation-exit-temporary(opacity, $duration), mdc-animation-exit-temporary(transform, $duration);
   }
 
   &-enter, &-leave-to {

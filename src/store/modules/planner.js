@@ -20,6 +20,7 @@ import {
   SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  INCREMENT_PROGRESS_ITEM,
   FETCH_PLANNER_EVENTS,
 } from '@/store/actions';
 import {
@@ -79,18 +80,53 @@ const actions = {
           config: new LiveQuery.Leaf(session.child('config'), {
             transform: evolve({ searchFromDate: parse, searchToDate: parse }),
           }),
-          result: new LiveQuery.Leaf(session.child('result')),
+          result: new LiveQuery.Object(session.child('result'), {
+            meetings: new LiveQuery.Leaf(session.child('result/meetings')),
+            status: new LiveQuery.Leaf(session.child('result/status')),
+          }),
         });
 
-        subscription.children.get('config').subscription.subscribe({
-          next: () => {
-            dispatch(FETCH_PLANNER_EVENTS);
-          },
-          error: console.error.bind(console),
-          complete: () => {
-            commit(UPDATE_PLANNER_EVENTS, []);
-          },
-        });
+        subscription.children
+          .get('result')
+          .subscription.children.get('meetings')
+          .subscription.subscribe({
+            next: () => {
+              dispatch(FETCH_PLANNER_EVENTS);
+            },
+            error: console.error.bind(console),
+            complete: () => {
+              commit(UPDATE_PLANNER_EVENTS, []);
+            },
+          });
+
+        subscription.children
+          .get('result')
+          .subscription.children.get('status')
+          .subscription.subscribe({
+            next: status => {
+              switch (status) {
+                case 'FETCH_SCHEDULES':
+                  dispatch(START_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                    message: 'Finding meeting times (Step 1/2)',
+                  });
+                  break;
+                case 'RESOLVE_TIMES':
+                  dispatch(INCREMENT_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                    message: 'Finding meeting times (Step 2/2)',
+                  });
+                  break;
+                case 'DONE':
+                  dispatch(FINISH_PROGRESS_ITEM, {
+                    type: REQUEST_PLANNER_RESULT,
+                  });
+                  break;
+              }
+            },
+            error: console.error.bind(console),
+            complete: () => {},
+          });
 
         return subscription;
       },
@@ -295,7 +331,7 @@ function createUserSubscription(ref) {
 /**
  * Returns a promise that resolves when a Vue reactive value satisfies the predicate
  */
-function watch(compute, { predicate = identity, timeout = 1000 } = {}) {
+function watch(compute, { predicate = identity, timeout = 5000 } = {}) {
   return new Promise((resolve, reject) => {
     let resolved = false;
     let vm;

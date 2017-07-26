@@ -22,7 +22,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@material/animation/functions';
+@import '@material/animation/variables';
 
 .flipper {
   height: 100%;
@@ -34,7 +34,7 @@ export default {
   height: 200%;
   position: absolute;
   will-change: transform;
-  transition: transform 200ms $mdc-animation-fast-out-slow-in-timing-function;
+  transition: transform 200ms $mdc-animation-standard-curve-timing-function;
 }
 
 .flipper-item {

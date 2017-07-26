@@ -61,7 +61,7 @@ export default {
 
   &-leave-active {
     $duration: 100ms;
-    transition: mdc-animation-exit(opacity, $duration);
+    transition: mdc-animation-exit-temporary(opacity, $duration);
   }
 
   &-enter {

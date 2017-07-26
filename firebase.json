@@ -6,7 +6,11 @@
     "public": "dist",
     "rewrites": [
       {
-        "source": "**",
+        "source": "/",
+        "destination": "/index.html"
+      },
+      {
+        "source": "/(signin|signout|my|plan)/**",
         "destination": "/index.html"
       }
     ]

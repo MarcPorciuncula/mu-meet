@@ -124,7 +124,7 @@ export default {
 
   &-leave-active {
     $duration: 300ms;
-    transition: mdc-animation-exit(opacity, $duration), mdc-animation-exit(transform, $duration);
+    transition: mdc-animation-exit-permanent(opacity, $duration), mdc-animation-exit-permanent(transform, $duration);
   }
 
   &-enter {
@@ -147,7 +147,7 @@ export default {
 
   &-leave-active {
     $duration: 200ms;
-    transition: mdc-animation-exit(opacity, $duration);
+    transition: mdc-animation-exit-permanent(opacity, $duration);
   }
 
   &-enter, &-leave {

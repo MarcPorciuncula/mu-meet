@@ -76,8 +76,7 @@ export default {
   color: #424242;
 }
 
-.mdc-list-item--multiline,
-.mdc-list-item--multiline.mdc-ripple-upgraded {
+.mdc-list-item--multiline {
   height: auto;
   align-items: flex-start;
   padding-top: 0.75rem;
