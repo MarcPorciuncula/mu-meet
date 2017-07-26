@@ -1,54 +1,43 @@
 <template>
-  <layout-section padding="normal">
-    <layout-container>
-      <type-container>
-        <type-text tag="h3" type="subheading2">
-          Parameters
-        </type-text>
-      </type-container>
-    </layout-container>
-    <layout-container padding="min">
-      <mdc-list-group>
-        <date-range-control
-          :start="session.config.searchFromDate"
-          :end="session.config.searchToDate"
-          @start-change="change('searchFromDate', $event)"
-          @end-change="change('searchToDate', $event)"
-        />
-        <time-range-control
-          :start="config.searchFromHour * 60"
-          :end="config.searchToHour * 60"
-          @start-change="change('searchFromHour', $event)"
-          @end-change="change('searchToHour', $event)"
-        />
-        <mdc-list-group-header>
-          Active Days (not working)
-        </mdc-list-group-header>
-        <mdc-list>
-          <mdc-list-item multiline>
-            <span slot="start-detail" class="material-icons">
-              view_week
-            </span>
-            Weekdays
-            <span slot="secondary-text">
-              Mon., Tue., Wed., Thu., Fri.
-            </span>
-          </mdc-list-item>
-        </mdc-list>
-        <mdc-list-group-header>
-          Minimum Duration (not working)
-        </mdc-list-group-header>
-        <mdc-list>
-          <mdc-list-item>
-            <span slot="start-detail" class="material-icons">
-              timelapse
-            </span>
-            30 Minutes
-          </mdc-list-item>
-        </mdc-list>
-      </mdc-list-group>
-    </layout-container>
-  </layout-section>
+  <mdc-list-group>
+    <date-range-control
+      :start="session.config.searchFromDate"
+      :end="session.config.searchToDate"
+      @start-change="change('searchFromDate', $event)"
+      @end-change="change('searchToDate', $event)"
+    />
+    <time-range-control
+      :start="config.searchFromHour * 60"
+      :end="config.searchToHour * 60"
+      @start-change="change('searchFromHour', $event)"
+      @end-change="change('searchToHour', $event)"
+    />
+    <mdc-list-group-header>
+      Active Days (not working)
+    </mdc-list-group-header>
+    <mdc-list multiline>
+      <mdc-list-item>
+        <span slot="start-detail" class="material-icons">
+          view_week
+        </span>
+        Weekdays
+        <span slot="secondary-text">
+          Mon., Tue., Wed., Thu., Fri.
+        </span>
+      </mdc-list-item>
+    </mdc-list>
+    <mdc-list-group-header>
+      Minimum Duration (not working)
+    </mdc-list-group-header>
+    <mdc-list>
+      <mdc-list-item>
+        <span slot="start-detail" class="material-icons">
+          timelapse
+        </span>
+        30 Minutes
+      </mdc-list-item>
+    </mdc-list>
+  </mdc-list-group>
 </template>
 
 <script>
@@ -100,9 +89,9 @@ export default {
         value = value / 60;
       }
       this.$store.dispatch(SET_PLANNER_CONFIG, {
-        [prop]: value
-      })
-    }
-  }
+        [prop]: value,
+      });
+    },
+  },
 };
 </script>

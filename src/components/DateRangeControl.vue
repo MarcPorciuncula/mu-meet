@@ -3,9 +3,8 @@
     <mdc-list-group-header v-show="expanded">
       Date Range
     </mdc-list-group-header>
-    <mdc-list>
+    <mdc-list multiline actionable>
       <mdc-list-item
-        multiline
         @click="!expanded && (expanded = true) || show('start')"
         :ripple="!open.start"
       >
@@ -87,8 +86,11 @@ export default {
   },
   created() {
     // Anchor the date range to the start, shifting the end when the start is changed
-    this.$on('start-change', (start) => {
-      this.$emit('end-change', addDays(start, getDifferenceInCalendarDays(this.end, this.start)));
+    this.$on('start-change', start => {
+      this.$emit(
+        'end-change',
+        addDays(start, getDifferenceInCalendarDays(this.end, this.start)),
+      );
     });
   },
   methods: {
@@ -107,7 +109,7 @@ export default {
         from: this.start,
         to: this.end,
       };
-    }
+    },
   },
   filters: {
     format,

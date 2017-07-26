@@ -43,6 +43,7 @@ const DEFAULT_STATE = {
   },
   result: {
     status: false,
+    stale: true,
     meetings: [],
   },
 };
@@ -194,6 +195,7 @@ export async function findMeetingTimes(sessionId) {
     .child('result/meetings')
     .set(meetings.map(timeslot => timeslot.toJSON()));
   await sessionRef.child('result/status').set('DONE');
+  await sessionRef.child('result/stale').set(false);
 }
 
 // function hydrateSession(session) {

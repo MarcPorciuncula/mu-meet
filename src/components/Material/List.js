@@ -14,6 +14,7 @@ const List = {
             'mdc-list--dense': this.dense,
             'mdc-list--separated': this.separated,
             'mdc-list--actionable': this.actionable,
+            'mdc-list--multiline': this.multiline,
           },
         ],
       },
@@ -26,6 +27,7 @@ const List = {
     dense: VueTypes.bool.def(false),
     separated: VueTypes.bool.def(false),
     actionable: VueTypes.bool.def(false),
+    multiline: VueTypes.bool.def(false),
   },
 };
 

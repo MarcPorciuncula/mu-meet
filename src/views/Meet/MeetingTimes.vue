@@ -1,26 +1,35 @@
 <template>
-  <layout-section padding="normal">
-    <layout-container>
+  <div>
+    <mdc-list actionable :multiline="done && stale">
+      <mdc-list-item separator />
+      <mdc-list-item ripple @click="search()">
+        <span slot="start-detail" class="material-icons">
+          {{ stale && !status ? 'event' : 'update'}}
+        </span>
+        {{ stale && !status ? 'Search for' : 'Update' }} meeting times
+        <span slot="secondary-text" v-if="done && stale">
+          Parameters have changed since you last refreshed meeting times.
+        </span>
+      </mdc-list-item>
+    </mdc-list>
+    <layout-section tag="div" padding="less" v-if="events">
+      <layout-container padding="less">
+        <schedule-view :events="events"/>
+        <type-container style="text-align: center">
+          <type-text tag="p" type="body2">
+            Only you can see your own calendar events.
+          </type-text>
+        </type-container>
+      </layout-container>
+    </layout-section>
+    <layout-container v-if="!status" padding="less" style="text-align: center">
       <type-container>
-        <type-text tag="h3" type="subheading2">
-          Meeting times
-        </type-text>
-        <type-text tag="p" type="body1">
-          (Press find meeting times to refresh after parameters have changed or a new team member has joined.)
+        <type-text tag="p" type="headline" style="color: grey">
+          No meeting times found yet.
         </type-text>
       </type-container>
     </layout-container>
-    <layout-container padding="min">
-      <schedule-view v-if="events.length" :events="events" />
-    </layout-container>
-    <layout-container>
-      <type-container>
-        <type-text tag="p" type="body1">
-          Only you can see your own calendar events.
-        </type-text>
-      </type-container>
-    </layout-container>
-  </layout-section>
+  </div>
 </template>
 
 <script>
@@ -34,10 +43,15 @@ import {
   CURRENT_PLANNER_EVENTS,
   CALENDARS,
 } from '@/store/getters';
+import {
+  List as MdcList,
+  ListItem as MdcListItem,
+} from '@/components/Material/List';
 import addSeconds from 'date-fns/add_seconds';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import parse from 'date-fns/parse';
 import { compose, map, defaultTo, path, sortBy, prop } from 'ramda';
+import { REQUEST_PLANNER_RESULT } from '@/store/actions';
 
 export default {
   components: {
@@ -46,11 +60,22 @@ export default {
     TypeContainer,
     TypeText,
     ScheduleView,
+    MdcList,
+    MdcListItem,
   },
   computed: {
     ...mapGetters({
       session: CURRENT_PLANNER_SESSION,
     }),
+    status() {
+      return this.session.result.status;
+    },
+    stale() {
+      return this.session.result.stale;
+    },
+    done() {
+      return this.session.result.status === 'DONE';
+    },
     meetings() {
       return compose(
         map(meeting => {
@@ -90,12 +115,31 @@ export default {
       )(this.$store.getters[CURRENT_PLANNER_EVENTS]);
     },
     events() {
+      if (!this.meetings.length) {
+        return null;
+      }
       return sortBy(prop('start'))([...this.meetings, ...this.calendarEvents]);
+    },
+  },
+  methods: {
+    search() {
+      // Don't trigger a new result when one is in progress
+      if (this.status && !this.done) return;
+
+      this.$store.dispatch(REQUEST_PLANNER_RESULT);
     },
   },
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+
+@media (max-width: 425px) {
+  .schedule-view {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    width: initial !important;
+  }
+}
 
 </style>

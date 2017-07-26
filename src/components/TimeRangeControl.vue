@@ -3,9 +3,8 @@
     <mdc-list-group-header v-show="expanded">
       Time Range
     </mdc-list-group-header>
-    <mdc-list>
+    <mdc-list :multiline="!expanded" actionable>
       <mdc-list-item
-        :multiline="!expanded"
         @click="!expanded && (expanded = true)"
       >
         <span slot="start-detail" class="material-icons">
