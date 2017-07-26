@@ -1,3 +1,6 @@
+## 0.0.6 (Jul 25, 2017)
+* Revert firebase hosting routing rules to default
+
 ## 0.0.5 (Jul 25, 2017)
 * Make meeting time calculations run faster
 * Show progress of meeting time calculations to all users (not just the one who clicked the button)
