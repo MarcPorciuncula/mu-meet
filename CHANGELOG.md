@@ -1,4 +1,9 @@
-## 0.0.6 (Jul 25, 2017)
+## 0.0.7 (Jul 27, 2017)
+* Fix issue with auth tokens not being refreshed on the server side resulting in failed cloud functions
+* Update the meeting planner ui to make it more obvious what steps to take
+* Show the user when their meeting times are stale and that they should recalculate meeting times.
+
+## 0.0.6 (Jul 26, 2017)
 * Revert firebase hosting routing rules to default
 
 ## 0.0.5 (Jul 25, 2017)
