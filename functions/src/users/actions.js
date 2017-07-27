@@ -2,13 +2,14 @@ import a from 'awaiting';
 import * as admin from 'firebase-admin';
 import { fetchUserProfile } from './google-profile';
 import { fetchCalendars } from '../calendar/google-calendar';
-import { getOAuth2Client, revoke } from '../auth/google-oauth';
+import { revoke } from '../auth/google-oauth';
+import oauth from '../auth/oauth-manager';
 
 export async function fetchProfileIntoDatabase(event) {
   const database = admin.database();
-  const { oAuth2Client, save } = await getOAuth2Client(event.data.uid);
+  const client = await oauth.getClient(event.data.uid);
 
-  const profile = await fetchUserProfile(event.data.uid, oAuth2Client);
+  const profile = await fetchUserProfile(event.data.uid, client);
   await a.list(
     ['email', 'name', 'given_name', 'family_name', 'picture'].map(prop =>
       database
@@ -16,19 +17,17 @@ export async function fetchProfileIntoDatabase(event) {
         .set(profile[prop]),
     ),
   );
-
-  save();
 }
 
 export async function fetchCalendarsIntoDatabase(event) {
   const database = admin.database();
-  const { oAuth2Client, save } = await getOAuth2Client(event.data.uid);
+  const client = await oauth.getClient(event.data.uid);
 
   console.log(
     `User ${event.data.uid} created. Fetch calendars and place in database`,
   );
 
-  const calendars = await fetchCalendars(event.data.uid, oAuth2Client);
+  const calendars = await fetchCalendars(event.data.uid, client);
   const user = database.ref(`/users/${event.data.uid}`);
   await user.child(`calendars`).set(calendars);
 
@@ -46,8 +45,6 @@ export async function fetchCalendarsIntoDatabase(event) {
       await user.child(`selected-calendars/${encodeId(calendar.id)}`).set(true);
     }
   }
-
-  save();
 }
 
 export async function revokeUserAccessTokens(event) {
