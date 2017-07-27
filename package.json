@@ -1,6 +1,6 @@
 {
   "name": "mu-meet",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Find a meeting time based on your team's calendars",
   "author": "Marc Porciuncula <marcporciuncula@gmail.com>",
   "private": true,
