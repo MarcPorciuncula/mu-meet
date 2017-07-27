@@ -5,7 +5,7 @@ import R from 'ramda';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
 import parseDate from 'date-fns/parse';
-import { getOAuth2Client } from '../auth/google-oauth';
+import oauth from '../auth/oauth-manager';
 import { fetchEvents } from '../calendar/google-calendar';
 import addMinutes from 'date-fns/add_minutes';
 import { Timeslot, getAvailableTimeslots } from './timeslot';
@@ -114,7 +114,7 @@ export async function findMeetingTimes(sessionId) {
   await sessionRef.child('result/status').set('FETCH_SCHEDULES');
 
   const fetchUserEventsInRange = async uid => {
-    const { save, oAuth2Client } = await getOAuth2Client(uid);
+    const client = await oauth.getClient(uid);
     const calendarIds = await database
       .ref(`/users/${uid}/selected-calendars`)
       .once('value')
@@ -123,7 +123,7 @@ export async function findMeetingTimes(sessionId) {
     const userEvents = R.flatten(
       await Promise.all(
         calendarIds.map(calendarId =>
-          fetchEvents(uid, oAuth2Client, {
+          fetchEvents(uid, client, {
             from: config.searchFromDate,
             to: config.searchToDate,
             calendarId,
@@ -131,7 +131,6 @@ export async function findMeetingTimes(sessionId) {
         ),
       ),
     );
-    save();
     return userEvents;
   };
 

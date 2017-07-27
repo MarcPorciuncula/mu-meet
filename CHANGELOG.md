@@ -1,3 +1,6 @@
+## 0.0.8 (Jul 28, 2017)
+* __Actually__ fix issue with auth tokens not being refreshed on the server
+
 ## 0.0.7 (Jul 27, 2017)
 * Fix issue with auth tokens not being refreshed on the server side resulting in failed cloud functions
 * Update the meeting planner ui to make it more obvious what steps to take

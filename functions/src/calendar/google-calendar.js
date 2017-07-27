@@ -1,5 +1,6 @@
 import a from 'awaiting';
 import google from 'googleapis';
+import assert from 'assert';
 
 /**
  * Fetches the calendars for user uid and places it onto /users/$uid/calendars
@@ -22,6 +23,15 @@ export async function fetchEvents(uid, oAuth2Client, { from, to, calendarId }) {
     version: 'v3',
     auth: oAuth2Client,
   });
+
+  assert(
+    from instanceof Date,
+    `Expected 'from' to be a Date but instead got ${from}`,
+  );
+  assert(
+    to instanceof Date,
+    `Expected 'to' to be a Date but instead got ${to}`,
+  );
 
   console.log(
     `Fetch user ${uid} events for calendar ${calendarId} from ${from} to ${to}`,

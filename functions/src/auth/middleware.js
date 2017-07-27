@@ -3,7 +3,8 @@ import a from 'awaiting';
 import credentials from '../credentials';
 import google from 'googleapis';
 import shortid from 'shortid';
-import { getOAuth2Client, GoogleOAuthError } from './google-oauth';
+import oauth from './oauth-manager';
+import { toPairs } from 'ramda';
 
 /**
  * Validates and decodes Firebase ID token and places it on `res.locals.idToken`
@@ -51,18 +52,13 @@ export async function validateFirebaseIdToken(req, res, next) {
 export async function withOAuth2Client(req, res, next) {
   const { uid } = res.locals.idToken;
 
-  let save;
-  let oAuth2Client;
   try {
-    ({ save, oAuth2Client } = await getOAuth2Client(uid));
+    const client = await oauth.getClient(uid);
+    Object.assign(res.locals, { oAuth2Client: client });
   } catch (err) {
-    if (err.code === GoogleOAuthError.codes.NO_CREDENTIALS_FOUND) {
-      res.send(403, 'Unauthorized');
-    }
+    console.error(err);
+    res.send(500, 'Internal server error.');
   }
-
-  Object.assign(res.locals, { oAuth2Client });
-  res.on('finish', save);
 
   next();
 }
@@ -140,9 +136,11 @@ export async function linkGoogleOAuthToFirebaseUser(req, res) {
     return;
   }
 
-  await database
-    .ref(`/users/${uid}/tokens`)
-    .transaction(x => Object.assign(x || {}, tokens));
+  const tokensRef = database.ref(`/users/${uid}/tokens`);
+  await a.list(
+    toPairs(tokens).map(([key, value]) => tokensRef.child(key).set(value)),
+  );
+
   await database.ref(`/google-credentials/${credentialLinkCode}`).set(null);
 
   console.log('Success');

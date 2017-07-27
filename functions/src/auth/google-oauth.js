@@ -4,6 +4,7 @@ import google from 'googleapis';
 import request from 'request-promise-native';
 import credentials from '../credentials';
 import isPast from 'date-fns/is_past';
+import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 
 const GOOGLE_OAUTH_ERROR_CODES = {
   NO_CREDENTIALS_FOUND: 'google-oauth/no-credentials-found',
@@ -22,6 +23,8 @@ export class GoogleOAuthError extends Error {
   }
 }
 
+export class WaitForValueTimeoutError extends Error {}
+
 /**
  * Returns a new OAuth2Client for a given firebase user
  * @param  {string} uid firebase user uid
@@ -29,30 +32,19 @@ export class GoogleOAuthError extends Error {
 export async function getOAuth2Client(uid) {
   const database = admin.database();
 
-  let tokens;
   const tokensRef = database.ref(`/users/${uid}/tokens`);
-  await a.single([
-    new Promise(resolve => {
-      const handler = snapshot => {
-        tokens = snapshot.val();
-        if (tokens) {
-          tokensRef.off('value', handler);
-          resolve();
-        }
-      };
-      tokensRef.on('value', handler);
-    }),
-    a.delay(10e3),
-  ]);
-
-  if (!tokens) {
-    console.error(
-      `Could not retrieve Google Credentials for user ${uid} within the time limit`,
-    );
-    throw new GoogleOAuthError(
-      GoogleOAuthError.codes.NO_CREDENTIALS_FOUND,
-      `Could not retrieve Google Credentials for user ${uid} within the time limit`,
-    );
+  let tokens;
+  // It may take a while for the server to retrieve tokens and place them onto the user, we'll watch the ref until a value is present or it times out
+  try {
+    tokens = await waitForValue(tokensRef);
+  } catch (err) {
+    if (err instanceof WaitForValueTimeoutError) {
+      throw new GoogleOAuthError(
+        GoogleOAuthError.codes.NO_CREDENTIALS_FOUND,
+        `Could not retrieve Google Credentials for user ${uid} within the time limit`,
+      );
+    }
+    throw err;
   }
 
   if (!credentials.web.redirect_uris.includes(tokens.redirect_uri)) {
@@ -68,13 +60,27 @@ export async function getOAuth2Client(uid) {
     tokens.redirect_uri,
   );
   oAuth2Client.setCredentials(tokens);
+  console.debug(
+    'Created OAuth client for user',
+    uid,
+    'with credentials',
+    tokens,
+  );
+
+  console.debug(
+    'Credentials expire',
+    getDistanceInWordsStrict(new Date(), new Date(tokens.expiry_date), {
+      addSuffix: true,
+    }),
+  );
 
   if (isPast(new Date(tokens.expiry_date))) {
+    console.debug('Credentials were found to be out of date, refreshing.');
     tokens = await a.callback(
       oAuth2Client.refreshAccessToken.bind(oAuth2Client),
     );
     await tokensRef.transaction(x => Object.assign(x || {}, tokens));
-    console.log(`Updated credentials for user ${uid}`);
+    console.log(`Refreshed credentials for user ${uid}`);
   }
 
   const save = async () => {
@@ -82,7 +88,7 @@ export async function getOAuth2Client(uid) {
     await tokensRef.transaction(x =>
       Object.assign(x || {}, oAuth2Client.credentials),
     );
-    console.log(`Updated credentials for user ${uid}`);
+    console.log(`Saved credentials for user ${uid}`, oAuth2Client.credentials);
   };
 
   return { save, oAuth2Client };
@@ -95,5 +101,33 @@ export async function revoke(token) {
     form: {
       token,
     },
+  });
+}
+
+/**
+ * Wait for a ref to be written a non null value.
+ * Times out after a certain amount of time
+ */
+function waitForValue(ref, { timeout = 5e3 } = {}) {
+  return new Promise((resolve, reject) => {
+    let timeoutHandle;
+
+    const handleError = reject;
+    const handleSnapshot = snapshot => {
+      const value = snapshot.val();
+      if (value === null) return;
+      resolve(value);
+      clearTimeout(timeoutHandle);
+      ref.off('value', handleSnapshot, handleError);
+    };
+    timeoutHandle = setTimeout(() => {
+      reject(
+        new WaitForValueTimeoutError(
+          'Timed out while watiting for value on ref ' + ref.toString(),
+        ),
+      );
+      ref.off('value', handleSnapshot, handleError);
+    }, timeout);
+    ref.on('value', handleSnapshot, handleError);
   });
 }
