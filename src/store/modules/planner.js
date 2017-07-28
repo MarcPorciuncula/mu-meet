@@ -1,7 +1,7 @@
 import invariant from 'invariant';
 import firebase from '@/firebase';
 import { functions } from '@/functions';
-import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
+import LiveQuery from '@/util/firebase-query';
 import { identity, evolve } from 'ramda';
 import Vue from 'vue';
 import parse from 'date-fns/parse';
@@ -20,7 +20,7 @@ import {
   SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
-  INCREMENT_PROGRESS_ITEM,
+  // INCREMENT_PROGRESS_ITEM,
   FETCH_PLANNER_EVENTS,
 } from '@/store/actions';
 import {
@@ -74,9 +74,9 @@ const actions = {
           host: new LiveQuery.Redirect(session.child('host'), (_, uid) =>
             createUserSubscription(root.child(`/users/${uid}`)),
           ),
-          users: new LiveQuery.List(session.child('users'), ref => {
-            return createUserSubscription(root.child(`/users/${ref.key}`));
-          }),
+          // users: new LiveQuery.List(session.child('users'), ref => {
+          //   return createUserSubscription(root.child(`/users/${ref.key}`));
+          // }),
           config: new LiveQuery.Leaf(session.child('config'), {
             transform: evolve({ searchFromDate: parse, searchToDate: parse }),
           }),
@@ -87,47 +87,41 @@ const actions = {
           }),
         });
 
-        subscription.children
-          .get('result')
-          .subscription.children.get('meetings')
-          .subscription.subscribe({
-            next: () => {
-              dispatch(FETCH_PLANNER_EVENTS);
-            },
-            error: console.error.bind(console),
-            complete: () => {
-              commit(UPDATE_PLANNER_EVENTS, []);
-            },
-          });
+        // subscription.getChild('result').getChild('meetings').subscribe({
+        //   next: () => {
+        //     dispatch(FETCH_PLANNER_EVENTS);
+        //   },
+        //   error: console.error.bind(console),
+        //   complete: () => {
+        //     commit(UPDATE_PLANNER_EVENTS, []);
+        //   },
+        // });
 
-        subscription.children
-          .get('result')
-          .subscription.children.get('status')
-          .subscription.subscribe({
-            next: status => {
-              switch (status) {
-                case 'FETCH_SCHEDULES':
-                  dispatch(START_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                    message: 'Finding meeting times (Step 1/2)',
-                  });
-                  break;
-                case 'RESOLVE_TIMES':
-                  dispatch(INCREMENT_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                    message: 'Finding meeting times (Step 2/2)',
-                  });
-                  break;
-                case 'DONE':
-                  dispatch(FINISH_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                  });
-                  break;
-              }
-            },
-            error: console.error.bind(console),
-            complete: () => {},
-          });
+        // subscription.getChild('result').getChild('status').subscribe({
+        //   next: status => {
+        //     switch (status) {
+        //       case 'FETCH_SCHEDULES':
+        //         dispatch(START_PROGRESS_ITEM, {
+        //           type: REQUEST_PLANNER_RESULT,
+        //           message: 'Finding meeting times (Step 1/2)',
+        //         });
+        //         break;
+        //       case 'RESOLVE_TIMES':
+        //         dispatch(INCREMENT_PROGRESS_ITEM, {
+        //           type: REQUEST_PLANNER_RESULT,
+        //           message: 'Finding meeting times (Step 2/2)',
+        //         });
+        //         break;
+        //       case 'DONE':
+        //         dispatch(FINISH_PROGRESS_ITEM, {
+        //           type: REQUEST_PLANNER_RESULT,
+        //         });
+        //         break;
+        //     }
+        //   },
+        //   error: console.error.bind(console),
+        //   complete: () => {},
+        // });
 
         return subscription;
       },
@@ -319,7 +313,7 @@ export default {
 
 function createUserSubscription(ref) {
   return new LiveQuery.Object(ref, {
-    id: new LiveQuery.Key(ref),
+    id: new LiveQuery.Leaf(ref, { resolve: snap => snap.key }),
     profile: new LiveQuery.Object(ref.child('profile'), ref => ({
       name: new LiveQuery.Leaf(ref.child('name')),
       picture: new LiveQuery.Leaf(ref.child('picture')),

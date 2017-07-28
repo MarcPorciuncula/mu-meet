@@ -1,5 +1,6 @@
-import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
+// import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
 import invariant from 'invariant';
+import { val, list } from '@/util/observable-query';
 import { omit } from 'ramda';
 import { UPDATE_PROFILE, UPDATE_PROFILE_SUBSCRIPTION } from '@/store/mutations';
 import {
@@ -41,20 +42,29 @@ const actions = {
     );
 
     const user = database.ref(`/users/${getters[USER_UID]}`);
-    const subscription = new LiveQuery.Leaf(user.child('profile'));
-    const unsubscribe = subscription.subscribe({
-      next: value => commit(UPDATE_PROFILE, value),
-      error: console.error.bind(console),
-      complete: () => {},
+
+    const observable = list(user.child('profile'), (profile, key) =>
+      val(profile.child('key')),
+    );
+
+    // const subscription = new LiveQuery.Leaf(user.child('profile'));
+    const subscription = observable.subscribe({
+      next: value => {
+        console.log('value', value);
+        commit(UPDATE_PROFILE, value);
+      },
+      error: err => console.error(err),
     });
 
-    commit(UPDATE_PROFILE_SUBSCRIPTION, { unsubscribe });
+    commit(UPDATE_PROFILE_SUBSCRIPTION, {
+      unsubscribe: () => subscription.unsubscribe(),
+    });
 
     return new Promise((resolve, reject) => {
-      const unsubscribe = subscription.subscribe({
+      const subscription = observable.subscribe({
         next: () => {
           resolve();
-          unsubscribe();
+          subscription.unsubscribe();
         },
         error: reject,
         complete: () => {},
