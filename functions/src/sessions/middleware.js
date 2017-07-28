@@ -33,6 +33,11 @@ export async function findMeetingTimes(req, res) {
     .once('value')
     .then(s => s.val());
 
-  await _findMeetingTimes(sessionId);
-  res.status(200).send('OK');
+  try {
+    await _findMeetingTimes(sessionId);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal server error.');
+  }
 }

@@ -113,88 +113,97 @@ export async function findMeetingTimes(sessionId) {
 
   await sessionRef.child('result/status').set('FETCH_SCHEDULES');
 
-  const fetchUserEventsInRange = async uid => {
-    const client = await oauth.getClient(uid);
-    const calendarIds = await database
-      .ref(`/users/${uid}/selected-calendars`)
-      .once('value')
-      .then(s => s.val())
-      .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
-    const userEvents = R.flatten(
-      await Promise.all(
-        calendarIds.map(calendarId =>
-          fetchEvents(uid, client, {
-            from: config.searchFromDate,
-            to: config.searchToDate,
-            calendarId,
-          }),
+  try {
+    const fetchUserEventsInRange = async uid => {
+      const client = await oauth.getClient(uid);
+      const calendarIds = await database
+        .ref(`/users/${uid}/selected-calendars`)
+        .once('value')
+        .then(s => s.val())
+        .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
+      const userEvents = R.flatten(
+        await Promise.all(
+          calendarIds.map(calendarId =>
+            fetchEvents(uid, client, {
+              from: config.searchFromDate,
+              to: config.searchToDate,
+              calendarId,
+            }),
+          ),
         ),
-      ),
+      );
+      return userEvents;
+    };
+
+    const allUserEvents = R.flatten(
+      await Promise.all(uids.map(uid => fetchUserEventsInRange(uid))),
     );
-    return userEvents;
-  };
 
-  const allUserEvents = R.flatten(
-    await Promise.all(uids.map(uid => fetchUserEventsInRange(uid))),
-  );
+    console.log(
+      `Fetched ${allUserEvents.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
+    );
 
-  console.log(
-    `Fetched ${allUserEvents.length} events from ${config.searchFromDate.toString()} to ${config.searchToDate.toString()}`,
-  );
+    await sessionRef.child('result/status').set('RESOLVE_TIMES');
 
-  await sessionRef.child('result/status').set('RESOLVE_TIMES');
-
-  const allUserEventTimeslots = allUserEvents.map(
-    event =>
-      new Timeslot(
-        parseDate(event.start.dateTime),
-        getDifferenceInMinutes(
-          parseDate(event.end.dateTime),
+    const allUserEventTimeslots = allUserEvents.map(
+      event =>
+        new Timeslot(
           parseDate(event.start.dateTime),
+          getDifferenceInMinutes(
+            parseDate(event.end.dateTime),
+            parseDate(event.start.dateTime),
+          ),
         ),
-      ),
-  );
+    );
 
-  console.log(allUserEventTimeslots.map(x => x.toJSON()));
+    console.log(allUserEventTimeslots.map(x => x.toJSON()));
 
-  const restrictedHours = [];
-  let current = config.searchFromDate;
-  while (isBefore(current, config.searchToDate)) {
-    restrictedHours.push(new Timeslot(current, config.searchFromHour * 60));
-    restrictedHours.push(
-      new Timeslot(
-        addHours(current, config.searchToHour),
-        (24 - config.searchToHour) * 60,
+    const restrictedHours = [];
+    let current = config.searchFromDate;
+    while (isBefore(current, config.searchToDate)) {
+      restrictedHours.push(new Timeslot(current, config.searchFromHour * 60));
+      restrictedHours.push(
+        new Timeslot(
+          addHours(current, config.searchToHour),
+          (24 - config.searchToHour) * 60,
+        ),
+      );
+      current = addHours(current, 24);
+    }
+
+    current = config.searchFromDate;
+    const restrictedDays = [];
+    while (isBefore(current, config.searchToDate)) {
+      if (!config.days[getDay(addMinutes(current, -config.timezoneOffset))]) {
+        restrictedDays.push(new Timeslot(current, 60 * 24));
+      }
+      current = addHours(current, 24);
+    }
+
+    const range = Timeslot.fromRange(
+      config.searchFromDate,
+      config.searchToDate,
+    );
+    const meetings = Timeslot.accumulate(
+      getAvailableTimeslots(
+        range,
+        R.flatten([allUserEventTimeslots, restrictedHours, restrictedDays]),
+        30,
       ),
     );
-    current = addHours(current, 24);
+
+    // TODO prioritise
+
+    await sessionRef
+      .child('result/meetings')
+      .set(meetings.map(timeslot => timeslot.toJSON()));
+    await sessionRef.child('result/status').set('DONE');
+    await sessionRef.child('result/stale').set(false);
+  } catch (err) {
+    await sessionRef.child('result/status').set(false);
+    await sessionRef.child('result/stale').set(true);
+    throw err;
   }
-
-  current = config.searchFromDate;
-  const restrictedDays = [];
-  while (isBefore(current, config.searchToDate)) {
-    if (!config.days[getDay(addMinutes(current, -config.timezoneOffset))]) {
-      restrictedDays.push(new Timeslot(current, 60 * 24));
-    }
-    current = addHours(current, 24);
-  }
-
-  const range = Timeslot.fromRange(config.searchFromDate, config.searchToDate);
-  const meetings = Timeslot.accumulate(
-    getAvailableTimeslots(
-      range,
-      R.flatten([allUserEventTimeslots, restrictedHours, restrictedDays]),
-      30,
-    ),
-  );
-
-  // TODO prioritise
-
-  await sessionRef
-    .child('result/meetings')
-    .set(meetings.map(timeslot => timeslot.toJSON()));
-  await sessionRef.child('result/status').set('DONE');
-  await sessionRef.child('result/stale').set(false);
 }
 
 // function hydrateSession(session) {
