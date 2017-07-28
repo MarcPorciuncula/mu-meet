@@ -1,7 +1,3 @@
-import firebase from '@/firebase';
-import firebaseAuth from 'firebase/auth';
-import getGoogle, { SCOPE } from '@/gapi';
-import { functions } from '@/functions';
 import { UPDATE_AUTH_STATE } from '@/store/mutations';
 import {
   REFRESH_AUTH_STATUS,
@@ -15,6 +11,12 @@ import {
   UNSUBSCRIBE_PLANNER_SESSION,
 } from '@/store/actions';
 import { USER_UID, IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
+import {
+  getIsAuthenticated,
+  getCurrentUserUid,
+  signInWithProgress,
+  signOut,
+} from '@/api/auth';
 
 const PENDING_INITIAL_REFRESH = 'PENDING_INITIAL_REFRESH';
 const PENDING_SIGN_IN = 'PENDING_SIGN_IN';
@@ -36,57 +38,43 @@ const actions = {
   async [REFRESH_AUTH_STATUS]({ commit }) {
     commit(UPDATE_AUTH_STATE, { pending: PENDING_REFRESH });
 
-    const user = await once(
-      firebase.auth().onAuthStateChanged.bind(firebase.auth()),
-    );
+    const uid = (await getIsAuthenticated()) ? await getCurrentUserUid() : null;
 
     commit(UPDATE_AUTH_STATE, {
-      uid: user ? user.uid : null,
+      uid,
       pending: null,
     });
   },
-  async [SIGN_IN]({ commit, dispatch }) {
+  [SIGN_IN]({ commit, dispatch }) {
     commit(UPDATE_AUTH_STATE, {
       pending: PENDING_SIGN_IN,
     });
+
     dispatch(START_PROGRESS_ITEM, {
       type: SIGN_IN,
-      message: 'Signing in (Step 1/3)',
+      message: 'Signing in',
     });
 
-    const google = await getGoogle();
-    const { code } = await google.auth2
-      .getAuthInstance()
-      .grantOfflineAccess({ scope: SCOPE });
+    return new Promise((resolve, reject) => {
+      const progress = signInWithProgress();
+      progress.subscribe({
+        next: step =>
+          dispatch(INCREMENT_PROGRESS_ITEM, {
+            type: SIGN_IN,
+            message: `Signing in (Step ${step}/4)`,
+          }),
+        complete: async () => {
+          commit(UPDATE_AUTH_STATE, {
+            uid: await getCurrentUserUid(),
+            pending: null,
+          });
 
-    dispatch(INCREMENT_PROGRESS_ITEM, {
-      type: SIGN_IN,
-      message: 'Signing in (Step 2/3)',
+          dispatch(FINISH_PROGRESS_ITEM, { type: SIGN_IN });
+          resolve();
+        },
+        error: reject,
+      });
     });
-
-    const { data } = await functions('getGoogleOAuth2Authorization', {
-      data: { code, redirect_uri: location.origin },
-    });
-    const credential = firebaseAuth.GoogleAuthProvider.credential(
-      data.id_token,
-    );
-    await firebase.auth().signInWithCredential(credential);
-
-    dispatch(INCREMENT_PROGRESS_ITEM, {
-      type: SIGN_IN,
-      message: 'Signing in (Step 3/3)',
-    });
-
-    await functions('linkGoogleOAuthToFirebaseUser', {
-      data: { credential_link_code: data.credential_link_code },
-    });
-
-    commit(UPDATE_AUTH_STATE, {
-      uid: firebase.auth().currentUser.uid,
-      pending: null,
-    });
-
-    dispatch(FINISH_PROGRESS_ITEM, { type: SIGN_IN });
   },
   async [SIGN_OUT]({ commit, dispatch }) {
     commit(UPDATE_AUTH_STATE, {
@@ -97,7 +85,7 @@ const actions = {
     dispatch(UNSUBSCRIBE_PLANNER_SESSION);
     dispatch(UNSUBSCRIBE_USER_PROFILE);
 
-    await firebase.auth().signOut();
+    await signOut();
 
     commit(UPDATE_AUTH_STATE, {
       uid: null,
