@@ -14,13 +14,13 @@
           <div class="field">
             <mdc-select
               :items="hours"
-              :value="_start.getHour()"
+              :value="_start.getHour().toString()"
               @change="change('start', 'hours', $event)"
             />
             <span>:</span>
             <mdc-select
               :items="minutes"
-              :value="_start.getMinute()"
+              :value="_start.getMinute().toString()"
               @change="change('start', 'minutes', $event)"
             />
             <mdc-select
@@ -46,13 +46,13 @@
         <div class="field">
           <mdc-select
             :items="hours"
-            :value="_end.getHour()"
+            :value="_end.getHour().toString()"
             @change="change('end', 'hours', $event)"
           />
           <span>:</span>
           <mdc-select
             :items="minutes"
-            :value="_end.getMinute()"
+            :value="_end.getMinute().toString()"
             @change="change('end', 'minutes', $event)"
           />
           <mdc-select
@@ -98,14 +98,17 @@ export default {
     hours() {
       const result = [];
       for (let i = 1; i <= 12; i++) {
-        result.push({ value: i, text: i.toString() });
+        result.push({ value: i.toString(), text: i.toString() });
       }
       return result;
     },
     minutes() {
       const result = [];
       for (let i = 0; i < 60; i += 30) {
-        result.push({ value: i, text: i.toString().padStart(2, '0') });
+        result.push({
+          value: i.toString(),
+          text: i.toString().padStart(2, '0'),
+        });
       }
       return result;
     },
@@ -123,9 +126,9 @@ export default {
     change(input, type, value) {
       const time = new Time(this[input]);
       if (type === 'hours') {
-        time.setHour(value);
+        time.setHour(parseInt(value));
       } else if (type === 'minutes') {
-        time.setMinute(value);
+        time.setMinute(parseInt(value));
       } else {
         time.setHalf(value);
       }
