@@ -46,8 +46,6 @@ build:
 
 test-functions:
   stage: test
-  environment:
-    name: $CI_COMMIT_REF_SLUG
   script:
   - cd functions && yarn test && cd ..
 
