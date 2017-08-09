@@ -1,3 +1,8 @@
+## 0.0.9 (Aug 8, 2017)
+* Disable the minute picker in time range control as meeting time finder does not yet take minutes into account.
+* Fix issue where minute picker in time range control throws an error.
+* Prevent meeting finder from getting stuck in an indeterminate state in the event of an internal server error.
+
 ## 0.0.8 (Jul 28, 2017)
 * __Actually__ fix issue with auth tokens not being refreshed on the server
 

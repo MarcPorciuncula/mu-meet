@@ -31,7 +31,7 @@ export default {
   props: {
     items: VueTypes.arrayOf(
       VueTypes.shape({
-        value: VueTypes.any.isRequired,
+        value: VueTypes.string.isRequired,
         text: VueTypes.string,
       }).isRequired,
     ).isRequired,
@@ -48,7 +48,7 @@ export default {
     // Set initial value
     this.update();
 
-    this.select.listen('MDCSelect:change', this.change);
+    this.select.listen('MDCSelect:change', this.change.bind(this));
   },
   watch: {
     value(value) {
@@ -66,7 +66,8 @@ export default {
   methods: {
     change() {
       // Revert the change and emit an event so the parent can handle the value change
-      const value = this._items.find(item => item.text === this.select.value).value;
+      const item = this._items.find(item => item.value === this.select.value);
+      const value = item.value;
       this.update();
       // HACK This causes the event to be emitted again, which is why we bail when this value
       // is the same as the last
