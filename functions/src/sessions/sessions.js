@@ -8,7 +8,11 @@ import parseDate from 'date-fns/parse';
 import oauth from '../auth/oauth-manager';
 import { fetchEvents } from '../calendar/google-calendar';
 import addMinutes from 'date-fns/add_minutes';
-import { Timeslot, getAvailableTimeslots } from './timeslot';
+import {
+  Timeslot,
+  getAvailableTimeslots,
+  getWeekdaysOverRange,
+} from './timeslot';
 import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
 import addHours from 'date-fns/add_hours';
 import isBefore from 'date-fns/is_before';
@@ -116,27 +120,29 @@ export async function findMeetingTimes(sessionId) {
   try {
     const fetchUserEventsInRange = async uid => {
       const client = await oauth.getClient(uid);
+
       const calendarIds = await database
         .ref(`/users/${uid}/selected-calendars`)
         .once('value')
         .then(s => s.val())
         .then(R.compose(R.map(atob), R.keys, R.pickBy(R.identity)));
+
+      const fetchCalendarEventsInRange = calendarId =>
+        fetchEvents(uid, client, {
+          from: config.searchFromDate,
+          to: config.searchToDate,
+          calendarId,
+        });
+
       const userEvents = R.flatten(
-        await Promise.all(
-          calendarIds.map(calendarId =>
-            fetchEvents(uid, client, {
-              from: config.searchFromDate,
-              to: config.searchToDate,
-              calendarId,
-            }),
-          ),
-        ),
+        await a.list(calendarIds.map(fetchCalendarEventsInRange)),
       );
+
       return userEvents;
     };
 
     const allUserEvents = R.flatten(
-      await Promise.all(uids.map(uid => fetchUserEventsInRange(uid))),
+      await a.list(uids.map(uid => fetchUserEventsInRange(uid))),
     );
 
     console.log(
@@ -145,40 +151,49 @@ export async function findMeetingTimes(sessionId) {
 
     await sessionRef.child('result/status').set('RESOLVE_TIMES');
 
-    const allUserEventTimeslots = allUserEvents.map(
-      event =>
-        new Timeslot(
+    const parseEventToTimeslot = event =>
+      new Timeslot(
+        parseDate(event.start.dateTime),
+        getDifferenceInMinutes(
+          parseDate(event.end.dateTime),
           parseDate(event.start.dateTime),
-          getDifferenceInMinutes(
-            parseDate(event.end.dateTime),
-            parseDate(event.start.dateTime),
-          ),
         ),
-    );
+      );
+
+    const allUserEventTimeslots = allUserEvents.map(parseEventToTimeslot);
 
     console.log(allUserEventTimeslots.map(x => x.toJSON()));
 
     const restrictedHours = [];
-    let current = config.searchFromDate;
-    while (isBefore(current, config.searchToDate)) {
-      restrictedHours.push(new Timeslot(current, config.searchFromHour * 60));
+    for (const date of dateRange(
+      config.searchFromDate,
+      config.searchToDate,
+      24,
+    )) {
+      restrictedHours.push(new Timeslot(date, config.searchFromHour * 60));
       restrictedHours.push(
         new Timeslot(
-          addHours(current, config.searchToHour),
+          addMinutes(date, config.searchToHour * 60),
           (24 - config.searchToHour) * 60,
         ),
       );
-      current = addHours(current, 24);
     }
 
-    current = config.searchFromDate;
-    const restrictedDays = [];
-    while (isBefore(current, config.searchToDate)) {
-      if (!config.days[getDay(addMinutes(current, -config.timezoneOffset))]) {
-        restrictedDays.push(new Timeslot(current, 60 * 24));
-      }
-      current = addHours(current, 24);
-    }
+    const restrictedDays = getWeekdaysOverRange(
+      Timeslot.fromRange(config.searchFromDate, config.searchToDate),
+      config.days.map(day => !day),
+    );
+
+    // const restrictedDays = [];
+    // for (const date of dateRange(
+    //   config.searchFromDate,
+    //   config.searchToDate,
+    //   24,
+    // )) {
+    //   if (!config.days[getDay(addMinutes(date, -config.timezoneOffset))]) {
+    //     restrictedDays.push(new Timeslot(date, 60 * 24));
+    //   }
+    // }
 
     const range = Timeslot.fromRange(
       config.searchFromDate,
@@ -240,6 +255,16 @@ function toString(date) {
 
 function atob(encoded) {
   return Buffer.from(encoded, 'base64').toString();
+}
+
+function dateRange(from, to, interval /* hours */) {
+  const result = [];
+  let current = from;
+  while (isBefore(current, to)) {
+    result.push(current);
+    current = addHours(current, to);
+  }
+  return result;
 }
 
 // function btoa(raw) {

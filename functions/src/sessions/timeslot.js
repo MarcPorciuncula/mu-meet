@@ -10,6 +10,8 @@ import isEqual from 'date-fns/is_equal';
 import compareAsc from 'date-fns/compare_asc';
 import getDifferenceInMinutes from 'date-fns/difference_in_minutes';
 import getSeconds from 'date-fns/get_seconds';
+import getDay from 'date-fns/get_day';
+import getStartOfDay from 'date-fns/start_of_day';
 
 export class Timeslot {
   start: Date;
@@ -25,10 +27,12 @@ export class Timeslot {
   subdivide(
     duration: number,
     {
-      align = this.start,
+      align,
       includeBoundaries = false,
     }: { align?: Date, includeBoundaries?: boolean } = {},
   ): Array<Timeslot> {
+    align = align || this.start;
+
     const getTimeslots = includeBoundaries
       ? getTimeslotsOverRange
       : getTimeslotsInRange;
@@ -161,10 +165,13 @@ export function getBoundaryTimeslotsOverRange(
   return boundaries;
 }
 
+/**
+ * Finds all timeslots of given duration aligned to the start of the range that are not occupied.
+ */
 export function getAvailableTimeslots(
   range: Timeslot,
   occupied: Array<Timeslot>,
-  duration: number,
+  duration: number /* minutes */,
 ): Array<Timeslot> {
   const isAvailable = {};
 
@@ -190,3 +197,25 @@ export function getAvailableTimeslots(
 
   return timeslots;
 }
+
+/**
+ * Generates timeslots for the given weekdays over the given range
+ */
+export function getWeekdaysOverRange(
+  range: Timeslot,
+  weekdays: Array<boolean>,
+  { timezoneOffset = 0 }: { timezoneOffset: number /* minutes */ } = {},
+) {
+  return range
+    .subdivide(24 * 60, {
+      align: addMinutes(getStartOfDay(range.start), -timezoneOffset),
+      includeBoundaries: true,
+    })
+    .filter(timeslot => {
+      return weekdays[getDay(addMinutes(timeslot.start, -timezoneOffset))];
+    });
+}
+
+/**
+ * Generates timeslots covering the given time range over the given range of days.
+ */
