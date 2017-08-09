@@ -20,6 +20,7 @@
             <span>:</span>
             <mdc-select
               :items="minutes"
+              disabled
               :value="_start.getMinute().toString()"
               @change="change('start', 'minutes', $event)"
             />
@@ -52,6 +53,7 @@
           <span>:</span>
           <mdc-select
             :items="minutes"
+            disabled
             :value="_end.getMinute().toString()"
             @change="change('end', 'minutes', $event)"
           />
@@ -63,6 +65,11 @@
         </div>
       </mdc-list-item>
     </mdc-list>
+    <type-container v-if="expanded">
+      <type-text tag="p" type="body2">
+        (Minute configuration is currently disabled due to a known bug.)
+      </type-text>
+    </type-container>
   </div>
 </template>
 
@@ -75,6 +82,7 @@ import {
 } from '@/components/Material/List';
 import MdcSelect from '@/components/Material/Select';
 import MdcSelectItem from '@/components/Material/SelectItem';
+import { TypeText, TypeContainer } from '@/components/Material/Typography';
 import Time from '@/util/Time';
 
 export default {
@@ -88,6 +96,8 @@ export default {
     MdcListGroupHeader,
     MdcSelect,
     MdcSelectItem,
+    TypeText,
+    TypeContainer,
   },
   data() {
     return {
