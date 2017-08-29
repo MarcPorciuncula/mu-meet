@@ -9,20 +9,20 @@ var chalk = require('chalk')
 var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
+var a = require('awaiting');
 
-var spinner = ora(`building for production...`)
-spinner.start()
+async function build() {
+  let spinner = ora(`building for production...`);
+  spinner.start();
 
-Promise.resolve()
-  .then(() => fs.remove(path.join(config.build.assetsRoot, config.build.assetsSubDirectory)))
-  .then(() => new Promise((resolve, reject) => {
-    webpack(webpackConfig, (err, stats) => {
-      if (err) reject(err);
-      else resolve(stats);
-    })
-  }))
-  .then((stats) => {
-    spinner.stop()
+  try {
+    // Clean out old assets
+    await fs.remove(path.join(config.build.assetsRoot, config.build.assetsSubDirectory));
+
+    // Build webpack
+    const stats = await a.callback(webpack, webpackConfig);
+    spinner.stop();
+
     process.stdout.write(stats.toString({
       colors: true,
       modules: false,
@@ -42,13 +42,17 @@ Promise.resolve()
       '  Opening index.html over file:// won\'t work.\n'
     ))
 
-    return fs.outputFile(path.join(__dirname, 'stats.json'), JSON.stringify(stats.toJson()));
-  })
-  .then(() => {
+    // Save build stats for bundle analysis
+    await fs.outputFile(path.join(__dirname, 'stats.json'), JSON.stringify(stats.toJson()));
     console.log(chalk.cyan('  Build stats saved to stats.json\n'));
-  })
-  .catch(err => {
+
+  } catch (err) {
     spinner.stop();
-    console.error(err);
-    process.exit(1);
-  });
+    throw err;
+  }
+}
+
+build().catch(err => {
+  console.error(err)
+  process.exit(1);
+});

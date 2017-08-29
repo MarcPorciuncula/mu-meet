@@ -5,15 +5,26 @@ import RavenVue from 'raven-js/plugins/vue';
 if (process.env.NODE_ENV === 'production') {
   const build = process.env.BUILD_ID;
   const dsn = process.env.SENTRY_DSN;
-  if (!build) throw new Error('Must supply BUILD_ID env variable');
-  if (!dsn) throw new Error('Must supply SENTRY_DSN env variable');
 
-  console.info('Release Version:', build);
-  console.info('Activating Sentry error reporting.');
+  let activate = true;
+  if (!build) {
+    activate = false;
+    console.warn('No BUILD_ID was supplied. Error reporting is disabled.');
+  }
 
-  Raven.config(dsn, {
-    release: build,
-  })
-    .addPlugin(RavenVue, Vue)
-    .install();
+  if (!dsn) {
+    activate = false;
+    console.warn('No SENTRY_DSN was supplied. Error reporting is disabled.');
+  }
+
+  if (activate) {
+    console.info('Release Version:', build);
+    console.info('Activating Sentry error reporting.');
+
+    Raven.config(dsn, {
+      release: build,
+    })
+      .addPlugin(RavenVue, Vue)
+      .install();
+  }
 }
