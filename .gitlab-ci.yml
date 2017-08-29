@@ -41,6 +41,7 @@ build:
   - echo $FIREBASE_CONFIG > secret/firebase-config.json
   # build
   - yarn build
+  - yarn prerender
   - cd functions && yarn build && cd ..
 
 deploy:
