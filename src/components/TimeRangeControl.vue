@@ -63,11 +63,6 @@
         </div>
       </mdc-list-item>
     </mdc-list>
-    <type-container v-if="expanded">
-      <type-text tag="p" type="body2">
-        (Minute configuration is currently disabled due to a known bug.)
-      </type-text>
-    </type-container>
   </div>
 </template>
 
