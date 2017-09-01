@@ -23,6 +23,7 @@ import { prop, evolve } from 'ramda';
 import max from 'date-fns/max';
 import min from 'date-fns/min';
 import getHours from 'date-fns/get_hours';
+import getMinutes from 'date-fns/get_minutes';
 import isEqual from 'date-fns/is_equal';
 import getStartOfDay from 'date-fns/start_of_day';
 
@@ -38,8 +39,8 @@ export default {
         end: VueTypes.instanceOf(Date).isRequired,
         summary: VueTypes.string.isRequired,
         color: {} /* nullable string */,
-      }).isRequired
-    ).isRequired
+      }).isRequired,
+    ).isRequired,
   },
   data() {
     return {
@@ -64,7 +65,7 @@ export default {
   },
   methods: {
     toTime(date) {
-      return new Time(getHours(date), 'h');
+      return new Time(getHours(date) * 60 + getMinutes(date), 'm');
     },
   },
 };
