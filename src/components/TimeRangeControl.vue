@@ -20,7 +20,6 @@
             <span>:</span>
             <mdc-select
               :items="minutes"
-              disabled
               :value="_start.getMinute().toString()"
               @change="change('start', 'minutes', $event)"
             />
@@ -53,7 +52,6 @@
           <span>:</span>
           <mdc-select
             :items="minutes"
-            disabled
             :value="_end.getMinute().toString()"
             @change="change('end', 'minutes', $event)"
           />

@@ -1,5 +1,3 @@
-// @flow
-
 import test from 'ava';
 import {
   Timeslot,
@@ -7,6 +5,8 @@ import {
   getTimeslotsOverRange,
   getBoundaryTimeslotsOverRange,
   getAvailableTimeslots,
+  getWeekdaysOverRange,
+  getTimeRangesOverRange,
 } from './timeslot';
 
 // const toJSON = x =>
@@ -50,7 +50,7 @@ test('Timeslot#subdivide splits a timeslot into multiple smaller ones', t => {
   ]);
 });
 
-test('Timeslots.accumulate combines adjacent (ordered and aligned) timeslots', t => {
+test('Timeslot.accumulate combines adjacent (ordered and aligned) timeslots', t => {
   {
     const start = new Date('2017-06-03T14:00:00.000Z');
     const duration = 600;
@@ -208,4 +208,116 @@ test('getAvailableTimeslots finds all subdivided timeslots that are not occupied
     new Timeslot(new Date('2017-06-03T14:50:00.000Z'), 5),
     new Timeslot(new Date('2017-06-03T14:55:00.000Z'), 5),
   ]);
+});
+
+test('getWeekdaysOverRange splits the given range into weekdays', t => {
+  const start = new Date(2017, 6, 30);
+  const range = new Timeslot(start, 7 * 24 * 60);
+
+  const result = getWeekdaysOverRange(
+    range,
+    [true, true, true, true, true, true, true],
+    {
+      timezoneOffset:
+        new Date().getTimezoneOffset() - start.getTimezoneOffset(),
+    },
+  );
+
+  t.deepEqual(result, [
+    new Timeslot(new Date(2017, 6, 30), 24 * 60),
+    new Timeslot(new Date(2017, 6, 31), 24 * 60),
+    new Timeslot(new Date(2017, 7, 1), 24 * 60),
+    new Timeslot(new Date(2017, 7, 2), 24 * 60),
+    new Timeslot(new Date(2017, 7, 3), 24 * 60),
+    new Timeslot(new Date(2017, 7, 4), 24 * 60),
+    new Timeslot(new Date(2017, 7, 5), 24 * 60),
+  ]);
+});
+
+test('getWeekdaysOverRange returns weekdays covering the start and end boundaries of the range', t => {
+  const start = new Date(2017, 6, 30, 12);
+  const range = new Timeslot(start, 6 * 24 * 60);
+
+  const result = getWeekdaysOverRange(
+    range,
+    [true, true, true, true, true, true, true],
+    {
+      timezoneOffset:
+        new Date().getTimezoneOffset() - start.getTimezoneOffset(),
+    },
+  );
+
+  t.deepEqual(result, [
+    new Timeslot(new Date(2017, 6, 30), 24 * 60),
+    new Timeslot(new Date(2017, 6, 31), 24 * 60),
+    new Timeslot(new Date(2017, 7, 1), 24 * 60),
+    new Timeslot(new Date(2017, 7, 2), 24 * 60),
+    new Timeslot(new Date(2017, 7, 3), 24 * 60),
+    new Timeslot(new Date(2017, 7, 4), 24 * 60),
+    new Timeslot(new Date(2017, 7, 5), 24 * 60),
+  ]);
+});
+
+test('getWeekdaysOverRange filters out weekdays specified', t => {
+  const start = new Date(2017, 6, 30);
+  const range = new Timeslot(start, 7 * 24 * 60);
+
+  const result = getWeekdaysOverRange(
+    range,
+    [false, true, true, true, true, true, true],
+    {
+      timezoneOffset:
+        new Date().getTimezoneOffset() - start.getTimezoneOffset(),
+    },
+  );
+
+  t.deepEqual(result, [
+    // new Timeslot(new Date(2017, 6, 30), 24 * 60),
+    new Timeslot(new Date(2017, 6, 31), 24 * 60),
+    new Timeslot(new Date(2017, 7, 1), 24 * 60),
+    new Timeslot(new Date(2017, 7, 2), 24 * 60),
+    new Timeslot(new Date(2017, 7, 3), 24 * 60),
+    new Timeslot(new Date(2017, 7, 4), 24 * 60),
+    new Timeslot(new Date(2017, 7, 5), 24 * 60),
+  ]);
+});
+
+test('getWeekdaysOverRange works over more than one week', t => {
+  const start = new Date(2017, 6, 30);
+  const range = new Timeslot(start, 14 * 24 * 60);
+
+  const result = getWeekdaysOverRange(
+    range,
+    [false, true, true, true, true, true, false],
+    {
+      timezoneOffset:
+        new Date().getTimezoneOffset() - start.getTimezoneOffset(),
+    },
+  );
+
+  t.deepEqual(result, [
+    // new Timeslot(new Date(2017, 6, 30), 24 * 60),
+    new Timeslot(new Date(2017, 6, 31), 24 * 60),
+    new Timeslot(new Date(2017, 7, 1), 24 * 60),
+    new Timeslot(new Date(2017, 7, 2), 24 * 60),
+    new Timeslot(new Date(2017, 7, 3), 24 * 60),
+    new Timeslot(new Date(2017, 7, 4), 24 * 60),
+    // new Timeslot(new Date(2017, 7, 5), 24 * 60),
+    // new Timeslot(new Date(2017, 7, 6), 24 * 60),
+    new Timeslot(new Date(2017, 7, 7), 24 * 60),
+    new Timeslot(new Date(2017, 7, 8), 24 * 60),
+    new Timeslot(new Date(2017, 7, 9), 24 * 60),
+    new Timeslot(new Date(2017, 7, 10), 24 * 60),
+    new Timeslot(new Date(2017, 7, 11), 24 * 60),
+    // new Timeslot(new Date(2017, 7, 12), 24 * 60),
+  ]);
+});
+
+test('getTimeRangesOverRange finds timeslots in the given range that fall within the given time range', t => {
+  const start = new Date(2017, 6, 30);
+  const range = new Timeslot(start, 24 * 60);
+
+  const result = getTimeRangesOverRange(range, { from: 0, to: 10 * 60 });
+
+  t.deepEqual(result, [new Timeslot(new Date(2017, 6, 30), 10 * 60)]);
 });
