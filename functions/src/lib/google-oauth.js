@@ -2,9 +2,9 @@ import * as admin from 'firebase-admin';
 import a from 'awaiting';
 import google from 'googleapis';
 import request from 'request-promise-native';
-import credentials from '../credentials';
 import isPast from 'date-fns/is_past';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
+import credentials from '../credentials';
 
 const GOOGLE_OAUTH_ERROR_CODES = {
   NO_CREDENTIALS_FOUND: 'google-oauth/no-credentials-found',

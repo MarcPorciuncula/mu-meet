@@ -1,9 +1,9 @@
 import a from 'awaiting';
 import * as admin from 'firebase-admin';
-import { fetchUserProfile } from './google-profile';
-import { fetchCalendars } from '../calendar/google-calendar';
-import { revoke } from '../auth/google-oauth';
-import oauth from '../auth/oauth-manager';
+import { fetchUserProfile } from '../lib/google-profile';
+import { fetchCalendars } from '../lib/google-calendar';
+import { revoke } from '../lib/google-oauth';
+import oauth from '../lib/oauth-manager';
 
 export async function fetchProfileIntoDatabase(event) {
   const database = admin.database();

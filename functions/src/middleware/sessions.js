@@ -2,7 +2,7 @@ import {
   SessionError,
   createSession as _createSession,
   findMeetingTimes as _findMeetingTimes,
-} from './sessions';
+} from '../lib/sessions';
 import * as admin from 'firebase-admin';
 
 export async function createSession(req, res) {

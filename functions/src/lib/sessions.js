@@ -5,8 +5,8 @@ import R from 'ramda';
 import getStartOfWeek from 'date-fns/start_of_week';
 import getEndOfWeek from 'date-fns/end_of_week';
 import parseDate from 'date-fns/parse';
-import oauth from '../auth/oauth-manager';
-import { fetchEvents } from '../calendar/google-calendar';
+import oauth from './oauth-manager';
+import { fetchEvents } from './google-calendar';
 import addMinutes from 'date-fns/add_minutes';
 import {
   Timeslot,

@@ -1,10 +1,10 @@
 import admin from 'firebase-admin';
 import a from 'awaiting';
-import credentials from '../credentials';
 import google from 'googleapis';
 import shortid from 'shortid';
-import oauth from './oauth-manager';
 import { toPairs } from 'ramda';
+import credentials from '../credentials';
+import oauth from '../lib/oauth-manager';
 
 /**
  * Validates and decodes Firebase ID token and places it on `res.locals.idToken`

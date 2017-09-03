@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin';
-import { fetchCalendars, fetchEvents } from './google-calendar';
 import parse from 'date-fns/parse';
 import R from 'ramda';
+import { fetchCalendars, fetchEvents } from '../lib/google-calendar';
 
 /**
  * Fetches the current Firebase User's calendar list and places it under their user entry in the database
@@ -40,7 +40,9 @@ export async function getEvents(req, res) {
       to,
       calendarId,
     });
-    allEvents.push(...events.map(event => Object.assign({}, event, { calendarId })));
+    allEvents.push(
+      ...events.map(event => Object.assign({}, event, { calendarId })),
+    );
   }
 
   res.type('application/json');
