@@ -127,6 +127,7 @@
         </mdc-list-group>
       </layout-container>
     </layout-section>
+    <tab-bar />
   </div>
 </template>
 
@@ -149,6 +150,7 @@ import {
 import TeamList from './TeamList';
 import MeetingTimes from './MeetingTimes';
 import Parameters from './MeetingParameters';
+import TabBar from '@/components/Material/TabBar';
 
 export default {
   components: {
@@ -164,6 +166,7 @@ export default {
     MeetingTimes,
     Parameters,
     CopyText,
+    TabBar,
   },
   props: {
     inviteLink: VueTypes.string.isRequired,

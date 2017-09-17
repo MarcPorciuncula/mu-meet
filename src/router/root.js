@@ -4,6 +4,8 @@ import auth from '@/router/auth';
 import user from '@/router/user';
 import planner from '@/router/planner';
 
+import Planner from '@/views/Planner';
+
 export default {
   path: '/',
   components: {
@@ -15,5 +17,11 @@ export default {
     auth,
     user,
     planner,
+    {
+      path: 'planner',
+      name: 'planner-test',
+      components: {default: Planner},
+      meta: { title: 'Meeting Planner' },
+    },
   ],
 };
