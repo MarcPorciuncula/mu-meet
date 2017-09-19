@@ -33,6 +33,7 @@
     "firebase": "^3.8.0",
     "fs-extra": "^3.0.1",
     "invariant": "^2.2.2",
+    "is-plain-object": "^2.0.4",
     "lodash": "^4.17.4",
     "nprogress": "^0.2.0",
     "ramda": "^0.23.0",

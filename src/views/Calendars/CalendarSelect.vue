@@ -44,7 +44,7 @@
       <mdc-list-group>
         <mdc-list-group-divider/>
         <mdc-list>
-          <mdc-list-item @click="reSyncCalendars()">
+          <mdc-list-item @click="sync()">
             <span slot="start-detail" class="material-icons">
               sync
             </span>
@@ -71,10 +71,7 @@ import MdcButton from '@/components/Material/Button';
 import CalendarDot from '@/components/CalendarDot';
 import dashboard from '@/router/user/dashboard';
 import { CALENDARS, SELECTED_CALENDARS, USER_PROFILE } from '@/store/getters';
-import {
-  SET_CALENDAR_SELECTED,
-  FETCH_CALENDARS_TO_DATABASE,
-} from '@/store/actions';
+import { ENABLE_DISABLE_CALENDAR, SYNC_CALENDARS } from '@/store/actions';
 
 export default {
   components: {
@@ -97,10 +94,10 @@ export default {
   }),
   methods: {
     updateCalendarSelected({ id, selected }) {
-      this.$store.dispatch(SET_CALENDAR_SELECTED, { id, selected });
+      this.$store.dispatch(ENABLE_DISABLE_CALENDAR, { id, enabled: selected });
     },
-    reSyncCalendars() {
-      this.$store.dispatch(FETCH_CALENDARS_TO_DATABASE);
+    sync() {
+      this.$store.dispatch(SYNC_CALENDARS);
     },
     confirm() {
       this.$router.push(this.$route.query.callback || dashboard.path);

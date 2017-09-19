@@ -4,11 +4,9 @@ export const SIGN_IN = 'auth/SIGN_IN';
 export const SIGN_OUT = 'auth/SIGN_OUT';
 
 // calendars
-export const SUBSCRIBE_CALENDARS = 'calendars/SUBSCRIBE_CALENDARS';
-export const UNSUBSCRIBE_CALENDARS = 'calendars/UNSUBSCRIBE_CALENDARS';
-export const SET_CALENDAR_SELECTED = 'calendars/SET_CALENDAR_SELECTED';
-export const FETCH_CALENDARS_TO_DATABASE =
-  'calendars/FETCH_CALENDARS_TO_DATABASE';
+export const FETCH_CALENDARS = 'calendars/FETCH';
+export const ENABLE_DISABLE_CALENDAR = 'calendars/ENABLE_DISABLE_CALENDAR';
+export const SYNC_CALENDARS = 'calendars/SYNC';
 
 // planner
 export const SUBSCRIBE_PLANNER_SESSION = 'planner/SUBSCRIBE_PLANNER_SESSION';
@@ -22,8 +20,7 @@ export const SET_PLANNER_CONFIG = 'planner/SET_PLANNER_CONFIG';
 export const FETCH_PLANNER_EVENTS = 'planner/FETCH_PLANNER_EVENTS';
 
 // profile
-export const SUBSCRIBE_USER_PROFILE = 'profile/SUBSCRIBE_USER_PROFILE';
-export const UNSUBSCRIBE_USER_PROFILE = 'profile/UNSUBSCRIBE_USER_PROFILE';
+export const FETCH_USER_PROFILE = 'profile/FETCH_USER_PROFILE';
 
 // progress
 export const START_PROGRESS_ITEM = 'progress/START_PROGRESS_ITEM';

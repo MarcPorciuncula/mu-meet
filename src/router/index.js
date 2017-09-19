@@ -6,6 +6,7 @@ import store from '@/store';
 import { IS_SIGNED_IN } from '@/store/getters';
 import {
   REFRESH_AUTH_STATUS,
+  FETCH_USER_PROFILE,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
 } from '@/store/actions';
@@ -29,6 +30,9 @@ async function verifyAuth(to, from, next) {
   if (store.getters[IS_SIGNED_IN] === null) {
     // Auth state is currently indeterminate
     await store.dispatch(REFRESH_AUTH_STATUS);
+    if (store.getters[IS_SIGNED_IN]) {
+      await store.dispatch(FETCH_USER_PROFILE);
+    }
   }
 
   if (

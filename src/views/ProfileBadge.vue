@@ -32,12 +32,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import {
-  IS_SIGNED_IN,
-  IS_SUBSCRIBED_USER_PROFILE,
-  USER_PROFILE,
-} from '@/store/getters';
-import { SUBSCRIBE_USER_PROFILE } from '@/store/actions';
+import { IS_SIGNED_IN, USER_PROFILE } from '@/store/getters';
 import MdcMenu from '@/components/Material/AnchoredMenu';
 import MdcMenuItem from '@/components/Material/MenuItem';
 import dashboardRoute from '@/router/user/dashboard';
@@ -51,11 +46,6 @@ export default {
     return {
       showGreeting: false,
     };
-  },
-  created() {
-    if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
-      this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
-    }
   },
   mounted() {
     if (this.user) {
@@ -80,11 +70,6 @@ export default {
     user(value, old) {
       if (!old && value) {
         this.greet();
-      }
-    },
-    isSignedIn(value) {
-      if (this.isSignedIn && !this.$store.getters[IS_SUBSCRIBED_USER_PROFILE]) {
-        this.$store.dispatch(SUBSCRIBE_USER_PROFILE);
       }
     },
   },

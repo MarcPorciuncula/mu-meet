@@ -7,7 +7,7 @@ import Functions, { SYNC_CALENDARS } from './functions';
 const encodeId = (id: string) => btoa(id);
 
 export default {
-  forUser: async (uid: string) => {
+  async forUser(uid: string) {
     const database = firebase.database();
 
     const calendars = await database
@@ -33,6 +33,8 @@ export default {
       );
       calendar.selected = !!selected[encodeId(calendar.id)];
     }
+
+    return calendars;
   },
   update: async (
     { uid, id }: { uid: string, id: string },
@@ -47,13 +49,13 @@ export default {
 
     // TODO allow update on other fields
 
-    if (patch.selected) {
+    if (typeof patch.selected !== 'undefined') {
       await database
         .ref(`/users/${uid}/selected-calendars/${encodeId(id)}`)
-        .set(patch);
+        .set(patch.selected);
     }
   },
-  sync: async (uid: string) => {
+  async sync(uid: string) {
     const user = await Auth.user();
     invariant(
       uid === user.uid,

@@ -2,7 +2,7 @@
 import firebase from './firebase';
 
 export default {
-  get: async (uid: string) => {
+  async get(uid: string) {
     const database = await firebase.database();
 
     const data = await database

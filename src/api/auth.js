@@ -5,17 +5,17 @@ import Functions, { AUTHORIZE, LINK_AUTH } from './functions';
 import getGoogle, { SCOPES } from './google';
 
 export default {
-  user: () => {
+  user() {
     // Force refresh of auth state by retrieving via onAuthStateChanged, always fires at
     // least once after being listened.
     return new Promise(resolve => {
-      const unlisten = firebase.auth().onAuthStateChanged(user => {
+      const unlisten = firebase.auth().onAuthStateChanged(() => {
         unlisten();
-        resolve(user);
+        resolve(firebase.auth().currentUser);
       });
     });
   },
-  login: async () => {
+  async login() {
     const Google = await getGoogle();
 
     // 1. Obtain OAuth2 authorization code from Google
@@ -36,6 +36,10 @@ export default {
     await Functions.call(LINK_AUTH, {
       data: { credential_link_code: res.credential_link_code },
     });
+
+    return firebase.auth().currentUser;
   },
-  logout: () => firebase.auth().signOut(),
+  logout() {
+    firebase.auth().signOut();
+  },
 };
