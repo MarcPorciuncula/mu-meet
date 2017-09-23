@@ -1,9 +1,13 @@
 // @flow
-import { sortBy, compose, map, toPairs, evolve } from 'ramda';
+import { compose, map, toPairs, evolve } from 'ramda';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
 import isPlainObject from 'is-plain-object';
 import parseDate from 'date-fns/parse';
 import a from 'awaiting';
 import firebase from './firebase';
+import Profile from './profile';
 import Functions, {
   CREATE_PLANNER_SESSION,
   GENERATE_PLANNER_RESULT,
@@ -15,11 +19,22 @@ async function patch(ref, data) {
       map(([key, value]) => patch(ref.child(key), value)),
       toPairs,
     )(data);
-    return await a.list(children);
+    return await Promise.all(children);
   } else {
-    await ref.set(patch);
+    if (data instanceof Date) {
+      data = data.toString();
+    }
+    await ref.set(data);
   }
 }
+
+Observable.fromRef = (ref, evt = 'value') =>
+  Observable.create(observer => {
+    const next = value => observer.next(value);
+    const error = err => observer.error(err);
+    ref.on(evt, next, error);
+    return () => ref.off(evt, next, error);
+  });
 
 export default {
   async get(id: string) {
@@ -29,6 +44,15 @@ export default {
       .ref(`/sessions/${id}`)
       .once('value')
       .then(s => s.val());
+
+    if (!session) return null;
+
+    // Replace user id map with list of user profiles
+    const profiles = await Promise.all(
+      Object.keys(session.users).map(async uid =>
+        Object.assign(await Profile.get(uid), { uid }),
+      ),
+    );
 
     return evolve({
       config: evolve({
@@ -43,37 +67,67 @@ export default {
           }),
         ),
       }),
+      users: () => profiles,
+      startedAt: parseDate,
     })(session);
+  },
+  subscribe(id: string) {
+    const database = firebase.database();
+
+    const val = s => s.val();
+    const session = database.ref(`/sessions/${id}`);
+
+    // Replace user id map with list of user profiles
+    const users = Observable.fromRef(session.child('users'))
+      .map(val)
+      .mergeMap(value =>
+        a.list(
+          Object.keys(value).map(async uid =>
+            Object.assign(await Profile.get(uid), { uid }),
+          ),
+        ),
+      );
+    // Parse dates
+    const config = Observable.fromRef(session.child('config'))
+      .map(val)
+      .map(
+        evolve({
+          searchFromDate: parseDate,
+          searchToDate: parseDate,
+        }),
+      );
+    // Parse dates
+    const result = Observable.fromRef(session.child('result'))
+      .map(val)
+      .map(
+        evolve({
+          meetings: map(
+            evolve({
+              end: parseDate,
+              start: parseDate,
+            }),
+          ),
+        }),
+      );
+
+    return { users, result, config };
   },
   async update(id: string, data: any) {
     const database = firebase.database();
 
-    const session = database.ref(`/sessions/${id}`);
+    const session = database.ref(`/sessions/${id}/`);
+
     await patch(session, data);
   },
   async forUser(uid: string): Promise<Array<string>> {
     const database = firebase.database();
 
-    const sessionsMap = await database
-      .ref(`/users/${uid}/previous-sessions`)
-      .once('value')
-      .then(s => s.val());
-
-    const sessions = compose(
-      map(([key, id]) => id),
-      sortBy(([key]) => key),
-      toPairs,
-    )(sessionsMap);
-
     const current = await database
       .ref(`/users/${uid}/current-session`)
       .once('value')
       .then(s => s.val());
-    if (current) {
-      sessions.push(current);
-    }
 
-    return sessions;
+    return current;
   },
   async create() {
     const date = new Date();
@@ -110,6 +164,16 @@ export default {
     // HACK this only works if the session is the current user's current session.
 
     await Functions.call(GENERATE_PLANNER_RESULT);
-    return (await this.get(id)).result;
+  },
+  async hasAccess({ uid, id }: { uid: string, id: string }) {
+    const database = firebase.database();
+
+    try {
+      await database.ref(`/sessions/${id}/users/${uid}`).once('value');
+    } catch (err) {
+      if (err.code === 'PERMISSION_DENIED') return false;
+      else throw err;
+    }
+    return true;
   },
 };

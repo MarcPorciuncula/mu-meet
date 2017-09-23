@@ -7,8 +7,6 @@ export const CLEAR_CALENDARS = 'calendars/CLEAR_CALENDARS';
 
 // planner
 export const UPDATE_PLANNER_SESSION = 'planner/UPDATE_PLANNER_SESSION';
-export const UPDATE_PLANNER_SUBSCRIPTION =
-  'planner/UPDATE_PLANNER_SUBSCRIPTION';
 export const UPDATE_PLANNER_EVENTS = 'planner/UPDATE_PLANNER_EVENTS';
 
 // profile

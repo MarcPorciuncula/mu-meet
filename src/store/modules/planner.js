@@ -1,18 +1,11 @@
-import invariant from 'invariant';
-import firebase from '@/firebase';
-import { functions } from '@/functions';
-import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
-import { identity, evolve } from 'ramda';
-import Vue from 'vue';
-import parse from 'date-fns/parse';
+import Planner from '@/api/planner';
+import Events from '@/api/Events';
 import {
   UPDATE_PLANNER_SESSION,
-  UPDATE_PLANNER_SUBSCRIPTION,
   UPDATE_PLANNER_EVENTS,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_PLANNER_SESSION,
-  UNSUBSCRIBE_PLANNER_SESSION,
   CREATE_PLANNER_SESSION,
   JOIN_PLANNER_SESSION,
   ARCHIVE_PLANNER_SESSION,
@@ -20,150 +13,76 @@ import {
   SET_PLANNER_CONFIG,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
-  INCREMENT_PROGRESS_ITEM,
   FETCH_PLANNER_EVENTS,
+  RESET_PLANNER,
 } from '@/store/actions';
 import {
   USER_UID,
   IS_IN_PLANNER_SESSION,
-  IS_SUBSCRIBED_PLANNER_SESSION,
   CURRENT_PLANNER_SESSION,
   CURRENT_PLANNER_EVENTS,
 } from '@/store/getters';
 
-const database = firebase.database();
-
 const state = {
   session: null,
   events: [],
-  _subscription: null,
 };
 
 const mutations = {
   [UPDATE_PLANNER_SESSION](state, session) {
-    state.session = session;
-  },
-  [UPDATE_PLANNER_SUBSCRIPTION](state, subscription) {
-    state._subscription = subscription;
+    if (state.session) {
+      Object.assign(state.session, session);
+    } else {
+      state.session = session;
+    }
   },
   [UPDATE_PLANNER_EVENTS](state, events) {
     state.events = events;
   },
 };
 
+let subscriptions;
+
 const actions = {
   async [SUBSCRIBE_PLANNER_SESSION]({ commit, dispatch, state, getters }) {
-    invariant(
-      !state._subscription,
-      'attempted to subscribe to planner session but already subscribed',
-    );
-
-    const uid = getters[USER_UID];
-    const root = database.ref();
-    const user = root.child(`users/${uid}`);
-
-    const subscription = new LiveQuery.Redirect(
-      user.child('current-session'),
-      (source, sessionId) => {
-        const session = root.child(`sessions/${sessionId}`);
-        const subscription = new LiveQuery.Object(session, {
-          id: new LiveQuery.Leaf(source),
-          startedAt: new LiveQuery.Leaf(session.child('startedAt'), {
-            transform: parse,
-          }),
-          host: new LiveQuery.Redirect(session.child('host'), (_, uid) =>
-            createUserSubscription(root.child(`/users/${uid}`)),
-          ),
-          users: new LiveQuery.List(session.child('users'), ref => {
-            return createUserSubscription(root.child(`/users/${ref.key}`));
-          }),
-          config: new LiveQuery.Leaf(session.child('config'), {
-            transform: evolve({ searchFromDate: parse, searchToDate: parse }),
-          }),
-          result: new LiveQuery.Object(session.child('result'), {
-            meetings: new LiveQuery.Leaf(session.child('result/meetings')),
-            status: new LiveQuery.Leaf(session.child('result/status')),
-            stale: new LiveQuery.Leaf(session.child('result/stale')),
-          }),
-        });
-
-        subscription.children
-          .get('result')
-          .subscription.children.get('meetings')
-          .subscription.subscribe({
-            next: () => {
-              dispatch(FETCH_PLANNER_EVENTS);
-            },
-            error: console.error.bind(console),
-            complete: () => {
-              commit(UPDATE_PLANNER_EVENTS, []);
-            },
-          });
-
-        subscription.children
-          .get('result')
-          .subscription.children.get('status')
-          .subscription.subscribe({
-            next: status => {
-              switch (status) {
-                case 'FETCH_SCHEDULES':
-                  dispatch(START_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                    message: 'Finding meeting times (Step 1/2)',
-                  });
-                  break;
-                case 'RESOLVE_TIMES':
-                  dispatch(INCREMENT_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                    message: 'Finding meeting times (Step 2/2)',
-                  });
-                  break;
-                case 'DONE':
-                  dispatch(FINISH_PROGRESS_ITEM, {
-                    type: REQUEST_PLANNER_RESULT,
-                  });
-                  break;
-              }
-            },
-            error: console.error.bind(console),
-            complete: () => {},
-          });
-
-        return subscription;
-      },
-    );
-
-    const unsubscribe = subscription.subscribe({
-      next: value => {
-        commit(UPDATE_PLANNER_SESSION, value);
-      },
-      error: console.error.bind(console),
-      complete: () => {},
-    });
-
-    commit(UPDATE_PLANNER_SUBSCRIPTION, {
-      unsubscribe,
-    });
-
-    return new Promise((resolve, reject) => {
-      const unsubscribe = subscription.subscribe({
-        next: () => {
-          resolve();
-          unsubscribe();
-        },
-        error: reject,
-        complete: () => {},
-      });
-
-      subscription.execute();
-    });
-  },
-  [UNSUBSCRIBE_PLANNER_SESSION]({ commit, getters, state }) {
-    if (getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
-      state._subscription.unsubscribe();
-      commit(UPDATE_PLANNER_SUBSCRIPTION, null);
+    const id = await Planner.forUser(getters[USER_UID]);
+    if (id) {
+      const session = await Planner.get(id);
+      commit(UPDATE_PLANNER_SESSION, Object.assign(session, { id }));
+      if (state.session.result.status === 'DONE') {
+        dispatch(FETCH_PLANNER_EVENTS);
+      }
+    } else {
       commit(UPDATE_PLANNER_SESSION, null);
+      return;
     }
+
+    if (subscriptions) {
+      for (let subscription of Object.values(subscriptions)) {
+        subscription.unsubscribe();
+      }
+    }
+
+    const { users, result, config } = Planner.subscribe(id);
+    subscriptions = {
+      users: users.subscribe({
+        next: value => commit(UPDATE_PLANNER_SESSION, { users: value }),
+      }),
+      result: result.subscribe({
+        next: value => {
+          if (
+            state.session.result.status !== 'DONE' &&
+            value.status === 'DONE'
+          ) {
+            dispatch(FETCH_PLANNER_EVENTS);
+          }
+          commit(UPDATE_PLANNER_SESSION, { result: value });
+        },
+      }),
+      config: config.subscribe({
+        next: value => commit(UPDATE_PLANNER_SESSION, { config: value }),
+      }),
+    };
   },
   async [CREATE_PLANNER_SESSION]({
     commit,
@@ -177,21 +96,7 @@ const actions = {
       message: 'Creating meeting plan',
     });
 
-    if (!getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
-      dispatch(SUBSCRIBE_PLANNER_SESSION);
-    }
-    if (getters[IS_IN_PLANNER_SESSION]) {
-      dispatch(ARCHIVE_PLANNER_SESSION);
-    }
-    const date = new Date();
-    await functions('createSession', {
-      data: {
-        startedAt: date.toString(),
-        timezoneOffset: date.getTimezoneOffset(),
-      },
-    });
-    // wait for the subscription to pick up the new session id
-    await watch(() => state.session && state.session.id);
+    await Planner.create();
 
     dispatch(FINISH_PROGRESS_ITEM, {
       type: CREATE_PLANNER_SESSION,
@@ -203,29 +108,8 @@ const actions = {
       message: 'Joining meeting plan ' + id,
     });
 
-    if (!getters[IS_SUBSCRIBED_PLANNER_SESSION]) {
-      dispatch(SUBSCRIBE_PLANNER_SESSION);
-    }
-    if (getters[IS_IN_PLANNER_SESSION]) {
-      dispatch(ARCHIVE_PLANNER_SESSION);
-    }
-
-    const session = database.ref(`/sessions/${id}`);
-    const user = database.ref(`/users/${getters[USER_UID]}`);
-    // startedAt is a public field, we can use it for an existence check
-    const exists = session
-      .child('startedAt')
-      .once('value')
-      .then(s => !!s.val());
-    if (!exists) {
-      throw new Error(`session ${id} does not exist`);
-    }
-
-    await session.child(`users/${getters[USER_UID]}`).set(true);
-    await user.child('current-session').set(id);
-
-    // wait for the subscription to pick up the new session id
-    await watch(() => state.session && state.session.id);
+    const uid = getters[USER_UID];
+    await Planner.join({ id, uid });
 
     dispatch(FINISH_PROGRESS_ITEM, {
       type: JOIN_PLANNER_SESSION,
@@ -233,24 +117,17 @@ const actions = {
   },
   async [ARCHIVE_PLANNER_SESSION]({ state, getters }) {
     const id = state.session.id;
-    const user = database.ref(`/users/${getters[USER_UID]}`);
+    const uid = getters[USER_UID];
 
-    await user.child('current-session').set(null);
-    await user.child('previous-sessions').push(id);
-
-    // wait for the subscription to pick up that the session is gone
-    await watch(() => state.session, {
-      predicate: session => session === null,
-    });
+    await Planner.archive({ uid, id });
   },
-  async [REQUEST_PLANNER_RESULT]({ dispatch }) {
+  async [REQUEST_PLANNER_RESULT]({ dispatch, state }) {
     dispatch(START_PROGRESS_ITEM, {
       type: REQUEST_PLANNER_RESULT,
       message: 'Finding meeting times',
     });
 
-    await functions('findMeetingTimes');
-    await watch(() => state.session.result.meetings);
+    await Planner.result(state.session.id);
 
     dispatch(FINISH_PROGRESS_ITEM, {
       type: REQUEST_PLANNER_RESULT,
@@ -268,39 +145,32 @@ const actions = {
       Object.assign({}, state.session, { config }),
     );
 
-    const session = database.ref(`/sessions/${state.session.id}`);
-    await session.child('config').set(
-      evolve({
-        searchFromDate: toString,
-        searchToDate: toString,
-      })(config),
-    );
+    await Planner.update(state.session.id, { config: patch });
+
     dispatch(FINISH_PROGRESS_ITEM, {
       type: SET_PLANNER_CONFIG,
     });
   },
-  async [FETCH_PLANNER_EVENTS]({ commit, dispatch, getters }) {
-    const config = await watch(
-      () => {
-        const session = getters[CURRENT_PLANNER_SESSION];
-        return session && session.config;
-      },
-      { timeout: 5000 },
-    );
-    const { searchFromDate: from, searchToDate: to } = config;
-    const { data: events } = await functions('getEvents', {
-      data: { from, to },
-    });
+  async [FETCH_PLANNER_EVENTS]({ commit, dispatch, getters, state }) {
+    const { searchFromDate: from, searchToDate: to } = state.session.config;
+    const uid = getters[USER_UID];
+    const events = await Events.forRange({ uid, from, to });
     commit(UPDATE_PLANNER_EVENTS, events);
+  },
+  [RESET_PLANNER]({ commit }) {
+    if (subscriptions) {
+      for (let subscription of Object.values(subscriptions)) {
+        subscription.unsubscribe();
+      }
+    }
+    commit(UPDATE_PLANNER_EVENTS, []);
+    commit(UPDATE_PLANNER_SESSION, null);
   },
 };
 
 const getters = {
   [IS_IN_PLANNER_SESSION](state) {
     return !!state.session;
-  },
-  [IS_SUBSCRIBED_PLANNER_SESSION](state) {
-    return !!state._subscription;
   },
   [CURRENT_PLANNER_SESSION](state) {
     return state.session;
@@ -316,47 +186,3 @@ export default {
   actions,
   getters,
 };
-
-function createUserSubscription(ref) {
-  return new LiveQuery.Object(ref, {
-    id: new LiveQuery.Key(ref),
-    profile: new LiveQuery.Object(ref.child('profile'), ref => ({
-      name: new LiveQuery.Leaf(ref.child('name')),
-      picture: new LiveQuery.Leaf(ref.child('picture')),
-      email: new LiveQuery.Leaf(ref.child('email')),
-      givenName: new LiveQuery.Leaf(ref.child('given_name')),
-    })),
-  });
-}
-
-/**
- * Returns a promise that resolves when a Vue reactive value satisfies the predicate
- */
-function watch(compute, { predicate = identity, timeout = 5000 } = {}) {
-  return new Promise((resolve, reject) => {
-    let resolved = false;
-    let vm;
-    const handleValue = value => {
-      if (predicate(value)) {
-        resolve(value);
-        resolved = true;
-        vm.$destroy();
-      }
-    };
-    vm = new Vue({
-      computed: { value: compute },
-      watch: { value: handleValue },
-    });
-    setTimeout(() => {
-      if (!resolved) {
-        reject(new Error(`watch timed out after ${timeout}ms`));
-        vm.$destroy();
-      }
-    }, timeout);
-    handleValue(compute());
-  });
-}
-
-function toString(x) {
-  return x.toString();
-}

@@ -6,9 +6,9 @@
       </header-bar>
     </progress-bar>
     <layout-section v-show="title" class="title-section" ref="title" padding="less">
-      <layout-container class="title-section_inner">
+      <layout-container :class="['title-section_inner', { hidden: !showTitle }]">
         <type-container trim-bottom>
-          <type-text tag="h2" type="title" :class="{ hidden: !showTitle }">
+          <type-text tag="h2" type="title" >
             {{ title }}
           </type-text>
         </type-container>

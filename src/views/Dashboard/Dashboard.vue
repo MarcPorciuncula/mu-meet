@@ -8,7 +8,7 @@
           </span>
           <span slot="body">
             You started a meeting plan {{ lastMeetingPlan.users.length ? 'with' : '' }}
-            {{ lastMeetingPlan.users.map(x => x.profile.givenName) | list }}
+            {{ lastMeetingPlan.users.map(x => x.given_name) | list }}
             {{ [now, lastMeetingPlan.startedAt] | distanceInWords }}.
           </span>
           <div slot="actions">
@@ -64,9 +64,7 @@ export default {
       startedAt: VueTypes.instanceOf(Date).isRequired,
       id: VueTypes.string.isRequired,
       users: VueTypes.arrayOf(
-        VueTypes.shape({
-          profile: VueTypes.shape({ givenName: VueTypes.string }).loose,
-        }).loose,
+        VueTypes.shape({ givenName: VueTypes.string }).loose,
       ).isRequired,
     }).loose,
     meetingPlanRoute: VueTypes.shape({

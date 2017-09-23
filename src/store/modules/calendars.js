@@ -8,6 +8,7 @@ import {
   SYNC_CALENDARS,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  RESET_CALENDARS,
 } from '@/store/actions';
 import { USER_UID, CALENDARS, SELECTED_CALENDARS } from '@/store/getters';
 
@@ -23,9 +24,7 @@ const mutations = {
   },
   [CLEAR_CALENDARS](state) {
     Object.keys(state).forEach(key => {
-      if (key !== '_subscription') {
-        Vue.delete(state, key);
-      }
+      Vue.delete(state, key);
     });
   },
 };
@@ -72,6 +71,9 @@ const actions = {
         type: SYNC_CALENDARS,
       });
     }
+  },
+  async [RESET_CALENDARS]({ commit }) {
+    commit(CLEAR_CALENDARS);
   },
 };
 

@@ -25,7 +25,7 @@ export default {
       if (session) {
         return Object.assign({}, session, {
           users: session.users.filter(
-            user => user.id !== this.$store.getters[USER_UID],
+            user => user.uid !== this.$store.getters[USER_UID],
           ),
         });
       }

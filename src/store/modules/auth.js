@@ -6,6 +6,9 @@ import {
   SIGN_OUT,
   START_PROGRESS_ITEM,
   FINISH_PROGRESS_ITEM,
+  RESET_PROFILE,
+  RESET_CALENDARS,
+  RESET_PLANNER,
 } from '@/store/actions';
 import { USER_UID, IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 
@@ -66,6 +69,9 @@ const actions = {
     });
 
     Auth.logout();
+    dispatch(RESET_PROFILE);
+    dispatch(RESET_CALENDARS);
+    dispatch(RESET_PLANNER);
 
     commit(UPDATE_AUTH_STATE, {
       uid: null,
