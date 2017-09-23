@@ -1,5 +1,5 @@
 import Planner from '@/api/planner';
-import Events from '@/api/Events';
+import Events from '@/api/events';
 import {
   UPDATE_PLANNER_SESSION,
   UPDATE_PLANNER_EVENTS,
