@@ -58,4 +58,4 @@ deploy:
   - next
   - master
   script:
-  - yarn deploy-all -- --project $CI_ENVIRONMENT_SLUG --token "$FIREBASE_CI_TOKEN"
+  - yarn deploy-all --project $CI_ENVIRONMENT_SLUG --token "$FIREBASE_CI_TOKEN"
