@@ -79,7 +79,6 @@ $quart: cubic-bezier(0.77, 0, 0.175, 1);
 .tab-container {
   width: 100vw;
   max-height: 100vh;
-  overflow-y: scroll;
   overflow-x: hidden;
 }
 
@@ -87,11 +86,13 @@ $quart: cubic-bezier(0.77, 0, 0.175, 1);
   width: calc(100vw * var(--tab-count));
   display: flex;
   transition: transform 250ms $quart;
+  max-height: 100%;
 }
 
 .tab-container__tab {
   width: 100vw;
   overflow-x: hidden;
+  overflow-y: scroll;
   height: auto;
   display: block;
 }
