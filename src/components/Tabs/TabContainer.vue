@@ -27,7 +27,8 @@ import Vue from 'vue';
 // children from being positioned incorrectly due to the fact that fixed positioning
 // and transforms don't work together.
 
-const tick = () => new Promise(resolve => Vue.nextTick(resolve));
+const tick = () =>
+  new Promise(resolve => Vue.nextTick(() => requestAnimationFrame(resolve)));
 
 export default {
   props: {
