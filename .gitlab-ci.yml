@@ -16,7 +16,7 @@ after_script:
 
 cache:
   untracked: true
-  key: "$CI_PROJECT_ID/NODE_8"
+  key: "NODE_8-$CI_PROJECT_ID"
   paths:
   - .yarn-cache
 
