@@ -86,8 +86,7 @@ class OAuthManager {
     if (!isPast(expiry)) return;
 
     tokens = await a.callback(client.refreshAccessToken.bind(client));
-    console.log('tokens', tokens);
-    await a.list(
+    await Promise.all(
       toPairs(tokens).map(([key, value]) => tokensRef.child(key).set(value)),
     );
   }
