@@ -77,3 +77,8 @@ export const onUserDeleteCleanUp = functions.auth
       await actions.deleteUserData(event);
     }
   });
+
+export const deleteOldSessions = functions.https.onRequest(async (req, res) => {
+  await actions.deleteOldSessions();
+  res.status(200).send('OK');
+});

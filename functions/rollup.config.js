@@ -12,9 +12,12 @@ export default {
   entry: 'src/index.js',
   format: 'cjs',
   dest: 'index.js',
-  external: Object.keys(pkg.dependencies).filter(dep => dep !== 'awaiting'),
+  external: [
+    ...Object.keys(pkg.dependencies).filter(dep => dep !== 'awaiting'),
+    'assert',
+  ],
   plugins: [
-    resolve({ main: true }),
+    resolve({ main: true, preferBuiltins: true }),
     commonjs({
       include: 'node_modules/**',
     }),
