@@ -50,6 +50,11 @@ export async function deleteOldSessions() {
         console.log('-', `/users/${uid}/previous-sessions/${key}`);
       }
     }
+    const current = user['current-session'];
+    if (current && paths.includes(`/sessions/${current}`)) {
+      paths.push(`/users/${uid}/current-session`);
+      console.log('-', `/users/${uid}/current-session`);
+    }
   });
 
   await a.map(paths, CONCURRENT_CONNECTIONS, async path => {
