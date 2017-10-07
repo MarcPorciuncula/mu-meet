@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
-    "start": "node build/dev-server.js",
+    "start": "firebase serve --only hosting",
     "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
     "deploy-all": "firebase deploy",

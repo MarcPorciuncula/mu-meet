@@ -139,6 +139,7 @@ module.exports = {
               },
             },
           ],
+          fallback: 'vue-style-loader',
         }),
       },
       // Extract compiled scss into a single css file
@@ -162,6 +163,7 @@ module.exports = {
               },
             },
           ],
+          fallback: 'vue-style-loader',
         }),
       },
     ],
