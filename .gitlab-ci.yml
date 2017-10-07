@@ -21,7 +21,7 @@ cache:
   - .yarn-cache
 
 variables:
-  COMMIT_SHA: $CI_COMMIT_SHA
+  BUILD_ID: $CI_COMMIT_SHA
 
 build:
   stage: build
