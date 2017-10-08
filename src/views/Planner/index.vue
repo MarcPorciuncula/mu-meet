@@ -1,7 +1,7 @@
 <template>
   <scroll-snap ref="snap" :offset="56" :threshold="56">
     <tab-container
-      :tabs="[{ id: 'meetings' }, { id: 'team' }, { id: 'configure' }]"
+      :tabs="[{ id: 'meetings' }, { id: 'team' }, { id: 'parameters' }]"
       :active="active"
       style="height: calc(100vh - 112px)"
     >
@@ -11,12 +11,12 @@
       <div slot="team">
         <team :session="session" />
       </div>
-      <div slot="configure">
+      <div slot="parameters">
         <parameters :session="session" />
       </div>
     </tab-container>
     <hero-tab-bar
-      :tabs="[{ icon: 'event', id: 'meetings' }, { icon: 'people', id: 'team' }, { icon: 'tune', id: 'configure' }]"
+      :tabs="[{ icon: 'event', id: 'meetings' }, { icon: 'people', id: 'team' }, { icon: 'tune', id: 'parameters' }]"
       :active="active"
       @change="change($event)"
     />
