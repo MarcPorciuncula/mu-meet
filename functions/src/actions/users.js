@@ -1,4 +1,3 @@
-import a from 'awaiting';
 import * as admin from 'firebase-admin';
 import { fetchUserProfile } from '../lib/google-profile';
 import { fetchCalendars } from '../lib/google-calendar';
@@ -9,8 +8,9 @@ export async function fetchProfileIntoDatabase(event) {
   const database = admin.database();
   const client = await oauth.getClient(event.data.uid);
 
+  console.log('Fetch user profile for user', event.data.uid);
   const profile = await fetchUserProfile(event.data.uid, client);
-  await a.list(
+  await Promise.all(
     ['email', 'name', 'given_name', 'family_name', 'picture'].map(prop =>
       database
         .ref(`/users/${event.data.uid}/profile/${prop}`)
