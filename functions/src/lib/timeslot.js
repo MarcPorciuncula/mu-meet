@@ -207,12 +207,12 @@ export function getWeekdaysOverRange(
   { timezoneOffset = 0 }: { timezoneOffset: number /* minutes */ } = {},
 ) {
   return range
-    .subdivide(24 * 60, {
-      align: addMinutes(getStartOfDay(range.start), -timezoneOffset),
+    .subdivide(24 * 60 /* minutes */, {
+      align: addMinutes(getStartOfDay(range.start), timezoneOffset),
       includeBoundaries: true,
     })
     .filter(timeslot => {
-      return weekdays[getDay(addMinutes(timeslot.start, timezoneOffset))];
+      return weekdays[getDay(addMinutes(timeslot.start, -1 * timezoneOffset))];
     });
 }
 
