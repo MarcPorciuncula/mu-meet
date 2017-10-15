@@ -59,8 +59,8 @@ export default {
     },
   },
   watch: {
-    async active(prev, next) {
-      if (prev !== next) {
+    async active(next, prev) {
+      if (next !== prev) {
         this.animating = true;
         await tick();
         this.transitioning = true;
