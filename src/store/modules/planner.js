@@ -53,8 +53,10 @@ const mutations = {
 let subscriptions;
 
 const actions = {
-  async [SUBSCRIBE_PLANNER_SESSION]({ commit, dispatch, state, getters }) {
-    const id = await Planner.forUser(getters[USER_UID]);
+  async [SUBSCRIBE_PLANNER_SESSION](
+    { commit, dispatch, state, getters },
+    { id },
+  ) {
     if (id) {
       const session = await Planner.get(id);
       commit(UPDATE_PLANNER_SESSION, Object.assign(session, { id }));

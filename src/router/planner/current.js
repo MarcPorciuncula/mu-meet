@@ -17,7 +17,7 @@ async function beforeEnter(to, from, next) {
   ) {
     await store.dispatch(JOIN_PLANNER_SESSION, { id: to.params.code });
   }
-  await store.dispatch(SUBSCRIBE_PLANNER_SESSION);
+  await store.dispatch(SUBSCRIBE_PLANNER_SESSION, { id: to.params.code });
   await store.dispatch(FETCH_CALENDARS, { progress: false });
   next();
 }
