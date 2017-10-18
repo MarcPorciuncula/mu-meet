@@ -1,3 +1,4 @@
+import invariant from 'invariant';
 import Auth from '@/api/auth';
 import { UPDATE_AUTH_STATE } from '@/store/mutations';
 import {
@@ -18,7 +19,7 @@ const PENDING_SIGN_OUT = 'PENDING_SIGN_OUT';
 const PENDING_REFRESH = 'PENDING_REFRESH';
 
 const state = {
-  uid: null,
+  uid: null, // null for indeterminate, need to refresh to find out
   pending: PENDING_INITIAL_REFRESH,
 };
 
@@ -41,7 +42,12 @@ const actions = {
       pending: null,
     });
   },
-  async [SIGN_IN]({ commit, dispatch }) {
+  async [SIGN_IN]({ commit, dispatch, state }) {
+    invariant(
+      state.pending !== PENDING_SIGN_IN,
+      'Cannot sign in while another sign in is in progress.',
+    );
+
     // TODO reimplement granular progress
     commit(UPDATE_AUTH_STATE, {
       pending: PENDING_SIGN_IN,
@@ -63,7 +69,12 @@ const actions = {
       dispatch(FINISH_PROGRESS_ITEM, { type: SIGN_IN });
     }
   },
-  async [SIGN_OUT]({ commit, dispatch }) {
+  async [SIGN_OUT]({ commit, dispatch, state }) {
+    invariant(
+      ![PENDING_SIGN_IN, PENDING_SIGN_OUT].includes(state.pending),
+      'Cannot sign out while a sign in or sign out is in progress',
+    );
+
     commit(UPDATE_AUTH_STATE, {
       pending: PENDING_SIGN_OUT,
     });
