@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       top: 0,
+      distance: 0,
     };
   },
   mounted() {
@@ -58,11 +59,16 @@ export default {
     center() {
       jump(this.$el, { offset: -this.offset, duration: 250 });
     },
+    computeDistance() {
+      this.distance = this.$el.getBoundingClientRect().top - this.offset;
+    },
   },
-  computed: {
-    distance() {
-      this.scrollY;
-      return this.$el.getBoundingClientRect().top - this.offset;
+  watch: {
+    scrollY() {
+      this.computeDistance();
+    },
+    offset() {
+      this.computeDistance();
     },
   },
   beforeDestroy() {
