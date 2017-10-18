@@ -1,8 +1,10 @@
+import invariant from 'invariant';
 import Planner from '@/api/planner';
 import Events from '@/api/events';
 import {
   UPDATE_PLANNER_SESSION,
   UPDATE_PLANNER_EVENTS,
+  UPDATE_PLANNER_PENDING_OPS,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_PLANNER_SESSION,
@@ -26,6 +28,10 @@ import {
 const state = {
   session: null,
   events: [],
+  pending: {
+    [CREATE_PLANNER_SESSION]: false,
+    [JOIN_PLANNER_SESSION]: false,
+  },
 };
 
 const mutations = {
@@ -38,6 +44,9 @@ const mutations = {
   },
   [UPDATE_PLANNER_EVENTS](state, events) {
     state.events = events;
+  },
+  [UPDATE_PLANNER_PENDING_OPS](state, patch) {
+    Object.assign(state.pending, patch);
   },
 };
 
@@ -91,29 +100,55 @@ const actions = {
     getters,
     dispatch,
   }) {
-    dispatch(START_PROGRESS_ITEM, {
-      type: CREATE_PLANNER_SESSION,
-      message: 'Creating meeting plan',
-    });
+    invariant(
+      !state.pending[CREATE_PLANNER_SESSION],
+      'Cannot create a planner session when already creating one',
+    );
+    invariant(
+      !state.pending[JOIN_PLANNER_SESSION],
+      'Cannot create a planner session when already joining one.',
+    );
+    commit(UPDATE_PLANNER_PENDING_OPS, { [CREATE_PLANNER_SESSION]: true });
 
-    await Planner.create();
+    try {
+      dispatch(START_PROGRESS_ITEM, {
+        type: CREATE_PLANNER_SESSION,
+        message: 'Creating meeting plan',
+      });
 
-    dispatch(FINISH_PROGRESS_ITEM, {
-      type: CREATE_PLANNER_SESSION,
-    });
+      await Planner.create();
+    } finally {
+      commit(UPDATE_PLANNER_PENDING_OPS, { [CREATE_PLANNER_SESSION]: false });
+      dispatch(FINISH_PROGRESS_ITEM, {
+        type: CREATE_PLANNER_SESSION,
+      });
+    }
   },
-  async [JOIN_PLANNER_SESSION]({ state, getters, dispatch }, { id }) {
-    dispatch(START_PROGRESS_ITEM, {
-      type: JOIN_PLANNER_SESSION,
-      message: 'Joining meeting plan ' + id,
-    });
+  async [JOIN_PLANNER_SESSION]({ state, getters, commit, dispatch }, { id }) {
+    invariant(
+      !state.pending[JOIN_PLANNER_SESSION],
+      'Cannot join a planner session when already joining one.',
+    );
+    invariant(
+      !state.pending[CREATE_PLANNER_SESSION],
+      'Cannot join a planner session when creating one.',
+    );
+    commit(UPDATE_PLANNER_PENDING_OPS, { [JOIN_PLANNER_SESSION]: true });
 
-    const uid = getters[USER_UID];
-    await Planner.join({ id, uid });
+    try {
+      dispatch(START_PROGRESS_ITEM, {
+        type: JOIN_PLANNER_SESSION,
+        message: 'Joining meeting plan ' + id,
+      });
 
-    dispatch(FINISH_PROGRESS_ITEM, {
-      type: JOIN_PLANNER_SESSION,
-    });
+      const uid = getters[USER_UID];
+      await Planner.join({ id, uid });
+    } finally {
+      commit(UPDATE_PLANNER_PENDING_OPS, { [JOIN_PLANNER_SESSION]: false });
+      dispatch(FINISH_PROGRESS_ITEM, {
+        type: JOIN_PLANNER_SESSION,
+      });
+    }
   },
   async [ARCHIVE_PLANNER_SESSION]({ state, getters }) {
     const id = state.session.id;

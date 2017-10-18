@@ -10,6 +10,7 @@ export const UPDATE_CALENDARS_PENDING_OPS =
 // planner
 export const UPDATE_PLANNER_SESSION = 'planner/UPDATE_PLANNER_SESSION';
 export const UPDATE_PLANNER_EVENTS = 'planner/UPDATE_PLANNER_EVENTS';
+export const UPDATE_PLANNER_PENDING_OPS = 'planner/UPDATE_PLANNER_PENDING_OPS';
 
 // profile
 export const UPDATE_PROFILE = 'profile/UPDATE_PROFILE';
