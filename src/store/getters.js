@@ -6,6 +6,7 @@ export const SIGN_IN_PENDING = 'auth/SIGN_IN_PENDING';
 // calendars
 export const CALENDARS = 'calendars/CALENDARS';
 export const SELECTED_CALENDARS = 'calendars/SELECTED_CALENDARS';
+export const CALENDARS_PENDING_OPS = 'calendars/PENDING_OPS';
 
 // planner
 export const IS_IN_PLANNER_SESSION = 'planner/IS_IN_PLANNER_SESSION';

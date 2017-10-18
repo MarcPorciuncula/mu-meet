@@ -4,6 +4,8 @@ export const UPDATE_AUTH_STATE = 'auth/UPDATE_STATE';
 // calendars
 export const UPDATE_CALENDAR = 'calendars/UPDATE_CALENDAR';
 export const CLEAR_CALENDARS = 'calendars/CLEAR_CALENDARS';
+export const UPDATE_CALENDARS_PENDING_OPS =
+  'calendars/UPDATE_CALENDARS_PENGING_OPS';
 
 // planner
 export const UPDATE_PLANNER_SESSION = 'planner/UPDATE_PLANNER_SESSION';

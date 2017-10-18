@@ -1,7 +1,12 @@
 import Vue from 'vue';
+import invariant from 'invariant';
 import { omit, pickBy, prop } from 'ramda';
 import Calendars from '@/api/calendars';
-import { UPDATE_CALENDAR, CLEAR_CALENDARS } from '@/store/mutations';
+import {
+  UPDATE_CALENDAR,
+  CLEAR_CALENDARS,
+  UPDATE_CALENDARS_PENDING_OPS,
+} from '@/store/mutations';
 import {
   FETCH_CALENDARS,
   ENABLE_DISABLE_CALENDAR,
@@ -10,22 +15,33 @@ import {
   FINISH_PROGRESS_ITEM,
   RESET_CALENDARS,
 } from '@/store/actions';
-import { USER_UID, CALENDARS, SELECTED_CALENDARS } from '@/store/getters';
+import {
+  USER_UID,
+  CALENDARS,
+  SELECTED_CALENDARS,
+  CALENDARS_PENDING_OPS,
+} from '@/store/getters';
 
-const state = {};
+const state = {
+  value: {},
+  pending: {
+    [SYNC_CALENDARS]: false,
+  },
+};
 
 const mutations = {
   [UPDATE_CALENDAR](state, calendar) {
     if (!state[calendar.id]) {
-      Vue.set(state, calendar.id, calendar);
+      Vue.set(state.value, calendar.id, calendar);
     } else {
-      Object.assign(state[calendar.id], omit(['id'], calendar));
+      Object.assign(state.value[calendar.id], omit(['id'], calendar));
     }
   },
   [CLEAR_CALENDARS](state) {
-    Object.keys(state).forEach(key => {
-      Vue.delete(state, key);
-    });
+    state.value = {};
+  },
+  [UPDATE_CALENDARS_PENDING_OPS](state, patch) {
+    Object.assign(state.pending, patch);
   },
 };
 
@@ -58,7 +74,14 @@ const actions = {
       { selected: enabled },
     );
   },
-  async [SYNC_CALENDARS]({ dispatch, getters }) {
+  async [SYNC_CALENDARS]({ commit, dispatch, getters, state }) {
+    invariant(
+      !state.pending[SYNC_CALENDARS],
+      'Cannot sync calendars when a calendar sync is already in progress',
+    );
+
+    commit(UPDATE_CALENDARS_PENDING_OPS, { [SYNC_CALENDARS]: true });
+
     dispatch(START_PROGRESS_ITEM, {
       type: SYNC_CALENDARS,
       message: 'Syncing your calendars',
@@ -67,6 +90,7 @@ const actions = {
       await Calendars.sync(getters[USER_UID]);
       await dispatch(FETCH_CALENDARS, { progress: false });
     } finally {
+      commit(UPDATE_CALENDARS_PENDING_OPS, { [SYNC_CALENDARS]: false });
       dispatch(FINISH_PROGRESS_ITEM, {
         type: SYNC_CALENDARS,
       });
@@ -79,10 +103,13 @@ const actions = {
 
 const getters = {
   [CALENDARS](state, getters) {
-    return state;
+    return state.value;
   },
   [SELECTED_CALENDARS](state, getters) {
     return pickBy(prop('selected'), getters[CALENDARS]);
+  },
+  [CALENDARS_PENDING_OPS](state, getters) {
+    return state.pending;
   },
 };
 

@@ -117,7 +117,6 @@ export default {
   },
   computed: {
     config() {
-      console.log(this.session.config);
       return this.session.config;
     },
   },

@@ -44,7 +44,7 @@
       <mdc-list-group>
         <mdc-list-group-divider/>
         <mdc-list>
-          <mdc-list-item @click="sync()">
+          <mdc-list-item @click="sync()" :disabled="!canSync">
             <span slot="start-detail" class="material-icons">
               sync
             </span>
@@ -70,7 +70,12 @@ import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import MdcButton from '@/components/Material/Button';
 import CalendarDot from '@/components/CalendarDot';
 import dashboard from '@/router/user/dashboard';
-import { CALENDARS, SELECTED_CALENDARS, USER_PROFILE } from '@/store/getters';
+import {
+  CALENDARS,
+  SELECTED_CALENDARS,
+  USER_PROFILE,
+  CALENDARS_PENDING_OPS,
+} from '@/store/getters';
 import { ENABLE_DISABLE_CALENDAR, SYNC_CALENDARS } from '@/store/actions';
 
 export default {
@@ -87,17 +92,25 @@ export default {
     TypeText,
     CalendarDot,
   },
-  computed: mapGetters({
-    calendars: CALENDARS,
-    selectedCalendars: SELECTED_CALENDARS,
-    profile: USER_PROFILE,
-  }),
+  computed: {
+    ...mapGetters({
+      calendars: CALENDARS,
+      selectedCalendars: SELECTED_CALENDARS,
+      profile: USER_PROFILE,
+      pending: CALENDARS_PENDING_OPS,
+    }),
+    canSync() {
+      return !this.pending[SYNC_CALENDARS];
+    },
+  },
   methods: {
     updateCalendarSelected({ id, selected }) {
       this.$store.dispatch(ENABLE_DISABLE_CALENDAR, { id, enabled: selected });
     },
     sync() {
-      this.$store.dispatch(SYNC_CALENDARS);
+      if (this.canSync) {
+        this.$store.dispatch(SYNC_CALENDARS);
+      }
     },
     confirm() {
       this.$router.push(this.$route.query.callback || dashboard.path);
@@ -124,6 +137,10 @@ export default {
 
 .mdc-list-item__text {
   max-width: calc(100% - 10rem) !important;
+}
+
+.mdc-list-item[disabled] {
+  color: #BDBDBD;
 }
 
 .calendar-name {
