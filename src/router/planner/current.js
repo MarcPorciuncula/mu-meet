@@ -1,4 +1,3 @@
-const Planner = () => import('@/views/Planner');
 import store from '@/store';
 import PlannerAPI from '@/api/planner';
 import { USER_UID } from '@/store/getters';
@@ -7,6 +6,7 @@ import {
   SUBSCRIBE_PLANNER_SESSION,
   JOIN_PLANNER_SESSION,
 } from '@/store/actions';
+const Planner = () => import('@/views/Planner');
 
 async function beforeEnter(to, from, next) {
   if (
