@@ -117,4 +117,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.mdc-button {
+  --mdc-theme-primary: black;
+}
 </style>
