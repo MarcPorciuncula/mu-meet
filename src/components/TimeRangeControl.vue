@@ -74,7 +74,6 @@ import {
   ListGroupHeader as MdcListGroupHeader,
 } from '@/components/Material/List';
 import MdcSelect from '@/components/Material/Select';
-import MdcSelectItem from '@/components/Material/SelectItem';
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
 import Time from '@/util/Time';
 
@@ -88,7 +87,6 @@ export default {
     MdcListItem,
     MdcListGroupHeader,
     MdcSelect,
-    MdcSelectItem,
     TypeText,
     TypeContainer,
   },
@@ -150,12 +148,11 @@ export default {
 .field {
   display: flex;
   flex-direction: row;
-  align-items: flex-center;
+  align-items: center;
 }
 
 .mdc-select {
   margin: 0 0.3rem;
-  text-align: right;
   padding-left: 0.1rem;
   padding-right: 0.1rem;
 
