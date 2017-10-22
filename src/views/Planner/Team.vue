@@ -9,8 +9,14 @@
     </layout-container>
     <layout-container padding="min">
       <mdc-list-group>
-        <mdc-list two-line>
-          <mdc-list-item v-for="member of members" :key="member.id">
+        <mdc-list
+          two-line
+          class="team-members"
+        >
+          <mdc-list-item
+            v-for="member of members"
+            :key="member.id"
+          >
             <img slot="avatar" :src="member.picture"/>
             {{ member.name }}
             <span slot="secondary-text">
@@ -81,5 +87,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.team-members .mdc-list-item {
+  overflow: visible;
+}
 </style>
