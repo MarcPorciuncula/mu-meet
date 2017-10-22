@@ -124,7 +124,13 @@ export default {
       return { start, end };
     },
     update() {
-      for (const value of [THIS_WEEK, NEXT_WEEK, WEEK_AFTER, CUSTOM]) {
+      for (const value of [
+        LAST_WEEK,
+        THIS_WEEK,
+        NEXT_WEEK,
+        WEEK_AFTER,
+        CUSTOM,
+      ]) {
         const { start, end } = this.dates(value);
         if (isEqual(this.start, start) && isEqual(this.end, end)) {
           this.value = value;
