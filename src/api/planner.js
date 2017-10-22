@@ -176,4 +176,37 @@ export default {
     }
     return true;
   },
+  async setCurrent({ uid, id }: { uid: string, id: string | null }) {
+    const database = firebase.database();
+
+    const current = await database
+      .ref(`/users/${uid}/current-session`)
+      .once('value')
+      .then(s => s.val());
+
+    if (current === id) {
+      return;
+    }
+
+    if (current) {
+      await database.ref(`/users/${uid}/previous-sessions`).push(current);
+    }
+
+    if (id) {
+      const result = await database
+        .ref(`/users/${uid}/previous-sessions`)
+        .orderByValue()
+        .equalTo(id)
+        .once('value')
+        .then(s => s.val());
+
+      await Promise.all(
+        Object.keys(result).map(key =>
+          database.ref(`/users/${uid}/previous-sessions/${key}`).set(null),
+        ),
+      );
+    }
+
+    await database.ref(`/users/${uid}/current-session/`).set(id);
+  },
 };

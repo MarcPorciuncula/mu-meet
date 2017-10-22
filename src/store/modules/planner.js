@@ -70,6 +70,8 @@ const actions = {
       return;
     }
 
+    await Planner.setCurrent({ uid: getters[USER_UID], id });
+
     if (subscriptions) {
       for (let subscription of Object.values(subscriptions)) {
         subscription.unsubscribe();
