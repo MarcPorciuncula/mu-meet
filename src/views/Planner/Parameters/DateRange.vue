@@ -39,9 +39,10 @@ import {
 } from '@/components/Material/List';
 import MdcSelect from '@/components/Material/Select';
 
-const THIS_WEEK = 'THIS_WEEK';
-const NEXT_WEEK = 'NEXT_WEEK';
-const WEEK_AFTER = 'WEEK_AFTER';
+const LAST_WEEK = 'last-week';
+const THIS_WEEK = 'this-week';
+const NEXT_WEEK = 'next-week';
+const WEEK_AFTER = 'week-after';
 const CUSTOM = 'CUSTOM';
 
 export default {
@@ -58,6 +59,7 @@ export default {
   computed: {
     options() {
       const result = [
+        { value: LAST_WEEK, text: 'last week' },
         { value: THIS_WEEK, text: 'this week' },
         { value: NEXT_WEEK, text: 'next week' },
         { value: WEEK_AFTER, text: 'the week after' },
@@ -81,6 +83,9 @@ export default {
       let start = getStartOfWeek(new Date());
 
       switch (value) {
+        case LAST_WEEK:
+          start = addDays(start, -7);
+          break;
         case NEXT_WEEK:
           start = addDays(start, 7);
           break;
