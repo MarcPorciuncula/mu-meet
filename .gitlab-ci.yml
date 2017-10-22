@@ -1,7 +1,8 @@
-image: node:7
+image: node:8
 
 stages:
 - build
+- test
 - deploy
 
 before_script:
@@ -15,12 +16,12 @@ after_script:
 
 cache:
   untracked: true
-  key: "$CI_PROJECT_ID"
+  key: "NODE_8-$CI_PROJECT_ID"
   paths:
   - .yarn-cache
 
 variables:
-  COMMIT_SHA: $CI_COMMIT_SHA
+  BUILD_ID: $CI_COMMIT_SHA
 
 build:
   stage: build
@@ -43,6 +44,11 @@ build:
   - yarn build
   - cd functions && yarn build && cd ..
 
+test-functions:
+  stage: test
+  script:
+  - cd functions && yarn test && cd ..
+
 deploy:
   stage: deploy
   environment:
@@ -52,4 +58,4 @@ deploy:
   - next
   - master
   script:
-  - yarn deploy-all -- --project $CI_ENVIRONMENT_SLUG --token "$FIREBASE_CI_TOKEN"
+  - yarn deploy-all --project $CI_ENVIRONMENT_SLUG --token "$FIREBASE_CI_TOKEN"

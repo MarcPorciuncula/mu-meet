@@ -1,8 +1,8 @@
-const ProfileBadge = () => import('@/views/ProfileBadge');
 import RouterView from '@/router/RouterView';
 import dashboard from '@/router/user/dashboard';
 import newSession from './new';
 import currentSession from './current';
+const ProfileBadge = () => import('@/views/ProfileBadge');
 
 function beforeEnter(to, from, next) {
   if (to.name === 'planner-root') {

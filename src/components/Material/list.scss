@@ -2,8 +2,9 @@
 @import '@material/list/mdc-list';
 
 .mdc-list-item.mdc-ripple-upgraded {
-  // HACK when the list item is given a ripple, the list item is moved left and given padding, so the ripple bleeds over to the edge of the list, however it gives the list item the wrong width
-  width: calc(100% + 2 * #{$mdc-list-side-padding}) !important;
+  // HACK the global border-sizing breaks the sizing of the list items, so restore the
+  // original value
+  box-sizing: initial;
 }
 
 .mdc-list-group {
@@ -25,14 +26,14 @@
   }
 }
 
-.mdc-list--actionable .mdc-list-item {
+.mdc-list--actionable .mdc-list-item--ripple {
   cursor: pointer;
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
 }
 
-.mdc-list--multiline .mdc-list-item {
+.mdc-list--multiline > .mdc-list-item {
   height: auto;
   align-items: flex-start;
   padding-top: 0.75rem;

@@ -18,7 +18,6 @@
 
 <script>
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
-import MdcButton from '@/components/Material/Button';
 import LayoutContainer from '@/components/Layout/Container';
 import LayoutSection from '@/components/Layout/Section';
 
@@ -28,7 +27,6 @@ export default {
     TypeText,
     LayoutContainer,
     LayoutSection,
-    MdcButton,
   },
 };
 </script>

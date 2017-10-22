@@ -1,98 +1,99 @@
 <template>
-  <div class="mdc-select" role="listbox" tabindex="0">
-    <span class="mdc-select__selected-text">{{ value }}</span>
-    <mdc-menu class="mdc-select__menu">
-      <mdc-select-item
-        v-for="item in _items"
-        :key="item.value"
-        :id="item.value"
-        :aria-selected="item.value === value"
+  <div
+    :class="['mdc-select', {
+      'mdc-select--no-dropdown': !dropdown,
+    }]"
+    role="listbox"
+    tabindex="0"
+  >
+    <span class="mdc-select__selected-text">
+      {{ items.find(item => item.value === value).text || value }}
+    </span>
+    <mdc-menu class="mdc-select__menu" ref="menu">
+      <mdc-menu-item
+        v-if="prompt"
+        role="option"
+        id="prompt"
+        aria-disabled="true"
       >
-        {{ item.text }}
-      </mdc-select-item>
+        {{ prompt }}
+      </mdc-menu-item>
+      <mdc-menu-item
+        v-for="item in items"
+        class="mdc-list-item"
+        role="option"
+        :id="item.value.toString()"
+        :key="item.value"
+        tabindex="0"
+        :aria-disabled="item.disabled"
+      >
+        {{ item.text || item.value }}
+      </mdc-menu-item>
     </mdc-menu>
   </div>
 </template>
 
 <script>
-import VueTypes from 'vue-types';
+import { propEq } from 'ramda';
 import { MDCSelect } from '@material/select';
+import { MDCSimpleMenu } from '@material/menu';
 import MdcMenu from './Menu';
-import MdcSelectItem from './SelectItem';
-import MdcList from './List';
-import './select.scss';
+import MdcMenuItem from './MenuItem';
 
 export default {
+  props: {
+    value: {},
+    prompt: {},
+    items: {},
+    dropdown: { default: true },
+  },
   components: {
     MdcMenu,
-    MdcList,
-    MdcSelectItem,
-  },
-  props: {
-    items: VueTypes.arrayOf(
-      VueTypes.shape({
-        value: VueTypes.string.isRequired,
-        text: VueTypes.string,
-      }).isRequired,
-    ).isRequired,
-    value: {},
-  },
-  data() {
-    return {
-      last: null,
-    };
+    MdcMenuItem,
   },
   mounted() {
-    this.select = new MDCSelect(this.$el);
+    // The menu must be initialized before the select
+    MDCSimpleMenu.attachTo(this.$refs.menu.$el);
 
-    // Set initial value
+    this.select = MDCSelect.attachTo(this.$el);
+    // HACK for some reason on init MDCSelect renders the wrong font to
+    // measure dimensions force it to render again
+    this.select.foundation_.resize();
     this.update();
 
-    this.select.listen('MDCSelect:change', this.change.bind(this));
+    this.select.listen('MDCSelect:change', () => {
+      this.$emit('change', this.select.value);
+    });
   },
   watch: {
-    value(value) {
-      this.update();
-    },
-  },
-  computed: {
-    _items() {
-      return this.items.map(item => ({
-        text: item.text || item.value,
-        value: item.value,
-      }));
+    value(val) {
+      if (this.select.value !== val) {
+        this.update();
+      }
     },
   },
   methods: {
-    change() {
-      // Revert the change and emit an event so the parent can handle the value change
-      const item = this._items.find(item => item.value === this.select.value);
-      const value = item.value;
-      this.update();
-      // HACK This causes the event to be emitted again, which is why we bail when this value
-      // is the same as the last
-      if (value === this.value || value === this.last) {
-        return;
-      }
-      this.$emit('change', value);
-      this.last = value;
-    },
     update() {
-      this.select.foundation_.setSelectedIndex(
-        this._items.findIndex(item => item.value === this.value),
+      this.select.selectedIndex = this.items.findIndex(
+        propEq('value', this.value),
       );
     },
-  },
-  beforeDestroy() {
-    this.select.destroy();
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss">
+@import './mdc-variables';
+@import '@material/select/mdc-select';
+
 .mdc-select {
-  box-sizing: initial;
-  font-family: inherit;
-  display: inline-block;
+  font-family: "Open Sans", sans-serif !important;
+  // Revert the global box-sizing: border-box
+  box-sizing: content-box;
+  font-size: inherit;
+}
+
+.mdc-select--no-dropdown {
+  background-image: none;
 }
 </style>

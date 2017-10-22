@@ -1,3 +1,9 @@
+## 0.0.10 (Oct 22, 2017)
+* A new tabbed layout for the meeting planner screen.
+* Add a Pride Codes bar!
+* Streamlined picking a date range, just choose this week, next week etc.
+* Fix the minute picker
+
 ## 0.0.9 (Aug 8, 2017)
 * Disable the minute picker in time range control as meeting time finder does not yet take minutes into account.
 * Fix issue where minute picker in time range control throws an error.

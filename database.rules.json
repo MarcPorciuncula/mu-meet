@@ -2,6 +2,7 @@
   "rules": {
     "sessions": {
       "$id": {
+        ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
         "config": {
           ".write": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()",
           ".read": "root.child('sessions/'+$id+'/users/'+auth.uid).exists()"

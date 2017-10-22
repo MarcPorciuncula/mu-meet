@@ -1,19 +1,7 @@
-import LiveQuery from '@/util/subscriptions/FirebaseLiveQuery';
-import invariant from 'invariant';
-import { omit } from 'ramda';
-import { UPDATE_PROFILE, UPDATE_PROFILE_SUBSCRIPTION } from '@/store/mutations';
-import {
-  SUBSCRIBE_USER_PROFILE,
-  UNSUBSCRIBE_USER_PROFILE,
-} from '@/store/actions';
-import {
-  USER_PROFILE,
-  USER_UID,
-  IS_SUBSCRIBED_USER_PROFILE,
-} from '@/store/getters';
-import firebase from '@/firebase';
-
-const database = firebase.database();
+import Profile from '@/api/profile';
+import { UPDATE_PROFILE } from '@/store/mutations';
+import { FETCH_USER_PROFILE, RESET_PROFILE } from '@/store/actions';
+import { USER_PROFILE, USER_UID } from '@/store/getters';
 
 const state = {
   email: null,
@@ -21,67 +9,33 @@ const state = {
   family_name: null,
   given_name: null,
   picture: null,
-  _subscription: null,
 };
 
 const mutations = {
   [UPDATE_PROFILE](state, data) {
     Object.assign(state, data);
   },
-  [UPDATE_PROFILE_SUBSCRIPTION](state, subscription) {
-    state._subscription = subscription;
-  },
 };
 
 const actions = {
-  [SUBSCRIBE_USER_PROFILE]({ commit, getters }) {
-    invariant(
-      !state._subscription,
-      'attempted to subscribe to calendars but already subscribed',
-    );
-
-    const user = database.ref(`/users/${getters[USER_UID]}`);
-    const subscription = new LiveQuery.Leaf(user.child('profile'));
-    const unsubscribe = subscription.subscribe({
-      next: value => commit(UPDATE_PROFILE, value),
-      error: console.error.bind(console),
-      complete: () => {},
-    });
-
-    commit(UPDATE_PROFILE_SUBSCRIPTION, { unsubscribe });
-
-    return new Promise((resolve, reject) => {
-      const unsubscribe = subscription.subscribe({
-        next: () => {
-          resolve();
-          unsubscribe();
-        },
-        error: reject,
-        complete: () => {},
-      });
-    });
+  async [FETCH_USER_PROFILE]({ commit, getters }) {
+    const profile = await Profile.get(getters[USER_UID]);
+    commit(UPDATE_PROFILE, profile);
   },
-  async [UNSUBSCRIBE_USER_PROFILE]({ commit, getters, state }) {
-    if (getters[IS_SUBSCRIBED_USER_PROFILE]) {
-      state._subscription.unsubscribe();
-      commit(UPDATE_PROFILE_SUBSCRIPTION, null);
-      commit(UPDATE_PROFILE, {
-        email: null,
-        name: null,
-        family_name: null,
-        given_name: null,
-        picture: null,
-      });
-    }
+  async [RESET_PROFILE]({ commit }) {
+    commit(UPDATE_PROFILE, {
+      email: null,
+      name: null,
+      family_name: null,
+      given_name: null,
+      picture: null,
+    });
   },
 };
 
 const getters = {
   [USER_PROFILE](state) {
-    return omit(['_subscription'], state);
-  },
-  [IS_SUBSCRIBED_USER_PROFILE](state) {
-    return !!state._subscription;
+    return state;
   },
 };
 

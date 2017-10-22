@@ -40,6 +40,7 @@
         </type-text>
       </type-container>
     </layout-container> -->
+    <a href="https://pride.codes" rel="noopener" target="_blank"><div class="pride-bar"></div></a>
     <layout-section padding="less">
       <layout-container padding="less">
         <type-container>
@@ -69,6 +70,15 @@ export default {
     LayoutSection,
     TypeContainer,
     TypeText,
+  },
+  created() {
+    if (!document.querySelector('[data-pride-codes-stylesheet]')) {
+      const el = document.createElement('link');
+      el.setAttribute('rel', 'stylesheet');
+      el.setAttribute('href', 'https://cdn.pride.codes/css/bar_helpers.css');
+      el.setAttribute('data-pride-codes-stylesheet', '');
+      document.head.appendChild(el);
+    }
   },
   computed: {
     build() {

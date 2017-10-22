@@ -191,6 +191,7 @@ export default {
 
 .get-started {
   background-color: #2196F3;
+  --mdc-theme-primary: #2196F3;
   color: white;
 }
 </style>

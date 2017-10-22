@@ -2,6 +2,7 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
+    "dev": "firebase serve --only functions",
     "build": "rollup -c",
     "deploy": "firebase deploy --only functions",
     "test": "cross-env NODE_ENV=test ava src/**/*.test.js",
@@ -32,14 +33,15 @@
     "babel-register": "^6.24.1",
     "babelrc-rollup": "^3.0.0",
     "cross-env": "^5.0.0",
-    "firebase-tools": "^3.6.1",
-    "flow-bin": "^0.47.0",
+    "firebase-tools": "^3.13.1",
+    "flow-bin": "^0.51.1",
     "prettier": "^1.5.3",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-json": "^2.1.1",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-watch": "^4.3.1"
   },
   "ava": {
     "require": [

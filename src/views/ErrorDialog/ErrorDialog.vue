@@ -20,31 +20,10 @@
 </template>
 
 <script>
+import uncaught from 'uncaught';
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
 import LayoutSection from '@/components/Layout/Section';
 import LayoutContainer from '@/components/Layout/Container';
-import Observable from '@/util/subscriptions/Observable';
-
-const data = {
-  error: null,
-};
-const observable = new Observable();
-
-window.addEventListener('click', event => {
-  observable.next(event);
-});
-
-window.onunhandledrejection = event => {
-  data.error = event.reason;
-  console.error('Unhandled promise rejection\n', event.reason);
-};
-
-window.addEventListener('error', event => {
-  data.error = event;
-});
-
-// TODO handle synchronous errors properly
-// TODO intercept console.error???
 
 export default {
   components: {
@@ -54,18 +33,22 @@ export default {
     LayoutContainer,
   },
   data() {
-    return data;
+    return {
+      error: null,
+    };
   },
   created() {
-    observable.subscribe({
-      next: event => {
-        if (!this.$el.contains(event.target) && this.error) {
-          this.error = null;
-        }
-      },
-      error: console.error.bind(console),
-      complete: () => {},
-    });
+    uncaught.start();
+    uncaught.addListener(this.handleError);
+  },
+  methods: {
+    handleError(err) {
+      console.error(err);
+      this.error = err;
+    },
+  },
+  beforeDestroy() {
+    uncaught.removeListener(this.handleError);
   },
 };
 </script>

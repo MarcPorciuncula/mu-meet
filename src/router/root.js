@@ -8,12 +8,9 @@ export default {
   path: '/',
   components: {
     default: RouterView,
-    'header-bar-control': Object.assign(NamedRouterView, { name: 'header-bar-control' }),
+    'header-bar-control': Object.assign(NamedRouterView, {
+      name: 'header-bar-control',
+    }),
   },
-  children: [
-    landing,
-    auth,
-    user,
-    planner,
-  ],
+  children: [landing, auth, user, planner],
 };

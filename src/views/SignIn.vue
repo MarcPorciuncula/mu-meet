@@ -32,7 +32,7 @@ import LayoutSection from '@/components/Layout/Section';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 import dashboard from '@/router/user/dashboard';
 import { IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
-import { SIGN_IN } from '@/store/actions';
+import { SIGN_IN, FETCH_USER_PROFILE } from '@/store/actions';
 
 export default {
   components: {
@@ -49,6 +49,7 @@ export default {
   methods: {
     async signIn() {
       await this.$store.dispatch(SIGN_IN);
+      await this.$store.dispatch(FETCH_USER_PROFILE);
       // HACK wait for the profile to pop up in the corner, should coordinate this properly
       await new Promise(resolve => setTimeout(resolve, 2000));
       this.$router.push(this.$route.query.callback || { name: dashboard.name });

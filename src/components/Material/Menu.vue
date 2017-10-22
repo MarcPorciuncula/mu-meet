@@ -16,7 +16,7 @@ export default {
     MdcList,
   },
   mounted() {
-    this.menu = new MDCSimpleMenu(this.$el);
+    this.menu = MDCSimpleMenu.attachTo(this.$el);
   },
   data() {
     return {
