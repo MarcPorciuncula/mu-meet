@@ -1,5 +1,5 @@
 <template>
-  <layout-section padding="normal">
+  <layout-section padding="min">
     <layout-container padding="normal">
       <type-container>
         <type-text tag="h3" type="subheading1">

@@ -31,7 +31,7 @@ const state = {
 
 const mutations = {
   [UPDATE_CALENDAR](state, calendar) {
-    if (!state[calendar.id]) {
+    if (!state.value[calendar.id]) {
       Vue.set(state.value, calendar.id, calendar);
     } else {
       Object.assign(state.value[calendar.id], omit(['id'], calendar));
