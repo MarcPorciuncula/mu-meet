@@ -145,13 +145,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
-@media (max-width: 425px) {
-  .schedule-view {
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
-    width: initial !important;
-  }
-}
-
 </style>
