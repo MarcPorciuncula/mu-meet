@@ -1,5 +1,11 @@
 <template>
-  <div class="mdc-select" role="listbox" tabindex="0">
+  <div
+    :class="['mdc-select', {
+      'mdc-select--no-dropdown': !dropdown,
+    }]"
+    role="listbox"
+    tabindex="0"
+  >
     <span class="mdc-select__selected-text">
       {{ items.find(item => item.value === value).text || value }}
     </span>
@@ -19,6 +25,7 @@
         :id="item.value.toString()"
         :key="item.value"
         tabindex="0"
+        :aria-disabled="item.disabled"
       >
         {{ item.text || item.value }}
       </mdc-menu-item>
@@ -38,6 +45,7 @@ export default {
     value: {},
     prompt: {},
     items: {},
+    dropdown: { default: true },
   },
   components: {
     MdcMenu,
@@ -48,6 +56,8 @@ export default {
     MDCSimpleMenu.attachTo(this.$refs.menu.$el);
 
     this.select = MDCSelect.attachTo(this.$el);
+    // HACK for some reason on init MDCSelect renders the wrong font to
+    // measure dimensions force it to render again
     this.select.foundation_.resize();
     this.update();
 
@@ -78,6 +88,12 @@ export default {
 
 .mdc-select {
   font-family: "Open Sans", sans-serif !important;
+  // Revert the global box-sizing: border-box
   box-sizing: content-box;
+  font-size: inherit;
+}
+
+.mdc-select--no-dropdown {
+  background-image: none;
 }
 </style>

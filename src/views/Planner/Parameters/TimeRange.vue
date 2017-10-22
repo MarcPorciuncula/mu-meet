@@ -1,64 +1,56 @@
 <template>
   <div>
-    <mdc-list-group-header v-show="expanded">
+    <mdc-list-group-header>
       Time Range
     </mdc-list-group-header>
-    <mdc-list :multiline="!expanded" actionable>
-      <mdc-list-item
-        @click="!expanded && (expanded = true)"
-      >
+    <mdc-list>
+      <mdc-list-item>
         <span slot="start-detail" class="material-icons">
           access_time
         </span>
-        <template v-if="expanded">
-          <div class="field">
-            <mdc-select
-              :items="hours"
-              :value="_start.getHour().toString()"
-              @change="change('start', 'hours', $event)"
-            />
-            <span>:</span>
-            <mdc-select
-              :items="minutes"
-              :value="_start.getMinute().toString()"
-              @change="change('start', 'minutes', $event)"
-            />
-            <mdc-select
-              :items="ampm"
-              :value="_start.getHalf()"
-              @change="change('start', 'ampm', $event)"
-            />
-          </div>
-        </template>
-        <template v-else>
-          Time Range
-          <span slot="secondary-text">
-            {{ _start.getHour() }}:{{ _start.getMinute() | padStart(2, '0') }} {{ _start.getHalf() }}
-            to
-            {{ _end.getHour() }}:{{ _end.getMinute() | padStart(2, '0') }} {{ _end.getHalf()}}
-          </span>
-        </template>
+        <div class="time-range-control__field">
+          <mdc-select
+            :items="hours"
+            :value="_start.getHour().toString()"
+            @change="change('start', 'hours', $event)"
+            :dropdown="false"
+          />
+          <span>:</span>
+          <mdc-select
+            :items="minutes"
+            :value="_start.getMinute().toString()"
+            @change="change('start', 'minutes', $event)"
+            :dropdown="false"
+          />
+          <mdc-select
+            :items="ampm"
+            :value="_start.getHalf()"
+            @change="change('start', 'ampm', $event)"
+            :dropdown="false"
+          />
+        </div>
       </mdc-list-item>
-      <mdc-list-item
-        v-show="expanded"
-      >
+      <mdc-list-item>
         <span slot="start-detail"></span>
-        <div class="field">
+        <div class="time-range-control__field">
           <mdc-select
             :items="hours"
             :value="_end.getHour().toString()"
             @change="change('end', 'hours', $event)"
+            :dropdown="false"
           />
           <span>:</span>
           <mdc-select
             :items="minutes"
             :value="_end.getMinute().toString()"
             @change="change('end', 'minutes', $event)"
+            :dropdown="false"
           />
           <mdc-select
             :items="ampm"
             :value="_end.getHalf()"
             @change="change('end', 'ampm', $event)"
+            :dropdown="false"
           />
         </div>
       </mdc-list-item>
@@ -89,11 +81,6 @@ export default {
     MdcSelect,
     TypeText,
     TypeContainer,
-  },
-  data() {
-    return {
-      expanded: false,
-    };
   },
   computed: {
     hours() {
@@ -145,20 +132,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.field {
+.time-range-control__field {
   display: flex;
   flex-direction: row;
   align-items: center;
+
+  margin-top: -0.25rem;
 }
 
 .mdc-select {
-  margin: 0 0.3rem;
+  margin: 0 0.25rem;
   padding-left: 0.1rem;
   padding-right: 0.1rem;
-
-  // disable the dropdown button
-  background-image: none;
-  font-size: inherit;
+  justify-content: flex-end;
 
   &:first-child {
     margin-left: 0;

@@ -31,7 +31,7 @@
             @start-change="change('searchFromHour', $event)"
             @end-change="change('searchToHour', $event)"
           />
-          <mdc-list-group-header>
+          <!-- <mdc-list-group-header>
             Active Days (not working)
           </mdc-list-group-header>
           <mdc-list multiline>
@@ -55,11 +55,11 @@
               </span>
               30 Minutes
             </mdc-list-item>
-          </mdc-list>
+          </mdc-list> -->
         </mdc-list-group>
       </layout-container>
     </layout-section>
-    <layout-section padding="normal">
+    <layout-section padding="none">
       <layout-container padding="min">
         <mdc-list-group>
           <mdc-list-group-divider />
@@ -88,14 +88,12 @@ import {
   ListGroupHeader as MdcListGroupHeader,
   ListGroupDivider as MdcListGroupDivider,
 } from '@/components/Material/List';
-import DateRangeControl from '@/components/DateRangeControl';
-import TimeRangeControl from '@/components/TimeRangeControl';
+import DateRangeControl from './DateRange';
+import TimeRangeControl from './TimeRange';
 import format from 'date-fns/format';
 import setHours from 'date-fns/set_hours';
 import setMinutes from 'date-fns/set_minutes';
 import { SET_PLANNER_CONFIG, ARCHIVE_PLANNER_SESSION } from '@/store/actions';
-import addSeconds from 'date-fns/add_seconds';
-import addDays from 'date-fns/add_days';
 import dashboardRoute from '@/router/user/dashboard';
 
 export default {
@@ -132,10 +130,6 @@ export default {
   },
   methods: {
     change(prop, value) {
-      // The date picker gives dates on 00:00:00, but we want the end date to be 23:59:59
-      if (prop === 'searchToDate') {
-        value = addSeconds(addDays(value, 1), -1);
-      }
       if (prop === 'searchFromHour' || prop === 'searchToHour') {
         value = value / 60;
       }

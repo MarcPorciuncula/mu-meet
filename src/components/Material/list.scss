@@ -26,14 +26,14 @@
   }
 }
 
-.mdc-list--actionable .mdc-list-item {
+.mdc-list--actionable .mdc-list-item--ripple {
   cursor: pointer;
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
 }
 
-.mdc-list--multiline .mdc-list-item {
+.mdc-list--multiline > .mdc-list-item {
   height: auto;
   align-items: flex-start;
   padding-top: 0.75rem;
