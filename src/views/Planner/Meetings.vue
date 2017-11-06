@@ -7,62 +7,63 @@
             Meeting Times
           </type-text>
           <type-text tag="p" type="headline" v-if="status === 'DONE'">
-            You have {{ session.result.meetings.length }} possible meeting times.
+            <span v-if="meetings.length">
+              You have {{ session.result.meetings.length }} possible meeting times.
+            </span>
+            <span v-else>
+              No meeting times found.
+            </span>
           </type-text>
         </type-container>
       </layout-container>
     </layout-section>
-    <layout-section v-if="status !== 'DONE'">
-      <div class="loader">
-        <type-container>
-          <type-text
-            tag="p"
-            type="body2"
-            v-for="message, key in ({ FETCH_SCHEDULES: 'Getting schedules', RESOLVE_TIMES: 'Resolving conflicts' })"
-            :key="key"
-            v-if="status === key"
-          >
-            {{ message }}...
-          </type-text>
-        </type-container>
-        <mdc-linear-progress
-        indeterminate
-        loading
-        class="loader__loading-bar"
-        />
-      </div>
-    </layout-section>
-    <template v-else>
-      <layout-section tag="div" padding="min" v-if="events">
-        <layout-container padding="less">
-          <schedule-view :events="events"/>
-          <type-container style="text-align: center">
-            <type-text tag="p" type="body2">
-              Only you can see your own calendar events.
-            </type-text>
-          </type-container>
-        </layout-container>
-      </layout-section>
-      <layout-container v-if="!status" padding="less" style="text-align: center">
-        <type-container>
-          <type-text tag="p" type="headline" style="color: grey">
-            No meeting times found yet.
+    <schedule-view
+      v-if="meetings.length"
+      :events="events"
+    />
+    <layout-section tag="div" padding="none" v-if="events">
+      <layout-container padding="less">
+        <type-container style="text-align: center">
+          <type-text tag="p" type="body2">
+            Only you can see your own calendar events.
           </type-text>
         </type-container>
       </layout-container>
+    </layout-section>
+    <layout-container padding="min">
       <mdc-list actionable :multiline="done && stale">
+        <template v-if="!meetings.length">
+          <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
+            <mdc-list-item ripple>
+              <span class="material-icons" slot="start-detail">
+                event_note
+              </span>
+              <span>
+                Select your calendars
+              </span>
+            </mdc-list-item>
+          </router-link>
+          <mdc-list-item ripple @click="$emit('change-tab', 'parameters')">
+            <span class="material-icons" slot="start-detail">
+              tune
+            </span>
+            <span>
+              Change parameters
+            </span>
+          </mdc-list-item>
+        </template>
         <mdc-list-item separator />
         <mdc-list-item ripple @click="search()">
           <span slot="start-detail" class="material-icons">
-            {{ stale && !status ? 'event' : 'update'}}
+            update
           </span>
-          {{ stale && !status ? 'Search for' : 'Update' }} meeting times
+          Update meeting times
           <span slot="secondary-text" v-if="done && stale">
             Parameters have changed since you last refreshed meeting times.
           </span>
         </mdc-list-item>
       </mdc-list>
-    </template>
+    </layout-container>
   </div>
 </template>
 
@@ -87,6 +88,7 @@ import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import parse from 'date-fns/parse';
 import { compose, map, defaultTo, path, sortBy, prop } from 'ramda';
 import { REQUEST_PLANNER_RESULT } from '@/store/actions';
+import calendarsRoute from '@/router/user/calendars';
 
 export default {
   components: {
@@ -156,6 +158,7 @@ export default {
       }
       return sortBy(prop('start'))([...this.meetings, ...this.calendarEvents]);
     },
+    calendarsRoute: () => calendarsRoute,
   },
   methods: {
     search() {
@@ -169,15 +172,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.loader__loading-bar {
-  width: 140px;
-}
-
-.loader {
-  min-height: calc(100vh - (56px * 4));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.schedule-view {
+  min-height: calc(100vh - (56px * 6.5));
 }
 </style>

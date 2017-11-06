@@ -80,14 +80,12 @@ export default {
 }
 
 .schedule-view_aside {
-  background-color: #EEEEEE;
   padding: 1rem 0;
   overflow-y: scroll;
 }
 
 .schedule-view_main {
   flex-grow: 1;
-  background-color: #FAFAFA;
   overflow: scroll;
 }
 </style>

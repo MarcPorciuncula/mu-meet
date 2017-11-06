@@ -23,7 +23,10 @@
 <script>
 import VueTypes from 'vue-types';
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
-import { List as MdcList, ListItem as MdcListItem } from '@/components/Material/List';
+import {
+  List as MdcList,
+  ListItem as MdcListItem,
+} from '@/components/Material/List';
 import CalendarDot from '@/components/CalendarDot';
 import Time from '@/util/Time';
 
@@ -35,8 +38,8 @@ export default {
         end: VueTypes.instanceOf(Time).isRequired,
         summary: VueTypes.string.isRequired,
         color: {} /* nullable string */,
-      }).isRequired
-    ).isRequired
+      }).isRequired,
+    ).isRequired,
   },
   components: {
     TypeText,
@@ -48,10 +51,15 @@ export default {
   filters: {
     padStart(value, n, fill) {
       return value.toString().padStart(n, fill);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
+.mdc-list-item {
+  border-left: solid 1px rgba(0, 0, 0, 0.12);
+  border-right: solid 1px rgba(0, 0, 0, 0.12);
+  background-color: #FAFAFA;
+}
 </style>

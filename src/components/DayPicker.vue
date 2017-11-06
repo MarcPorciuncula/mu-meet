@@ -85,7 +85,7 @@ export default {
 }
 
 .day-picker__day--active /deep/ .mdc-list-item__text {
-  border-left-color: #2196F3;
+  border-left-color: #000;
 }
 
 .secondary {
