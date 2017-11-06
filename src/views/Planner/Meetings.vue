@@ -6,41 +6,63 @@
           <type-text tag="h3" type="title">
             Meeting Times
           </type-text>
-          <type-text tag="p" type="headline" v-if="session.result.status === 'DONE'">
+          <type-text tag="p" type="headline" v-if="status === 'DONE'">
             You have {{ session.result.meetings.length }} possible meeting times.
           </type-text>
         </type-container>
       </layout-container>
     </layout-section>
-    <layout-section tag="div" padding="min" v-if="events">
-      <layout-container padding="less">
-        <schedule-view :events="events"/>
-        <type-container style="text-align: center">
-          <type-text tag="p" type="body2">
-            Only you can see your own calendar events.
+    <layout-section v-if="status !== 'DONE'">
+      <div class="loader">
+        <type-container>
+          <type-text
+            tag="p"
+            type="body2"
+            v-for="message, key in ({ FETCH_SCHEDULES: 'Getting schedules', RESOLVE_TIMES: 'Resolving conflicts' })"
+            :key="key"
+            v-if="status === key"
+          >
+            {{ message }}...
+          </type-text>
+        </type-container>
+        <mdc-linear-progress
+        indeterminate
+        loading
+        class="loader__loading-bar"
+        />
+      </div>
+    </layout-section>
+    <template v-else>
+      <layout-section tag="div" padding="min" v-if="events">
+        <layout-container padding="less">
+          <schedule-view :events="events"/>
+          <type-container style="text-align: center">
+            <type-text tag="p" type="body2">
+              Only you can see your own calendar events.
+            </type-text>
+          </type-container>
+        </layout-container>
+      </layout-section>
+      <layout-container v-if="!status" padding="less" style="text-align: center">
+        <type-container>
+          <type-text tag="p" type="headline" style="color: grey">
+            No meeting times found yet.
           </type-text>
         </type-container>
       </layout-container>
-    </layout-section>
-    <layout-container v-if="!status" padding="less" style="text-align: center">
-      <type-container>
-        <type-text tag="p" type="headline" style="color: grey">
-          No meeting times found yet.
-        </type-text>
-      </type-container>
-    </layout-container>
-    <mdc-list actionable :multiline="done && stale">
-      <mdc-list-item separator />
-      <mdc-list-item ripple @click="search()">
-        <span slot="start-detail" class="material-icons">
-          {{ stale && !status ? 'event' : 'update'}}
-        </span>
-        {{ stale && !status ? 'Search for' : 'Update' }} meeting times
-        <span slot="secondary-text" v-if="done && stale">
-          Parameters have changed since you last refreshed meeting times.
-        </span>
-      </mdc-list-item>
-    </mdc-list>
+      <mdc-list actionable :multiline="done && stale">
+        <mdc-list-item separator />
+        <mdc-list-item ripple @click="search()">
+          <span slot="start-detail" class="material-icons">
+            {{ stale && !status ? 'event' : 'update'}}
+          </span>
+          {{ stale && !status ? 'Search for' : 'Update' }} meeting times
+          <span slot="secondary-text" v-if="done && stale">
+            Parameters have changed since you last refreshed meeting times.
+          </span>
+        </mdc-list-item>
+      </mdc-list>
+    </template>
   </div>
 </template>
 
@@ -59,6 +81,7 @@ import {
   List as MdcList,
   ListItem as MdcListItem,
 } from '@/components/Material/List';
+import MdcLinearProgress from '@/components/Material/LinearProgress';
 import addSeconds from 'date-fns/add_seconds';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import parse from 'date-fns/parse';
@@ -74,6 +97,7 @@ export default {
     ScheduleView,
     MdcList,
     MdcListItem,
+    MdcLinearProgress,
   },
   computed: {
     ...mapGetters({
@@ -145,4 +169,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.loader__loading-bar {
+  width: 140px;
+}
+
+.loader {
+  min-height: calc(100vh - (56px * 4));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 </style>
