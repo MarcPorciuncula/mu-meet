@@ -4,8 +4,14 @@
       @change-tab="$emit('change-tab', $event)"
       @request-result="result()"
     />
-    <meetings-loading v-else-if="session.result.status !== 'DONE'" />
-    <meetings v-else />
+    <meetings-loading
+      v-else-if="session.result.status !== 'DONE'"
+      @change-tab="$emit('change-tab', $event)"
+    />
+    <meetings
+      v-else
+      @change-tab="$emit('change-tab', $event)"
+    />
 </div>
 </template>
 
