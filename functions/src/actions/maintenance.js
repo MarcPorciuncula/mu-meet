@@ -5,6 +5,7 @@ import addDays from 'date-fns/add_days';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';
 import a from 'awaiting';
 import { evolve } from 'ramda';
+import { fetchProfileIntoDatabase } from './users';
 
 const BATCH_SIZE = 20;
 const CONCURRENT_CONNECTIONS = 6;
@@ -66,6 +67,16 @@ export async function deleteOldSessions() {
   console.log('Maintenance [CLEAR_OLD_SESSIONS] successful.');
 }
 
+export async function refetchProfiles() {
+  const database = admin.database();
+
+  console.log('Beginning maintenance [REFETCH_PROFILES]');
+  await batchMapRef(database.ref(`/users`), BATCH_SIZE, (user, uid) =>
+    fetchProfileIntoDatabase({ data: { uid: uid } }),
+  );
+  console.log('Maintenance [REFETCH_PROFILES] successful.');
+}
+
 async function batchMapRef(ref, size, cb) {
   const result = [];
 
@@ -77,9 +88,9 @@ async function batchMapRef(ref, size, cb) {
   let keys = data ? Object.keys(data) : [];
 
   while (keys.length) {
-    for (const key of keys) {
-      result.push(await cb(data[key], key));
-    }
+    result.push(
+      ...(await Promise.all(keys.map(async key => cb(data[key], key)))),
+    );
     data = await ref
       .orderByKey()
       .startAt(keys[keys.length - 1])

@@ -113,6 +113,9 @@ export default {
         case WEEK_AFTER:
           start = addDays(start, 14);
           break;
+        case LAST_WEEK:
+          start = addDays(start, -7);
+          break;
         case CUSTOM:
           return { start: this.start, end: this.end };
         default:

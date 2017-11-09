@@ -1,6 +1,6 @@
 {
   "name": "mu-meet",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Find a meeting time based on your team's calendars",
   "author": "Marc Porciuncula <marcporciuncula@gmail.com>",
   "private": true,
@@ -21,6 +21,7 @@
     "@material/elevation": "^0.1.13",
     "@material/form-field": "^0.23.0",
     "@material/layout-grid": "^0.23.0",
+    "@material/linear-progress": "^0.24.0",
     "@material/list": "^0.23.0",
     "@material/menu": "^0.23.0",
     "@material/ripple": "^0.23.0",
@@ -102,9 +103,5 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"]
 }

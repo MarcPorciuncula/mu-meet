@@ -82,3 +82,8 @@ export const deleteOldSessions = functions.https.onRequest(async (req, res) => {
   await actions.deleteOldSessions();
   res.status(200).send('OK');
 });
+
+export const refetchProfiles = functions.https.onRequest(async (req, res) => {
+  await actions.refetchProfiles();
+  res.status(200).send('OK');
+});

@@ -81,6 +81,10 @@
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/@material/base/-/base-0.2.6.tgz#3003f3df2c06d172151d4160b8c8b2e6c65e7c01"
 
+"@material/base@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@material/base/-/base-0.24.0.tgz#888a61e5b6580e35a66384a9f8823091b4fe7c55"
+
 "@material/button@^0.23.0":
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/@material/button/-/button-0.23.0.tgz#6c5c24778292ab1f13f83ee94a2c8e026b04a2d3"
@@ -120,6 +124,14 @@
 "@material/layout-grid@^0.23.0":
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/@material/layout-grid/-/layout-grid-0.23.0.tgz#468b08eaae12f49e5053ca340eeca53b1866161e"
+
+"@material/linear-progress@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@material/linear-progress/-/linear-progress-0.24.0.tgz#1a8dda57e5ae5593970308c01ef68ab225f0380b"
+  dependencies:
+    "@material/animation" "^0.4.1"
+    "@material/base" "^0.24.0"
+    "@material/theme" "^0.24.0"
 
 "@material/list@^0.23.0":
   version "0.23.0"
@@ -179,6 +191,10 @@
     "@material/rtl" "^0.1.8"
     "@material/theme" "^0.4.0"
     "@material/typography" "^0.3.0"
+
+"@material/theme@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@material/theme/-/theme-0.24.0.tgz#fccc30a38c39f5d66912239fbac225684832baa2"
 
 "@material/theme@^0.4.0":
   version "0.4.0"
