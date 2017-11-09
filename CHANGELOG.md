@@ -1,3 +1,9 @@
+## 0.0.11 (Nov 9, 2017)
+* If the meeting finder can't find any meeting times, it now suggests changing parameters or checking you have the right calendars.
+* Fix a bug where the date range picker would show 'last week' for this week.
+* Add a new loading screen when MUmeet is finding meeting times so it's clearer that there's work being done.
+* Add a maintenance job for refreshing users' profiles.
+
 ## 0.0.10 (Oct 22, 2017)
 * A new tabbed layout for the meeting planner screen.
 * Add a Pride Codes bar!
