@@ -77,6 +77,7 @@ export default {
 $quart: cubic-bezier(0.77, 0, 0.175, 1);
 
 .tab-container {
+  position: relative;
   width: 100vw;
   max-height: 100vh;
   overflow-x: hidden;
@@ -90,6 +91,7 @@ $quart: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 .tab-container__tab {
+  position: relative;
   width: 100vw;
   overflow-x: hidden;
   overflow-y: scroll;

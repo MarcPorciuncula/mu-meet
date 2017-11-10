@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="planner-meetings">
     <layout-section padding="less">
       <layout-container>
         <type-container trim-bottom>
@@ -64,6 +64,7 @@
         </mdc-list-item>
       </mdc-list>
     </layout-container>
+    <pill-notification />
   </div>
 </template>
 
@@ -89,6 +90,7 @@ import parse from 'date-fns/parse';
 import { compose, map, defaultTo, path, sortBy, prop } from 'ramda';
 import { REQUEST_PLANNER_RESULT } from '@/store/actions';
 import calendarsRoute from '@/router/user/calendars';
+import PillNotification from '@/components/PillNotification';
 
 export default {
   components: {
@@ -100,6 +102,7 @@ export default {
     MdcList,
     MdcListItem,
     MdcLinearProgress,
+    PillNotification,
   },
   computed: {
     ...mapGetters({
