@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import * as functions from 'firebase-functions';
 import { compose } from 'compose-middleware';
 import bodyParser from 'body-parser';
@@ -83,7 +85,12 @@ export const deleteOldSessions = functions.https.onRequest(async (req, res) => {
   res.status(200).send('OK');
 });
 
-export const refetchProfiles = functions.https.onRequest(async (req, res) => {
+export const refetch_profiles = functions.https.onRequest(async (req, res) => {
   await actions.refetchProfiles();
+  res.status(200).send('OK');
+});
+
+export const validate_users = functions.https.onRequest(async (req, res) => {
+  await actions.validateUsers();
   res.status(200).send('OK');
 });

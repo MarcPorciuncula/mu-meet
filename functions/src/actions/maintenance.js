@@ -77,6 +77,20 @@ export async function refetchProfiles() {
   console.log('Maintenance [REFETCH_PROFILES] successful.');
 }
 
+export async function validateUsers() {
+  const database = admin.database();
+
+  console.log('Beginnning maintenance [VALIDATE_USERS]');
+  await batchMapRef(database.ref('/users'), BATCH_SIZE, (user, uid) => {
+    console.log('User', uid);
+    if (!user.profile) console.log('NO_PROFILE');
+    if (!user.tokens) console.log('NO_TOKENS');
+    if (user.tokens && !user.tokens.refresh_token)
+      console.log('NO_REFRESH_TOKEN');
+  });
+  console.log('Maintenance [VALIDATE_USERS] successful');
+}
+
 async function batchMapRef(ref, size, cb) {
   const result = [];
 
