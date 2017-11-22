@@ -52,6 +52,21 @@ export const find_meeting_times = functions.https.onRequest(
   compose([cors, validateFirebaseIdToken, middleware.findMeetingTimes]),
 );
 
+export const delete_old_sessions = functions.https.onRequest(async (req, res) => {
+  await actions.deleteOldSessions();
+  res.status(200).send('OK');
+});
+
+export const refetch_profiles = functions.https.onRequest(async (req, res) => {
+  await actions.refetchProfiles();
+  res.status(200).send('OK');
+});
+
+export const validate_users = functions.https.onRequest(async (req, res) => {
+  await actions.validateUsers();
+  res.status(200).send('OK');
+});
+
 export const invalidateSessionResultOnConfigChange = functions.database
   .ref('/sessions/{sessionId}/config')
   .onUpdate(actions.invalidateSessionResult);
@@ -78,18 +93,3 @@ export const onUserDeleteCleanUp = functions.auth
       await actions.deleteUserData(event);
     }
   });
-
-export const delete_old_sessions = functions.https.onRequest(async (req, res) => {
-  await actions.deleteOldSessions();
-  res.status(200).send('OK');
-});
-
-export const refetch_profiles = functions.https.onRequest(async (req, res) => {
-  await actions.refetchProfiles();
-  res.status(200).send('OK');
-});
-
-export const validate_users = functions.https.onRequest(async (req, res) => {
-  await actions.validateUsers();
-  res.status(200).send('OK');
-});
