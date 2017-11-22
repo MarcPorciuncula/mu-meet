@@ -2,26 +2,25 @@
 
 import * as functions from 'firebase-functions';
 import { compose } from 'compose-middleware';
-import bodyParser from 'body-parser';
 import * as middleware from './middleware';
 import * as actions from './actions';
 
-const { cors, validateFirebaseIdToken, withOAuth2Client } = middleware;
+const { cors, validateFirebaseIdToken, withOAuth2Client, json } = middleware;
 
-export const getGoogleOAuth2Authorization = functions.https.onRequest(
-  compose([cors, bodyParser.json(), middleware.getGoogleOAuth2Authorization]),
+export const get_google_oauth2_authorization = functions.https.onRequest(
+  compose([cors, json, middleware.getGoogleOAuth2Authorization]),
 );
 
-export const linkGoogleOAuthToFirebaseUser = functions.https.onRequest(
+export const link_google_oauth_to_firebase_user = functions.https.onRequest(
   compose([
     cors,
     middleware.validateFirebaseIdToken,
-    bodyParser.json(),
+    json,
     middleware.linkGoogleOAuthToFirebaseUser,
   ]),
 );
 
-export const getCalendars = functions.https.onRequest(
+export const get_calendars = functions.https.onRequest(
   compose([
     cors,
     validateFirebaseIdToken,
@@ -30,26 +29,26 @@ export const getCalendars = functions.https.onRequest(
   ]),
 );
 
-export const getEvents = functions.https.onRequest(
+export const get_events = functions.https.onRequest(
   compose([
     cors,
-    bodyParser.json(),
+    json,
     validateFirebaseIdToken,
     withOAuth2Client,
     middleware.getEvents,
   ]),
 );
 
-export const createSession = functions.https.onRequest(
+export const create_session = functions.https.onRequest(
   compose([
     cors,
-    bodyParser.json(),
+    json,
     validateFirebaseIdToken,
     middleware.createSession,
   ]),
 );
 
-export const findMeetingTimes = functions.https.onRequest(
+export const find_meeting_times = functions.https.onRequest(
   compose([cors, validateFirebaseIdToken, middleware.findMeetingTimes]),
 );
 
@@ -80,7 +79,7 @@ export const onUserDeleteCleanUp = functions.auth
     }
   });
 
-export const deleteOldSessions = functions.https.onRequest(async (req, res) => {
+export const delete_old_sessions = functions.https.onRequest(async (req, res) => {
   await actions.deleteOldSessions();
   res.status(200).send('OK');
 });
