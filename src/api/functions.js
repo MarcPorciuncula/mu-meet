@@ -25,9 +25,9 @@ export default {
   },
 };
 
-export const AUTHORIZE = 'getGoogleOAuth2Authorization';
-export const LINK_AUTH = 'linkGoogleOAuthToFirebaseUser';
-export const SYNC_CALENDARS = 'getCalendars';
-export const CREATE_PLANNER_SESSION = 'createSession';
-export const GENERATE_PLANNER_RESULT = 'findMeetingTimes';
-export const GET_EVENTS = 'getEvents';
+export const AUTHORIZE = 'get_google_oauth2_authorization';
+export const LINK_AUTH = 'link_google_oauth_to_firebase_user';
+export const SYNC_CALENDARS = 'get_calendars';
+export const CREATE_PLANNER_SESSION = 'create_session';
+export const GENERATE_PLANNER_RESULT = 'find_meeting_times';
+export const GET_EVENTS = 'get_events';
