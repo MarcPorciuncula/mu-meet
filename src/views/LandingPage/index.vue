@@ -39,15 +39,17 @@
           <div class="measure mv4-ns">
             <gifv
               preload
-              class="w-100 h-auto"
+              inner-class="w-100 h-auto"
               poster="/static/video/RonnyChiengClip_poster.jpg"
               width="1080"
               height="720"
               :sources="[{ src: '/static/video/RonnyChiengClip_compressed.mp4', type: 'video/mp4' }]"
             />
-            <span class="f7 gray">Ronny Chieng: International Student - ABC 2017</span>
+            <div class="tr">
+              <span class="f7 gray">Ronny Chieng: International Student - ABC, 2017</span>
+            </div>
             <blockquote class="ml0 pl3 lh-copy bl">
-              <p class="f5 mb0">Any other time is perfect, I promise, 5pm? No I can't do that.</p>
+              <p class="f5 mb0">Any other time is perfect, I promise. 5pm? No I can't do that.</p>
               <cite class="f6 fs-normal">- teammate</cite>
             </blockquote>
           </div>
