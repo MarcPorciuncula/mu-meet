@@ -41,7 +41,9 @@ export async function getOAuth2Client(uid) {
     if (err instanceof WaitForValueTimeoutError) {
       throw new GoogleOAuthError(
         GoogleOAuthError.codes.NO_CREDENTIALS_FOUND,
-        `Could not retrieve Google Credentials for user ${uid} within the time limit`,
+        `Could not retrieve Google Credentials for user ${
+          uid
+        } within the time limit`,
       );
     }
     throw err;
@@ -118,7 +120,7 @@ function waitForValue(ref, { timeout = 5e3 } = {}) {
       if (value === null) return;
       resolve(value);
       clearTimeout(timeoutHandle);
-      ref.off('value', handleSnapshot, handleError);
+      ref.off('value', handleSnapshot);
     };
     timeoutHandle = setTimeout(() => {
       reject(
@@ -126,7 +128,7 @@ function waitForValue(ref, { timeout = 5e3 } = {}) {
           'Timed out while watiting for value on ref ' + ref.toString(),
         ),
       );
-      ref.off('value', handleSnapshot, handleError);
+      ref.off('value', handleSnapshot);
     }, timeout);
     ref.on('value', handleSnapshot, handleError);
   });
