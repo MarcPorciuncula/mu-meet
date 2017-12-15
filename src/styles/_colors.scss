@@ -48,3 +48,19 @@ $white: #fff;
 @mixin bg-color($color, $weight) {
   @extend .bg-#{color}-#{weight};
 }
+
+.black {
+  color: $black;
+}
+
+.bg-black {
+  background-color: black;
+}
+
+.white {
+  color: $white;
+}
+
+.bg-white {
+  background-color: white;
+}

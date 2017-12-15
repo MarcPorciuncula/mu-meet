@@ -1,0 +1,47 @@
+@import 'tachyons-sass/scss/heights';
+
+.min-vh-75 {
+  min-height: 75vh;
+}
+.min-vh-80 {
+  min-height: 80vh;
+}
+.min-vh-90 {
+  min-height: 90vh;
+}
+
+@media #{$breakpoint-not-small} {
+  .min-vh-75-ns {
+    min-height: 75vh;
+  }
+  .min-vh-80-ns {
+    min-height: 80vh;
+  }
+  .min-vh-90-ns {
+    min-height: 90vh;
+  }
+}
+
+@media #{$breakpoint-medium} {
+  .min-vh-75-m {
+    min-height: 75vh;
+  }
+  .min-vh-80-m {
+    min-height: 80vh;
+  }
+  .min-vh-90-m {
+    min-height: 90vh;
+  }
+}
+
+@media #{$breakpoint-large} {
+  .min-vh-75-l {
+    min-height: 75vh;
+  }
+  .min-vh-80-l {
+    min-height: 80vh;
+  }
+  .min-vh-90-l {
+    min-height: 90vh;
+  }
+}

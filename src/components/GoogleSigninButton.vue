@@ -18,13 +18,16 @@ export default {};
   height: 46px;
   border: none;
   border-radius: 2px;
+  outline: none;
 
   &:focus {
     background: url("../assets/google_signin_buttons/btn_google_signin_light_focus_web.png");
+    outline: none;
   }
 
   &:active {
     background: url("../assets/google_signin_buttons/btn_google_signin_light_pressed_web.png");
+    outline: none;
   }
 
   &[disabled] {

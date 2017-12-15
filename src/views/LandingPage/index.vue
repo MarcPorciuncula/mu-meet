@@ -1,12 +1,11 @@
 <template>
   <div>
     <div class="splash min-vh-75 min-vh-100-ns pb1 flex flex-column items-center">
-      <div class="mw8 flex items-center justify-between ph3 pt2-ns w-100 h3">
-        <span class="f4 bb b--gray">MUmeet</span>
+      <HeaderBarInner>
         <router-link :to="{ name: 'signin' }">
-          <mdc-button compact>Sign In / Start</mdc-button>
+          <MdcButton compact>Sign In / Start</MdcButton>
         </router-link>
-      </div>
+      </HeaderBarInner>
       <div class="mw8 w-100 flex flex-column" style="flex-grow: 1">
         <div class="pa4 mt3 mw6-ns flex items-center ml5-l" style="flex-grow: 1">
           <div class="mb5">
@@ -17,7 +16,7 @@
               MUmeet finds meeting times based on your team's calendars.
             </p>
             <router-link :to="{ name: 'signin' }">
-              <mdc-button raised>Get started</mdc-button>
+              <MdcButton raised>Get started</MdcButton>
             </router-link>
           </div>
         </div>
@@ -72,7 +71,7 @@
           </p>
           <div class="tc">
             <router-link :to="{ name: 'signin' }">
-              <mdc-button raised>Find a time</mdc-button>
+              <MdcButton raised>Find a time</MdcButton>
             </router-link>
           </div>
         </div>
@@ -83,22 +82,21 @@
 
 <script>
 import MdcButton from '@/components/Material/Button';
+import HeaderBarInner from '@/views/HeaderBar/Inner';
 import Gifv from '@/components/Gifv';
 
 export default {
   components: {
     MdcButton,
     Gifv,
+    HeaderBarInner,
   },
 };
 </script>
 
 <style scoped lang="scss">
-.min-vh-75 {
-  min-height: 75vh;
-}
-
 .splash {
+  background-color: #D8DCDF;
   background: url('../../assets/eric-rothermel-23788-greyscale-1080.jpg') no-repeat center left;
   background-size: cover;
 }
