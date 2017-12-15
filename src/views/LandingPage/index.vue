@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="splash min-vh-75 min-vh-100-ns pb1 flex flex-column items-center">
-      <div class="mw8 flex items-center justify-between ph3 pt2 w-100 h3">
+      <div class="mw8 flex items-center justify-between ph3 pt2-ns w-100 h3">
         <span class="f4 bb b--gray">MUmeet</span>
         <router-link :to="{ name: 'signin' }">
           <mdc-button compact>Sign In / Start</mdc-button>
