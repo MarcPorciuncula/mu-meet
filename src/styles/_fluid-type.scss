@@ -1,0 +1,4 @@
+@mixin fluid-type($min-size, $max-size, $min-screen-size, $max-screen-size) {
+  // prettier-ignore
+  font-size: calc( #{$min-rem-size}px + (#{$max-rem-size} - #{$min-rem-size}) * (100vw - #{$min-screen-size}px) / (#{$max-screen-size} - #{$min-screen-size}) );
+}

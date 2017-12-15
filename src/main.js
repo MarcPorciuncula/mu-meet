@@ -4,8 +4,7 @@ import Vue from 'vue';
 import router from '@/router';
 import store from '@/store';
 import Wrapper from '@/views/Wrapper';
-import '@/index.scss';
-import 'tachyons/css/tachyons.min.css';
+import '@/styles/index.scss';
 
 Vue.config.productionTip = false;
 

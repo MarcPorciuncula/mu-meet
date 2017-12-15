@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="min-vh-100 relative sans bg-grey-100">
     <progress-bar class="header-bar">
       <header-bar v-show="!hideHeaderBar" :title="title" :show-title="title && !showTitle" :message="progressMessage">
         <router-view name="header-bar-control"></router-view>
@@ -96,12 +96,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.wrapper {
-  min-height: 100vh;
-  position: relative;
-  background-color: #F5F5F5;
-}
-
 .content {
   min-height: 70vh;
 }
