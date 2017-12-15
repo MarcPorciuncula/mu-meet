@@ -3,9 +3,9 @@
     <div class="splash min-vh-75 min-vh-100-ns pb1 flex flex-column items-center">
       <div class="mw8 flex items-center justify-between ph3 pt2 w-100 h3">
         <span class="f4 bb b--gray">MUmeet</span>
-        <a href="/signin">
+        <router-link :to="{ name: 'signin' }">
           <mdc-button compact>Sign In / Start</mdc-button>
-        </a>
+        </router-link>
       </div>
       <div class="mw8 w-100 flex flex-column" style="flex-grow: 1">
         <div class="pa4 mt3 mw6-ns flex items-center ml5-l" style="flex-grow: 1">
@@ -16,7 +16,9 @@
             <p class="f4 lh-copy measure">
               MUmeet finds meeting times based on your team's calendars.
             </p>
-            <mdc-button raised>Get started</mdc-button>
+            <router-link :to="{ name: 'signin' }">
+              <mdc-button raised>Get started</mdc-button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -69,7 +71,9 @@
             Round up your team and find a better meeting time, it's easy with MUmeet.
           </p>
           <div class="tc">
-            <mdc-button raised>Find a time</mdc-button>
+            <router-link :to="{ name: 'signin' }">
+              <mdc-button raised>Find a time</mdc-button>
+            </router-link>
           </div>
         </div>
       </div>

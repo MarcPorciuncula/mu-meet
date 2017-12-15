@@ -13,6 +13,7 @@ async function beforeEnter(to, from, next) {
 }
 
 export default {
+  name: 'signin',
   path: '/signin',
   components: {
     default: SignIn,
