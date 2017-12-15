@@ -23,7 +23,8 @@ $white: #fff;
       color: nth($weights, $i);
     }
 
-    .bg-#{$name}-#{nth($color-scale, $i)} {
+    .bg-#{$name}-#{nth($color-scale, $i)},
+    .bg-#{$name}-#{nth($color-scale, $i)}-hover:hover {
       background-color: nth($weights, $i);
     }
   }
@@ -35,7 +36,8 @@ $white: #fff;
       color: nth($weights, $i);
     }
 
-    .bg-#{$name}-a#{nth($color-scale, $i)} {
+    .bg-#{$name}-a#{nth($color-scale, $i)},
+    .bg-#{$name}-a#{nth($color-scale, $i)}-hover:hover {
       background-color: nth($weights, $i);
     }
   }
@@ -57,10 +59,17 @@ $white: #fff;
   background-color: black;
 }
 
+.bg-black-hover:hover {
+  background-color: black;
+}
+
 .white {
   color: $white;
 }
 
 .bg-white {
+  background-color: white;
+}
+.bg-white-hover:hover {
   background-color: white;
 }

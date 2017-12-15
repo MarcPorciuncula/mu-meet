@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="splash min-vh-75 min-vh-100-ns pb1 flex flex-column items-center">
-      <HeaderBarInner>
+      <HeaderBar>
         <router-link :to="{ name: 'signin' }">
           <MdcButton compact>Sign In / Start</MdcButton>
         </router-link>
-      </HeaderBarInner>
+      </HeaderBar>
       <div class="mw8 w-100 flex flex-column" style="flex-grow: 1">
         <div class="pa4 mt3 mw6-ns flex items-center ml5-l" style="flex-grow: 1">
           <div class="mb5">
@@ -82,14 +82,14 @@
 
 <script>
 import MdcButton from '@/components/Material/Button';
-import HeaderBarInner from '@/views/HeaderBar/Inner';
+import HeaderBar from '@/views/HeaderBar';
 import Gifv from '@/components/Gifv';
 
 export default {
   components: {
     MdcButton,
     Gifv,
-    HeaderBarInner,
+    HeaderBar,
   },
 };
 </script>

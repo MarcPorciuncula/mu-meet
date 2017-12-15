@@ -32,6 +32,30 @@
 @import './colors';
 @import 'tachyons-sass/scss/media-queries';
 
+@mixin tachyons-responsive($selector) {
+  .#{$selector} {
+    @content;
+  }
+
+  @media #{$breakpoint-not-small} {
+    .#{$selector}-ns {
+      @content;
+    }
+  }
+
+  @media #{$breakpoint-medium} {
+    .#{$selector}-m {
+      @content;
+    }
+  }
+
+  @media #{$breakpoint-large} {
+    .#{$selector}-l {
+      @content;
+    }
+  }
+}
+
 //  Debugging
 @import 'tachyons-sass/scss/debug-children';
 @import 'tachyons-sass/scss/debug-grid';
@@ -77,7 +101,8 @@
 @import 'tachyons-sass/scss/rotations';
 // @import 'tachyons-sass/scss/skins';
 // @import 'tachyons-sass/scss/skins-pseudo';
-@import 'tachyons-sass/scss/spacing';
+// @import 'tachyons-sass/scss/spacing';
+@import './spacing';
 @import 'tachyons-sass/scss/negative-margins';
 @import 'tachyons-sass/scss/tables';
 @import 'tachyons-sass/scss/text-decoration';
@@ -88,8 +113,10 @@
 @import 'tachyons-sass/scss/utilities';
 @import 'tachyons-sass/scss/visibility';
 @import 'tachyons-sass/scss/white-space';
-@import 'tachyons-sass/scss/vertical-align';
-// @import 'tachyons-sass/scss/hovers';
+// @import 'tachyons-sass/scss/vertical-align';
+@import 'tachyons-sass/scss/hovers';
 @import 'tachyons-sass/scss/z-index';
 @import 'tachyons-sass/scss/nested';
 @import 'tachyons-sass/scss/styles';
+
+@import 'elevation';
