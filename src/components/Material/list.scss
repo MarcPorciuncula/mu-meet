@@ -21,9 +21,13 @@
     border-top: 1px solid rgba(0, 0, 0, 0.12);
   }
 
-  .mdc-list-item:last-child {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  .mdc-list-item:first-child {
+    border-top: none;
   }
+
+  // .mdc-list-item:last-child {
+  //   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  // }
 }
 
 .mdc-list--actionable .mdc-list-item--ripple {

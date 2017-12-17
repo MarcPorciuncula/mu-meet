@@ -15,7 +15,6 @@ $mdc-typography-font-weight-values: (
     black: 900
   )
   !default;
-
 /* TODO(sgomes): Figure out what to do about desktop font sizes. */
 /* TODO(sgomes): Figure out what to do about i18n and i18n font sizes. */
 $mdc-typography-styles: (
@@ -112,7 +111,7 @@ $mdc-typography-styles: (
       font-size: 0.875rem,
       line-height: 2.25rem,
       font-weight: map-get($mdc-typography-font-weight-values, medium),
-      letter-spacing: 0.04em,
+      letter-spacing: 0,
       margin: inherit,
       text-decoration: none,
       text-transform: uppercase

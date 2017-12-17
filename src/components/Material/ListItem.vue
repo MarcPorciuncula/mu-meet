@@ -77,9 +77,9 @@ export default {
 }
 
 .mdc-list-item--ripple {
-  @include mdc-ripple-base;
-  @include mdc-ripple-bg((pseudo: '::before', base-color: black));
-  @include mdc-ripple-fg((pseudo: '::after', base-color: black));
+  // @include mdc-ripple-base;
+  // @include mdc-ripple-bg((pseudo: '::before', base-color: black));
+  // @include mdc-ripple-fg((pseudo: '::after', base-color: black));
 
   overflow: hidden;
 }

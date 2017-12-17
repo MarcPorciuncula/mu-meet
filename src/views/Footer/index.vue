@@ -43,6 +43,7 @@ import LayoutSection from '@/components/Layout/Section';
 import { TypeContainer, TypeText } from '@/components/Material/Typography';
 
 export default {
+  name: 'Footer',
   components: {
     LayoutContainer,
     LayoutSection,

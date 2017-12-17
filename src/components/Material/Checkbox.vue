@@ -59,8 +59,4 @@ export default {
 
 <style lang="scss">
 @import '@material/checkbox/mdc-checkbox';
-
-.mdc-checkbox__background {
-  --mdc-theme-secondary: black;
-}
 </style>

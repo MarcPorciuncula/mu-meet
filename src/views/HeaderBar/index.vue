@@ -18,6 +18,7 @@
 import VueTypes from 'vue-types';
 
 export default {
+  name: 'HeaderBar',
   props: {
     logo: VueTypes.bool.def(true),
     linkto: {},

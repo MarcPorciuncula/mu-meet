@@ -2,7 +2,7 @@
   <div class="flex flex-column" style="flex-grow: 1">
     <HeaderBar :linkto="{ name: 'landing-page' }"/>
     <div class="flex flex-column items-center justify-center-ns pv1" style="flex-grow: 1">
-      <div class="bg-grey-50 mw6 mh3 mt4-ns ph3 ph4-ns pv2 ba br2 b--gray">
+      <div class="bg-grey-50 mw6 mh3 mt4-ns ph3 ph4-ns pv2 br2 elevate1">
         <h3 class="f3 fw3 lh-title">
           Sign in with Google to continue to MUmeet.
         </h3>
@@ -43,6 +43,7 @@ import { IS_SIGNED_IN, SIGN_IN_PENDING } from '@/store/getters';
 import { SIGN_IN } from '@/store/actions';
 
 export default {
+  name: 'SignIn',
   components: {
     GoogleSigninButton,
     HeaderBar,

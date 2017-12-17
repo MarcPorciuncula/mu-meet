@@ -1,5 +1,6 @@
 <template>
   <div class="mdc-simple-menu" tabindex="-1">
+    <slot name="main"></slot>
     <mdc-list class="mdc-simple-menu__items" role="menu" aria-hidden="true">
       <slot></slot>
     </mdc-list>
@@ -25,7 +26,17 @@ export default {
   },
   methods: {
     toggle() {
-      this.menu.open = !this.menu.open;
+      if (this.menu.open) {
+        this.menu.hide();
+      } else {
+        this.menu.show();
+      }
+    },
+    show() {
+      this.menu.show();
+    },
+    hide() {
+      this.menu.hide();
     },
   },
   beforeDestroy() {

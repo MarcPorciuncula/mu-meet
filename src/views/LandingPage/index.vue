@@ -86,6 +86,7 @@ import HeaderBar from '@/views/HeaderBar';
 import Gifv from '@/components/Gifv';
 
 export default {
+  name: 'LandingPage',
   components: {
     MdcButton,
     Gifv,

@@ -2,7 +2,6 @@ import RouterView from '@/router/RouterView';
 import dashboard from '@/router/user/dashboard';
 import newSession from './new';
 import currentSession from './current';
-const ProfileBadge = () => import('@/views/ProfileBadge');
 
 function beforeEnter(to, from, next) {
   if (to.name === 'planner-root') {
@@ -16,10 +15,7 @@ export default {
   name: 'planner-root',
   path: '/plan',
   meta: { requiresAuth: true },
-  components: {
-    default: RouterView,
-    'header-bar-control': ProfileBadge,
-  },
+  components: RouterView,
   beforeEnter,
   children: [newSession, currentSession],
 };

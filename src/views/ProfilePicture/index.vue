@@ -1,7 +1,9 @@
 <template>
   <div>
-    <div v-if="src === nophoto" class="w-100 h-100 flex items-center justify-center br-100 bg-blue-grey-800 white relative">
-      <span class="lh-title absolute">{{ user.profile.name[0] }}</span>
+    <div class="w-100 h-100 flex items-center justify-center br-100 bg-blue-grey-800 white relative">
+      <span v-if="user.profile && src === nophoto" class="lh-title absolute">
+        {{ user.profile.name[0] }}
+      </span>
       <img
         :src="src"
         :alt="alt"
@@ -15,6 +17,7 @@
 
 <script>
 export default {
+  name: 'ProfilePicture',
   props: {
     user: {},
   },
