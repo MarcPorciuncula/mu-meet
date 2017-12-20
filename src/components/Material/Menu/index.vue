@@ -1,23 +1,23 @@
 <template>
   <div class="mdc-simple-menu" tabindex="-1">
     <slot name="main"></slot>
-    <mdc-list class="mdc-simple-menu__items" role="menu" aria-hidden="true">
+    <MdcList class="mdc-simple-menu__items" role="menu" aria-hidden="true">
       <slot></slot>
-    </mdc-list>
+    </MdcList>
   </div>
 </template>
 
 <script>
 import { MDCSimpleMenu } from '@material/menu';
-import MdcList from './List';
-import './menu.scss';
+import MdcList from '@/components/Material/List';
 
 export default {
+  name: 'MdcMenu',
   components: {
     MdcList,
   },
   mounted() {
-    this.menu = MDCSimpleMenu.attachTo(this.$el);
+    this.menu = new MDCSimpleMenu(this.$el);
   },
   data() {
     return {
@@ -44,3 +44,8 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+@import '../mdc-variables';
+@import '@material/menu/mdc-menu';
+</style>

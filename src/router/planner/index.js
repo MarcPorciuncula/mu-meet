@@ -15,7 +15,7 @@ export default {
   name: 'planner-root',
   path: '/plan',
   meta: { requiresAuth: true },
-  components: RouterView,
+  component: RouterView,
   beforeEnter,
   children: [newSession, currentSession],
 };

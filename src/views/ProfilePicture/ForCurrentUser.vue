@@ -17,7 +17,7 @@
 import { mapGetters } from 'vuex';
 import ProfilePicture from '.';
 import MdcMenu from '@/components/Material/Menu';
-import MdcMenuItem from '@/components/Material/MenuItem';
+import MdcMenuItem from '@/components/Material/Menu/Item';
 import { USER_PROFILE, IS_SIGNED_IN } from '@/store/getters';
 import { FETCH_USER_PROFILE } from '@/store/actions';
 

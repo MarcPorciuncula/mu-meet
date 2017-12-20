@@ -38,12 +38,14 @@
         </h3>
         <div class="flex flex-wrap">
           <div class="meeting-card-outer">
-            <div class="pa3 bg-white bg-grey-100-hover br2 br--bottom pointer elevate1 elevate6-hover elevate-transition flex flex-column items-center justify-center meeting-card relative pt4 grey-800">
-              <span class="f1 db mvn2 material-icons">event</span><br/>
-              <span class="f5 lh-title b">
-                Start meeting plan
-              </span>
-            </div>
+            <router-link :to="{ name: 'meet-new-session' }">
+              <div class="pa3 bg-white bg-grey-100-hover br2 br--bottom pointer elevate1 elevate6-hover elevate-transition flex flex-column items-center justify-center meeting-card relative pt4 grey-800">
+                <span class="f1 db mvn2 material-icons">event</span><br/>
+                <span class="f5 lh-title b">
+                  Start meeting plan
+                </span>
+              </div>
+            </router-link>
           </div>
         </div>
       </div>

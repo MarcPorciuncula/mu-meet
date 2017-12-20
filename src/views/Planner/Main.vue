@@ -1,14 +1,14 @@
 <template>
   <div>
-    <guide v-if="!session.result.status"
+    <Guide v-if="!session.result.status"
       @change-tab="$emit('change-tab', $event)"
       @request-result="result()"
     />
-    <meetings-loading
+    <MeetingsLoading
       v-else-if="session.result.status !== 'DONE'"
       @change-tab="$emit('change-tab', $event)"
     />
-    <meetings
+    <Meetings
       v-else
       @change-tab="$emit('change-tab', $event)"
     />

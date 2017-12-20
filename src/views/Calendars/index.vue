@@ -11,7 +11,7 @@
         </p>
         <div class="mv2 grey-800">
           <router-link
-            :to="{ name: 'dashboard' }"
+            :to="{ path: $route.query.callback || '/my/dashboard' }"
             class="f5 lh-copy"
           >
             <span class="f4 material-icons" style="transform: translate(-5%, 25%)">
@@ -35,16 +35,14 @@
           >
             <MdcListItem
               v-for="calendar of calendars"
-              class=""
-              :text="formatCalendarName(calendar.summary)"
               :key="calendar.id"
-              truncate
             >
               <CalendarDot
-                slot="start-detail"
+                slot="graphic"
                 :color="calendar.backgroundColor"
               />
-              <div slot="end-detail">
+              {{ formatCalendarName(calendar.summary) }}
+              <div slot="meta">
                 <MdcCheckbox
                   :style="{
                     margin: '-0.5rem 0 0 -0.5rem',
@@ -138,7 +136,7 @@ import { mapGetters } from 'vuex';
 import HeaderBar from '@/views/HeaderBar';
 import ProfilePictureForCurrentUser from '@/views/ProfilePicture/ForCurrentUser';
 import MdcList from '@/components/Material/List';
-import MdcListItem from '@/components/Material/ListItem';
+import MdcListItem from '@/components/Material/List/Item';
 import MdcCheckbox from '@/components/Material/Checkbox';
 import MdcButton from '@/components/Material/Button';
 import CalendarDot from '@/components/CalendarDot';
@@ -205,5 +203,20 @@ export default {
   &:active {
     outline: initial;
   }
+}
+
+.mdc-list /deep/ .mdc-list-item__start-detail {
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.mdc-list /deep/ .mdc-list-item__text {
+  overflow-x: hidden;
+  margin-right: 16px;
+  white-space: nowrap;
+}
+
+.mdc-list /deep/ .mdc-list-item__end-detail {
+  flex-shrink: 0;
 }
 </style>
