@@ -81,11 +81,11 @@ export default {
 
 .schedule-view_aside {
   padding: 1rem 0;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .schedule-view_main {
   flex-grow: 1;
-  overflow: scroll;
+  overflow: auto;
 }
 </style>

@@ -10,9 +10,7 @@ async function beforeEnter(to, from, next) {
 export default {
   name: 'dashboard',
   path: 'dashboard',
-  components: {
-    default: Dashboard,
-  },
+  component: Dashboard,
   meta: { title: 'Dashboard' },
   beforeEnter,
 };

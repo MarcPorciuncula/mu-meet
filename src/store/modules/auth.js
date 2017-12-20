@@ -19,7 +19,7 @@ const PENDING_SIGN_OUT = 'PENDING_SIGN_OUT';
 const PENDING_REFRESH = 'PENDING_REFRESH';
 
 const state = {
-  uid: null, // null for indeterminate, need to refresh to find out
+  uid: null,
   pending: PENDING_INITIAL_REFRESH,
 };
 
@@ -44,7 +44,7 @@ const actions = {
   },
   async [SIGN_IN]({ commit, dispatch, state }) {
     invariant(
-      state.pending !== PENDING_SIGN_IN,
+      ![PENDING_SIGN_IN, PENDING_REFRESH].includes(state.pending),
       'Cannot sign in while another sign in is in progress.',
     );
 
@@ -102,7 +102,7 @@ const getters = {
     return !!getters[USER_UID];
   },
   [SIGN_IN_PENDING](state) {
-    return !!state.pending;
+    return state.pending;
   },
 };
 

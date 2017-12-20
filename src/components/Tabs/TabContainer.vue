@@ -92,7 +92,7 @@ $quart: cubic-bezier(0.77, 0, 0.175, 1);
 .tab-container__tab {
   width: 100vw;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overscroll-behavior: contain;
   height: auto;
   display: block;
 }

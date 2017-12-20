@@ -1,24 +1,22 @@
 <template>
   <div
-    :class="['mdc-select', {
-      'mdc-select--no-dropdown': !dropdown,
-    }]"
+    class="mdc-select"
     role="listbox"
     tabindex="0"
   >
-    <span class="mdc-select__selected-text">
-      {{ items.find(item => item.value === value).text || value }}
-    </span>
-    <mdc-menu class="mdc-select__menu" ref="menu">
-      <mdc-menu-item
-        v-if="prompt"
-        role="option"
-        id="prompt"
-        aria-disabled="true"
+    <div class="mdc-select__surface">
+      <div
+        :class="['mdc-select__label', {
+          'mdc-select__label--float-above': selectedIndex > -1
+        }]"
       >
-        {{ prompt }}
-      </mdc-menu-item>
-      <mdc-menu-item
+        {{ label }}
+      </div>
+      <div class="mdc-select__selected-text"></div>
+      <div class="mdc-select__bottom-line"></div>
+    </div>
+    <MdcMenu class="mdc-select__menu" ref="menu">
+      <MdcMenuItem
         v-for="item in items"
         class="mdc-list-item"
         role="option"
@@ -28,23 +26,28 @@
         :aria-disabled="item.disabled"
       >
         {{ item.text || item.value }}
-      </mdc-menu-item>
-    </mdc-menu>
+      </MdcMenuItem>
+    </MdcMenu>
   </div>
 </template>
 
 <script>
+import VueTypes from 'vue-types';
 import { propEq } from 'ramda';
 import { MDCSelect } from '@material/select';
-import { MDCSimpleMenu } from '@material/menu';
-import MdcMenu from './Menu';
-import MdcMenuItem from './MenuItem';
+import MdcMenu from '@/components/Material/Menu';
+import MdcMenuItem from '@/components/Material/Menu/Item';
 
 export default {
   props: {
-    value: {},
-    prompt: {},
-    items: {},
+    value: VueTypes.any,
+    label: VueTypes.string.isRequired,
+    items: VueTypes.arrayOf(
+      VueTypes.shape({
+        value: VueTypes.string,
+        text: VueTypes.string,
+      }),
+    ),
     dropdown: { default: true },
   },
   components: {
@@ -52,31 +55,23 @@ export default {
     MdcMenuItem,
   },
   mounted() {
-    // The menu must be initialized before the select
-    MDCSimpleMenu.attachTo(this.$refs.menu.$el);
-
-    this.select = MDCSelect.attachTo(this.$el);
-    // HACK for some reason on init MDCSelect renders the wrong font to
-    // measure dimensions force it to render again
-    this.select.foundation_.resize();
-    this.update();
+    this.select = new MDCSelect(this.$el);
+    this.select.selectedIndex = this.items.findIndex(
+      propEq('value', this.value),
+    );
 
     this.select.listen('MDCSelect:change', () => {
       this.$emit('change', this.select.value);
     });
   },
-  watch: {
-    value(val) {
-      if (this.select.value !== val) {
-        this.update();
-      }
+  computed: {
+    selectedIndex() {
+      return this.items.findIndex(propEq('value', this.value));
     },
   },
-  methods: {
-    update() {
-      this.select.selectedIndex = this.items.findIndex(
-        propEq('value', this.value),
-      );
+  watch: {
+    selectedIndex(index) {
+      this.select.selectedIndex = index;
     },
   },
 };
@@ -88,9 +83,6 @@ export default {
 
 .mdc-select {
   font-family: "Open Sans", sans-serif !important;
-  // Revert the global box-sizing: border-box
-  box-sizing: content-box;
-  font-size: inherit;
 }
 
 .mdc-select--no-dropdown {

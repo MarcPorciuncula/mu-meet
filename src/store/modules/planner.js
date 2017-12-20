@@ -162,10 +162,14 @@ const actions = {
 
     await Planner.archive({ uid, id });
   },
-  async [REQUEST_PLANNER_RESULT]({ dispatch, state }) {
+  async [REQUEST_PLANNER_RESULT]({ dispatch, commit, state }) {
     dispatch(START_PROGRESS_ITEM, {
       type: REQUEST_PLANNER_RESULT,
       message: 'Finding meeting times',
+    });
+
+    commit(UPDATE_PLANNER_SESSION, {
+      result: Object.assign({}, state.result, { status: 'FETCH_SCHEDULES' }),
     });
 
     await Planner.result(state.session.id);

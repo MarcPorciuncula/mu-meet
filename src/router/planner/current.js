@@ -25,9 +25,7 @@ async function beforeEnter(to, from, next) {
 export default {
   path: ':code',
   name: 'planner-current',
-  components: {
-    default: Planner,
-  },
+  component: Planner,
   beforeEnter: beforeEnter,
   meta: { title: 'Meeting Planner' },
 };
