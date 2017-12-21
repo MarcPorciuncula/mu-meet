@@ -72,7 +72,7 @@
                       </span>
                     </div>
                   </div>
-                  <div v-else>
+                  <div v-else class="pv2">
                     <span class="f3 fw6">Plan in progress</span>
                   </div>
                 </div>
