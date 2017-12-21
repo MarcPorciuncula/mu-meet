@@ -32,11 +32,14 @@ export class WaitForValueTimeoutError extends Error {}
 export async function getOAuth2Client(uid) {
   const database = admin.database();
 
-  const tokensRef = database.ref(`/users/${uid}/tokens`);
   let tokens;
   // It may take a while for the server to retrieve tokens and place them onto the user, we'll watch the ref until a value is present or it times out
   try {
-    tokens = await waitForValue(tokensRef);
+    await waitForValue(database.ref(`/users/${uid}/tokens/redirect_uri`));
+    tokens = await database
+      .ref(`/users/${uid}/tokens`)
+      .once('value')
+      .then(s => s.val());
   } catch (err) {
     if (err instanceof WaitForValueTimeoutError) {
       throw new GoogleOAuthError(
