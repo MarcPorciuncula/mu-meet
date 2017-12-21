@@ -78,6 +78,7 @@ export default {
 .day-picker__day /deep/ .mdc-list-item__text {
   border-left: 2px solid rgba(0, 0, 0, 0);
   padding-left: 0.5rem;
+  user-select: none;
 }
 
 .day-picker__day--active /deep/ .mdc-list-item__text {
