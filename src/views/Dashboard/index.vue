@@ -85,19 +85,23 @@
                     {{ session.startedAt | format('dddd Do MMM') }}
                   </span>
                   <br/>
-                  <span class="f6 lh-title grey-500">
+                  <span
+                    v-if="session.users.length > 1"
+                    class="f6 lh-title grey-500"
+                  >
                     With
+                    <br/>
                   </span>
-                  <br/>
                   <ul class="list pl0 mv0">
                     <li
                       v-for="user in session.users"
+                      v-if="user.uid !== uid"
                       class="f6 lh-copy"
                     >
                       {{ user.name }}
                     </li>
                   </ul>
-                  <span class="f7 lh-title mono grey-400">
+                  <span class="f7 lh-title mono grey-500">
                     {{ session.id }}
                   </span>
                 </div>
@@ -114,7 +118,7 @@
 import { mapGetters } from 'vuex';
 import HeaderBar from '@/views/HeaderBar';
 import ProfilePictureForCurrentUser from '@/views/ProfilePicture/ForCurrentUser';
-import { USER_PROFILE, PLANNER_SESSIONS } from '@/store/getters';
+import { USER_PROFILE, PLANNER_SESSIONS, USER_UID } from '@/store/getters';
 import format from 'date-fns/format';
 
 export default {
@@ -126,6 +130,7 @@ export default {
   computed: mapGetters({
     profile: USER_PROFILE,
     sessions: PLANNER_SESSIONS,
+    uid: USER_UID,
   }),
   filters: {
     format,

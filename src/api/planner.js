@@ -162,7 +162,7 @@ export default {
     for (const session of sessions) {
       session.users = await Promise.all(
         Object.keys(session.users).map(async uid =>
-          Object.assign(Profile.get(uid), { uid }),
+          Object.assign(await Profile.get(uid), { uid }),
         ),
       );
     }
