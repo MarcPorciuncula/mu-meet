@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="w-100 h-100 flex items-center justify-center br-100 bg-blue-grey-800 white relative">
-      <span v-if="user.profile && src === nophoto" class="lh-title absolute">
+      <span v-if="user.profile.picture && src === nophoto" class="lh-title absolute">
         {{ user.profile.name[0] }}
       </span>
       <img
-        :src="src"
+        :src="src || nophoto"
         :alt="alt"
         width="100"
         height="100"
