@@ -32,18 +32,75 @@
       </div>
     </div>
     <div class="flex flex-column items-center mtn6 mb4">
-      <div class="mw8 w-100 ph3">
-        <h3 class="f6 fw5 grey-600 lh-title">
+      <div class="mw8 w-100">
+        <h3 class="f6 fw5 grey-600 lh-title ph3">
           Recent plans
         </h3>
-        <div class="flex flex-wrap">
-          <div class="meeting-card-outer">
+        <div class="flex flex-wrap ph2">
+          <div class="meeting-card-outer pa2">
             <router-link :to="{ name: 'meet-new-session' }">
-              <div class="pa3 bg-white bg-grey-100-hover br2 br--bottom pointer elevate1 elevate6-hover elevate-transition flex flex-column items-center justify-center meeting-card relative pt4 grey-800">
+              <div
+                class="pa3 bg-white bg-grey-100-hover br2 br--bottom pointer elevate1 elevate6-hover elevate-transition flex flex-column items-center justify-center meeting-card relative pt4 grey-800"
+              >
                 <span class="f1 db mvn2 material-icons">event</span><br/>
                 <span class="f5 lh-title b">
                   Start meeting plan
                 </span>
+              </div>
+            </router-link>
+          </div>
+
+          <div
+            class="meeting-card-outer pa2"
+            v-for="session of sessions"
+          >
+            <router-link :to="{ name: 'planner-current', params: { code: session.id } }">
+              <div class="pa3 bg-white bg-grey-100-hover br2 br--bottom pointer elevate1 elevate6-hover elevate-transition flex flex-column justify-between meeting-card relative grey-800">
+                <div>
+                  <div
+                    v-if="session.result.status === 'DONE'"
+                    class="flex items-center"
+                  >
+                    <div>
+                      <span class="f1 lh-title fw6">
+                        {{ session.result.meetings.length }}
+                      </span>
+                    </div>
+                    <div class="f5 lh-title ml2" style="transform: translateY(3%)">
+                      <span>
+                        meeting<br/> times
+                      </span>
+                    </div>
+                  </div>
+                  <div v-else>
+                    <span class="f3 fw6">Plan in progress</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="f6 lh-title grey-500">
+                    Planned on
+                  </span>
+                  <br/>
+                  <span class="f6 lh-title">
+                    {{ session.startedAt | format('dddd Do MMM') }}
+                  </span>
+                  <br/>
+                  <span class="f6 lh-title grey-500">
+                    With
+                  </span>
+                  <br/>
+                  <ul class="list pl0 mv0">
+                    <li
+                      v-for="user in session.users"
+                      class="f6 lh-copy"
+                    >
+                      {{ user.name }}
+                    </li>
+                  </ul>
+                  <span class="f7 lh-title mono grey-400">
+                    {{ session.id }}
+                  </span>
+                </div>
               </div>
             </router-link>
           </div>
@@ -57,7 +114,8 @@
 import { mapGetters } from 'vuex';
 import HeaderBar from '@/views/HeaderBar';
 import ProfilePictureForCurrentUser from '@/views/ProfilePicture/ForCurrentUser';
-import { USER_PROFILE } from '@/store/getters';
+import { USER_PROFILE, PLANNER_SESSIONS } from '@/store/getters';
+import format from 'date-fns/format';
 
 export default {
   name: 'Dashboard',
@@ -67,7 +125,11 @@ export default {
   },
   computed: mapGetters({
     profile: USER_PROFILE,
+    sessions: PLANNER_SESSIONS,
   }),
+  filters: {
+    format,
+  },
 };
 </script>
 

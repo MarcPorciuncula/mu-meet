@@ -12,6 +12,7 @@ export const CALENDARS_PENDING_OPS = 'calendars/PENDING_OPS';
 export const IS_IN_PLANNER_SESSION = 'planner/IS_IN_PLANNER_SESSION';
 export const CURRENT_PLANNER_SESSION = 'planner/CURRENT_PLANNER_SESSION';
 export const CURRENT_PLANNER_EVENTS = 'planner/CURRENT_PLANNER_EVENTS';
+export const PLANNER_SESSIONS = 'planner/PLANNER_SESSIONS';
 
 // profile
 export const USER_PROFILE = 'profile/USER_PROFILE';

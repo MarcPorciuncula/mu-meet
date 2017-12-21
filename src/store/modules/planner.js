@@ -5,6 +5,7 @@ import {
   UPDATE_PLANNER_SESSION,
   UPDATE_PLANNER_EVENTS,
   UPDATE_PLANNER_PENDING_OPS,
+  UPDATE_PLANNER_SESSIONS,
 } from '@/store/mutations';
 import {
   SUBSCRIBE_PLANNER_SESSION,
@@ -17,16 +18,19 @@ import {
   FINISH_PROGRESS_ITEM,
   FETCH_PLANNER_EVENTS,
   RESET_PLANNER,
+  FETCH_PLANNER_SESSIONS,
 } from '@/store/actions';
 import {
   USER_UID,
   IS_IN_PLANNER_SESSION,
   CURRENT_PLANNER_SESSION,
   CURRENT_PLANNER_EVENTS,
+  PLANNER_SESSIONS,
 } from '@/store/getters';
 
 const state = {
   session: null,
+  sessions: [],
   events: [],
   pending: {
     [CREATE_PLANNER_SESSION]: false,
@@ -48,6 +52,9 @@ const mutations = {
   [UPDATE_PLANNER_PENDING_OPS](state, patch) {
     Object.assign(state.pending, patch);
   },
+  [UPDATE_PLANNER_SESSIONS](state, sessions) {
+    state.sessions = sessions;
+  },
 };
 
 let subscriptions;
@@ -57,7 +64,10 @@ const actions = {
     { commit, dispatch, state, getters },
     { id } = {},
   ) {
-    id = id || (await Planner.forUser(getters[USER_UID]));
+    if (!id) {
+      const current = await Planner.currentForUser(getters[USER_UID]);
+      id = current && current.id;
+    }
 
     if (id) {
       const session = await Planner.get(id);
@@ -210,6 +220,11 @@ const actions = {
     }
     commit(UPDATE_PLANNER_EVENTS, []);
     commit(UPDATE_PLANNER_SESSION, null);
+    commit(UPDATE_PLANNER_SESSIONS, []);
+  },
+  async [FETCH_PLANNER_SESSIONS]({ commit, getters }) {
+    const sessions = await Planner.allForUser(getters[USER_UID]);
+    commit(UPDATE_PLANNER_SESSIONS, sessions);
   },
 };
 
@@ -222,6 +237,9 @@ const getters = {
   },
   [CURRENT_PLANNER_EVENTS](state) {
     return state.events;
+  },
+  [PLANNER_SESSIONS](state) {
+    return state.sessions;
   },
 };
 

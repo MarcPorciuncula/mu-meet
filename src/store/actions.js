@@ -19,6 +19,7 @@ export const REQUEST_PLANNER_RESULT = 'planner/REQUEST_PLANNER_RESULT';
 export const SET_PLANNER_CONFIG = 'planner/SET_PLANNER_CONFIG';
 export const FETCH_PLANNER_EVENTS = 'planner/FETCH_PLANNER_EVENTS';
 export const RESET_PLANNER = 'planner/RESET';
+export const FETCH_PLANNER_SESSIONS = 'planner/FETCH_PLANNER_SESSIONS';
 
 // profile
 export const FETCH_USER_PROFILE = 'profile/FETCH_USER_PROFILE';
