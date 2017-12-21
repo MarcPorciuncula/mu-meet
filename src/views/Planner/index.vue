@@ -52,25 +52,6 @@ import { CURRENT_PLANNER_SESSION } from '@/store/getters';
 import { RESET_PLANNER } from '@/store/actions';
 import debounce from 'lodash/debounce';
 
-// function onScroll(cb) {
-//   let ticking = false;
-//   let scrollY = 0;
-//
-//   const handler = () => {
-//     scrollY = window.scrollY;
-//     if (!ticking) {
-//       window.requestAnimationFrame(() => {
-//         cb(scrollY);
-//         ticking = false;
-//       });
-//     }
-//     ticking = true;
-//   };
-//
-//   document.addEventListener('scroll', handler);
-//   return () => document.removeEventListener('scroll', handler);
-// }
-
 export default {
   name: 'Planner',
   components: {
