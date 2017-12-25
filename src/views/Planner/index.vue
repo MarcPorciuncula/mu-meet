@@ -1,102 +1,81 @@
 <template>
-  <div
-    @touchstart="adjustTabsShift()"
-    @touchend="adjustTabsShift()"
-    @touchmove="adjustTabsShift()"
-  >
-    <HeaderBar class="bg-white">
+  <div>
+    <HeaderBar class="header-bar bg-black-o90 white" style="margin-bottom: 52px">
       <ProfilePictureForCurrentUser class="f5" style="width: 1.8rem; height: 1.8rem" />
     </HeaderBar>
-    <ScrollSnap ref="snap" :offset="64" :threshold="96">
-      <TabContainer
-        :tabs="[{ id: 'meetings' }, { id: 'team' }, { id: 'parameters' }]"
-        :active="active"
-        :style="`height: calc(100vh - 64px - 57px); padding-bottom: ${tabsShift * -1}px`"
-      >
-        <div slot="meetings">
-          <MainTab :session="session" @change-tab="change($event)" />
+    <SlideOut
+      :open="open"
+      @open="open = true"
+      @change-tab="tab = TABS[$event]"
+    >
+      <div class="mdc-theme--dark slide-out_inner pb3">
+        <div class="flex justify-between items-center ph3">
+          <h2 class="f4 lh-title fw4 mv0">
+            {{ tab.title }}
+          </h2>
+          <button
+            @click="open = false"
+            class="flex items-center justify-around bg-transparent lh-copy sans pa0 bn white w2 h2"
+          >
+            <span class="material-icons f4">
+              close
+            </span>
+          </button>
         </div>
-        <div slot="team">
-          <Team :session="session" />
-        </div>
-        <div slot="parameters">
-          <Parameters :session="session" />
-        </div>
-      </TabContainer>
-      <HeroTabBar
-        ref="tabs"
-        :tabs="[{ icon: 'event', id: 'meetings' }, { icon: 'people', id: 'team' }, { icon: 'tune', id: 'parameters' }]"
-        :active="active"
-        :style="{
-          transform: `translateY(${tabsShift}px)`,
-          transition: 'transform 100ms ease',
-        }"
-        @change="change($event)"
-      />
-    </ScrollSnap>
+        <Parameters
+          v-if="tab.id === TABS.SETTINGS.id"
+          :session="session"
+        />
+        <Team
+          v-if="tab.id === TABS.USERS.id"
+          :session="session"
+        />
+      </div>
+    </SlideOut>
+    <div>
+      <MainTab :session="session" @change-tab="(tab = TABS[$event], open = true)" />
+    </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import HeroTabBar from '@/components/Tabs/HeroTabBar';
-import ScrollSnap from '@/components/ScrollSnap';
-import TabContainer from '@/components/Tabs/TabContainer';
 import HeaderBar from '@/views/HeaderBar';
 import ProfilePictureForCurrentUser from '@/views/ProfilePicture/ForCurrentUser';
+import Toolbar from './Toolbar';
+import SlideOut from './SlideOut';
 import Main from './Main';
 import Team from './Team';
 import Parameters from './Parameters';
 import { CURRENT_PLANNER_SESSION } from '@/store/getters';
 import { RESET_PLANNER } from '@/store/actions';
-import debounce from 'lodash/debounce';
+
+const SETTINGS = { id: 'SETTINGS', title: 'Settings' };
+const USERS = { id: 'USERS', title: 'Team' };
+const TABS = { SETTINGS, USERS };
 
 export default {
   name: 'Planner',
   components: {
-    HeroTabBar,
-    TabContainer,
     MainTab: Main,
-    ScrollSnap,
     Team,
     Parameters,
     HeaderBar,
     ProfilePictureForCurrentUser,
+    Toolbar,
+    SlideOut,
   },
   data() {
     return {
-      active: 'meetings',
-      tabsShift: 0,
+      open: false,
+      tab: { id: 'SETTINGS', title: 'Settings' },
     };
   },
   computed: {
     ...mapGetters({
       session: CURRENT_PLANNER_SESSION,
     }),
-  },
-  mounted() {
-    setTimeout(this.$refs.snap.center, 250);
-
-    this.adjustTabsShift = debounce(this.adjustTabsShift, 150);
-    this.adjustTabsShift();
-  },
-  methods: {
-    change(id) {
-      this.active = id;
-    },
-    adjustTabsShift() {
-      Vue.nextTick(() => {
-        window.requestAnimationFrame(() => {
-          const rect = this.$refs.tabs.$el.getBoundingClientRect();
-          this.tabsShift = Math.min(
-            this.tabsShift + window.innerHeight - rect.bottom,
-            0,
-          );
-          console.log('adjust');
-        });
-      });
-    },
+    TABS: () => TABS,
   },
   beforeRouteLeave(to, from, next) {
     this.$store.dispatch(RESET_PLANNER);
@@ -106,5 +85,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.bg-black-o90 {
+  background-color: rgba(darken(#263238, 10%), 0.95);
+}
 
+.slide-out__inner {
+  overscroll-behaviour: contain;
+  overflow-y: auto;
+  max-height: 100%;
+}
 </style>

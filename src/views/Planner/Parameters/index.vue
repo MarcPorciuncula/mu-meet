@@ -1,10 +1,9 @@
 <template>
   <div>
-    <div class="bg-white flex flex-column items-center">
-      <div class="mw8 w-100 mt4-ns mb3 pa3 pb6">
-        <h2 class="f3 fw5 lh-title mt0">Change parameters</h2>
-        <p class="f5 lh-copy grey-600 measure-narrow">
-          At least 30 min
+    <div class="flex flex-column items-center">
+      <div class="mw8 w-100 mt4-ns ph3">
+        <p class="f5 lh-copy measure-narrow">
+          Currently searching for at least 30 min
           from {{ session.config.searchFromHour | formatHour }}
           to {{ session.config.searchToHour | formatHour }}
           on weekdays,
@@ -12,14 +11,14 @@
           to {{ session.config.searchToDate | format('ddd DD MMM') }}.
         </p>
       </div>
-    </div>
-    <div class="flex flex-column items-center mtn6 mb4">
-      <div class="mw6 w-100 pa3">
-        <h3 class="f6 fw5 grey-600 lh-title">
+      <div class="mw6 w-100 ph3">
+        <h3 class="f5 fw5 lh-title">
           Parameters
         </h3>
-        <div class="bg-white br2 br--bottom elevate1 mb3 pa3">
-          <h4 class="f6 lh-copy fw4 grey-700 mt0">
+        <div
+          v-if="uid === session.host"
+        >
+          <h4 class="f6 lh-copy fw4 mt0">
             Date range
           </h4>
           <DateRangeSelect
@@ -27,7 +26,7 @@
             :end="session.config.searchToDate"
             @change="changeDateRange($event)"
           />
-          <h4 class="f6 lh-copy fw4 grey-700">
+          <h4 class="f6 lh-copy fw4">
             Time range
           </h4>
           <TimeRangeSelect
@@ -36,12 +35,17 @@
             @change="changeTimeRange($event)"
           />
         </div>
-        <h3 class="f6 fw5 grey-600 lh-title">
-          Other options
+        <div v-else>
+          <p class="f6 lh-copy grey-600">
+            Meeting parameters are controlled by the host of the meeting plan, {{ session.users.find(u => u.uid === session.host).name }}.
+          </p>
+        </div>
+        <h3 class="f5 fw5 lh-title">
+          Other
         </h3>
         <div>
           <button
-            class="f5 bn bg-transparent di lh-copy sans pa0 action grey-900"
+            class="f6 bn bg-transparent di lh-copy sans pa0 action grey-300"
             @click="archive()"
           >
             <span class="f4 material-icons" style="transform: translate(-5%, 25%)">
@@ -56,7 +60,7 @@
           </p>
           <router-link
             :to="{ path: '/my/dashboard' }"
-            class="f5 lh-copy"
+            class="f6 lh-copy grey-300"
           >
             <span class="f4 material-icons" style="transform: translate(-5%, 25%)">
               chevron_left
@@ -72,12 +76,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import DateRangeSelect from './DateRangeSelect';
 import TimeRangeSelect from './TimeRangeSelect';
 import format from 'date-fns/format';
 import setHours from 'date-fns/set_hours';
 import setMinutes from 'date-fns/set_minutes';
 import { SET_PLANNER_CONFIG, ARCHIVE_PLANNER_SESSION } from '@/store/actions';
+import { USER_UID } from '@/store/getters';
 
 export default {
   name: 'PlannerParameters',
@@ -92,6 +98,9 @@ export default {
     config() {
       return this.session.config;
     },
+    ...mapGetters({
+      uid: USER_UID,
+    }),
   },
   methods: {
     changeDateRange({ start, end }) {

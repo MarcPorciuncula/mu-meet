@@ -1,19 +1,6 @@
 <template>
   <div>
-    <div class="bg-white flex flex-column items-center">
-      <div class="mw8 w-100 mt4-ns mb3 pa3 pb6">
-        <h2 class="f3 fw5 lh-title mt0">Find a time</h2>
-        <p class="f5 lh-copy grey-600 measure-narrow">
-          <span v-if="meetings.length">
-            You have {{ session.result.meetings.length }} possible meeting times.
-          </span>
-          <span v-else>
-            No meeting times found.
-          </span>
-        </p>
-      </div>
-    </div>
-    <div class="flex flex-column items-center mtn6 mb4">
+    <div class="flex flex-column items-center mb4">
       <div class="mw8 w-100 pa3">
         <h3 class="f6 fw5 grey-600 lh-title">
           Meeting times
