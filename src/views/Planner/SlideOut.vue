@@ -59,7 +59,7 @@ export default {
   height: 100%;
   transform: translateY(calc(-100% + 52px));
   transition: mdc-animation-enter(transform, 350ms);
-  background-color: rgba(darken(#263238, 10%), 0.95);
+  background-color: rgba(darken(#263238, 10%), 0.9);
   color: white;
   pointer-events: initial;
   overflow-y: scroll;

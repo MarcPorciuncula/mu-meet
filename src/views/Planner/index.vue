@@ -86,7 +86,7 @@ export default {
 
 <style scoped lang="scss">
 .bg-black-o90 {
-  background-color: rgba(darken(#263238, 10%), 0.95);
+  background-color: rgba(darken(#263238, 10%), 0.9);
 }
 
 .slide-out__inner {
