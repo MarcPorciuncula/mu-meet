@@ -3,7 +3,7 @@
     <main class="flex flex-column min-vh-90" style="flex-grow: 1">
       <router-view></router-view>
     </main>
-    <PageFooter/>
+    <router-view name="footer"></router-view>
     <ErrorDialog/>
   </div>
 </template>
