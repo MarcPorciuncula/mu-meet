@@ -1,4 +1,4 @@
-import RouterView, { NamedRouterView } from '@/router/RouterView';
+import RouterView from '@/router/RouterView';
 import landing from '@/router/landing';
 import auth from '@/router/auth';
 import user from '@/router/user';
@@ -8,9 +8,7 @@ export default {
   path: '/',
   components: {
     default: RouterView,
-    'header-bar-control': Object.assign(NamedRouterView, {
-      name: 'header-bar-control',
-    }),
+    footer: { render: h => h('router-view', { props: { name: 'footer' } }) },
   },
   children: [landing, auth, user, planner],
 };

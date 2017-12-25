@@ -9,13 +9,11 @@
 </template>
 
 <script>
-import PageFooter from '@/views/Footer';
 import ErrorDialog from '@/views/ErrorDialog';
 
 export default {
   name: 'Wrapper',
   components: {
-    PageFooter,
     ErrorDialog,
   },
 };
