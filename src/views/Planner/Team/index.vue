@@ -1,11 +1,6 @@
 <template>
   <div>
     <div class="flex flex-column items-center">
-      <div class="mw6 w-100 ph3">
-        <h3 class="f6 fw5 grey-300 lh-title">
-          Your team
-        </h3>
-      </div>
       <div class="mw6 w-100">
         <MdcListGroup>
           <MdcList two-line avatar-list>
