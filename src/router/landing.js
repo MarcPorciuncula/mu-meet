@@ -1,8 +1,11 @@
 const Landing = () => import('@/views/LandingPage');
-const HeaderBarControl = () => import('@/views/LandingPage/HeaderBarControl');
+const Footer = () => import('@/views/Footer');
 
 export default {
   name: 'landing-page',
   path: '',
-  components: { default: Landing, 'header-bar-control': HeaderBarControl },
+  components: { default: Landing, footer: Footer },
+  meta: {
+    hideHeaderBar: true,
+  },
 };

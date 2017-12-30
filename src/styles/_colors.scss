@@ -1,0 +1,79 @@
+$color-scale: 50 100 200 300 400 500 600 700 800 900;
+$colors: (
+  red: #ffebee #ffcdd2 #ef9a9a #e57373 #ef5350 #f44336 #e53935 #d32f2f #c62828 #b71c1c,
+  green: #e8f5e9 #c8e6c9 #a5d6a7 #81c784 #66bb6a #4caf50 #43a047 #388e3c #2e7d32
+    #1b5e20,
+  grey: #fafafa #f5f5f5 #eeeeee #e0e0e0 #bdbdbd #9e9e9e #757575 #616161 #424242 #212121,
+  blue-grey: #eceff1 #cfd8dc #b0bec5 #90a4ae #78909c #607d8b #546e7a #455a64 #37474f
+    #263238
+);
+
+$accent-scale: 100 200 400 700;
+$accents: (
+  red: #ff8a80 #ff5252 #ff1744 #d50000,
+  green: #b9f6ca #69f0ae #00e676 #00c853
+);
+
+$black: #000;
+$white: #fff;
+
+@each $name, $weights in $colors {
+  @for $i from 1 through length($color-scale) {
+    .#{$name}-#{nth($color-scale, $i)} {
+      color: nth($weights, $i);
+    }
+
+    .bg-#{$name}-#{nth($color-scale, $i)},
+    .bg-#{$name}-#{nth($color-scale, $i)}-hover:hover {
+      background-color: nth($weights, $i);
+    }
+  }
+}
+
+@each $name, $weights in $accents {
+  @for $i from 1 through length($accent-scale) {
+    .#{$name}-a#{nth($color-scale, $i)} {
+      color: nth($weights, $i);
+    }
+
+    .bg-#{$name}-a#{nth($color-scale, $i)},
+    .bg-#{$name}-a#{nth($color-scale, $i)}-hover:hover {
+      background-color: nth($weights, $i);
+    }
+  }
+}
+
+@mixin color($color, $weight) {
+  @extend .#{color}-#{weight};
+}
+
+@mixin bg-color($color, $weight) {
+  @extend .bg-#{color}-#{weight};
+}
+
+.black {
+  color: $black;
+}
+
+.bg-black {
+  background-color: black;
+}
+
+.bg-black-hover:hover {
+  background-color: black;
+}
+
+.white {
+  color: $white;
+}
+
+.bg-white {
+  background-color: white;
+}
+.bg-white-hover:hover {
+  background-color: white;
+}
+
+.bg-transparent {
+  background-color: transparent;
+}

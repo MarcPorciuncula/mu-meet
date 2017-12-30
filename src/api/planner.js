@@ -119,15 +119,73 @@ export default {
 
     await patch(session, data);
   },
-  async forUser(uid: string): Promise<Array<string>> {
+  async allForUser(uid: string): Promise<Array<Object>> {
     const database = firebase.database();
 
-    const current = await database
+    const sessions = [];
+
+    const previousIds = await database
+      .ref(`/users/${uid}/previous-sessions`)
+      .once('value')
+      .then(s => s.val());
+
+    if (previousIds) {
+      const previousSessions = await Promise.all(
+        Object.values(previousIds).map(id =>
+          database
+            .ref(`/sessions/${id}`)
+            .once('value')
+            .then(s => s.val()),
+        ),
+      );
+      previousSessions.forEach((session, i) => {
+        sessions.push(
+          Object.assign(session, { id: Object.values(previousIds)[i] }),
+        );
+      });
+    }
+
+    const currentId = await database
       .ref(`/users/${uid}/current-session`)
       .once('value')
       .then(s => s.val());
 
-    return current;
+    if (currentId) {
+      const currentSession = await database
+        .ref(`/sessions/${currentId}`)
+        .once('value')
+        .then(s => s.val());
+      sessions.push(Object.assign(currentSession, { id: currentId }));
+    }
+
+    // FIXME this is terrible horrible inefficient code please fix
+    for (const session of sessions) {
+      session.users = await Promise.all(
+        Object.keys(session.users).map(async uid =>
+          Object.assign(await Profile.get(uid), { uid }),
+        ),
+      );
+    }
+
+    return sessions;
+  },
+  async currentForUser(uid: string) {
+    const database = firebase.database();
+
+    const currentId = await database
+      .ref(`/users/${uid}/current-session`)
+      .once('value')
+      .then(s => s.val());
+
+    if (currentId) {
+      const currentSession = await database
+        .ref(`/sessions/${currentId}`)
+        .once('value')
+        .then(s => s.val());
+      return Object.assign(currentSession, { id: currentId });
+    }
+
+    return null;
   },
   async create() {
     const date = new Date();

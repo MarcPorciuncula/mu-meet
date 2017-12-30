@@ -32,16 +32,21 @@ export class WaitForValueTimeoutError extends Error {}
 export async function getOAuth2Client(uid) {
   const database = admin.database();
 
-  const tokensRef = database.ref(`/users/${uid}/tokens`);
   let tokens;
   // It may take a while for the server to retrieve tokens and place them onto the user, we'll watch the ref until a value is present or it times out
   try {
-    tokens = await waitForValue(tokensRef);
+    await waitForValue(database.ref(`/users/${uid}/tokens/redirect_uri`));
+    tokens = await database
+      .ref(`/users/${uid}/tokens`)
+      .once('value')
+      .then(s => s.val());
   } catch (err) {
     if (err instanceof WaitForValueTimeoutError) {
       throw new GoogleOAuthError(
         GoogleOAuthError.codes.NO_CREDENTIALS_FOUND,
-        `Could not retrieve Google Credentials for user ${uid} within the time limit`,
+        `Could not retrieve Google Credentials for user ${
+          uid
+        } within the time limit`,
       );
     }
     throw err;
@@ -118,7 +123,7 @@ function waitForValue(ref, { timeout = 5e3 } = {}) {
       if (value === null) return;
       resolve(value);
       clearTimeout(timeoutHandle);
-      ref.off('value', handleSnapshot, handleError);
+      ref.off('value', handleSnapshot);
     };
     timeoutHandle = setTimeout(() => {
       reject(
@@ -126,7 +131,7 @@ function waitForValue(ref, { timeout = 5e3 } = {}) {
           'Timed out while watiting for value on ref ' + ref.toString(),
         ),
       );
-      ref.off('value', handleSnapshot, handleError);
+      ref.off('value', handleSnapshot);
     }, timeout);
     ref.on('value', handleSnapshot, handleError);
   });

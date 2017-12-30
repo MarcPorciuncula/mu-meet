@@ -1,0 +1,13 @@
+@import 'tachyons-sass/scss/heights';
+
+@include tachyons-responsive(min-vh-75) {
+  min-height: 75vh;
+}
+
+@include tachyons-responsive(min-vh-80) {
+  min-height: 80vh;
+}
+
+@include tachyons-responsive(min-vh-90) {
+  min-height: 90vh;
+}

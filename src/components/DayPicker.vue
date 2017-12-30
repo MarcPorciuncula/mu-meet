@@ -8,7 +8,7 @@
         <mdc-list-item
           v-for="day in month"
           @click="$emit('change', day)"
-          :class="['day-picker__day', {
+          :class="['day-picker__day pointer', {
             'day-picker__day--active': isEqual(day, selected),
           }]"
           :key="day.toString()"
@@ -25,13 +25,10 @@
 
 <script>
 import VueTypes from 'vue-types';
-import {
-  List as MdcList,
-  ListItem as MdcListItem,
-  ListGroup as MdcListGroup,
-  ListGroupHeader as MdcListGroupHeader,
-  ListGroupDivider as MdcListGroupDivider,
-} from '@/components/Material/List';
+import MdcList from '@/components/Material/List';
+import MdcListItem from '@/components/Material/List/Item';
+import MdcListGroup from '@/components/Material/List/Group';
+import MdcListGroupHeader from '@/components/Material/List/GroupHeader';
 import format from 'date-fns/format';
 import addHours from 'date-fns/add_hours';
 import getEndOfDay from 'date-fns/end_of_day';
@@ -51,7 +48,6 @@ export default {
     MdcListItem,
     MdcListGroup,
     MdcListGroupHeader,
-    MdcListGroupDivider,
   },
   computed: {
     days() {
@@ -82,6 +78,7 @@ export default {
 .day-picker__day /deep/ .mdc-list-item__text {
   border-left: 2px solid rgba(0, 0, 0, 0);
   padding-left: 0.5rem;
+  user-select: none;
 }
 
 .day-picker__day--active /deep/ .mdc-list-item__text {

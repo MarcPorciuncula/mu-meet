@@ -8,7 +8,7 @@ async function beforeEnter(to, from, next) {
 }
 
 export default {
-  name: 'sign-out',
+  name: 'signout',
   path: '/signout',
   beforeEnter,
 };

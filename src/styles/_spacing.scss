@@ -1,0 +1,64 @@
+@import 'tachyons-sass/scss/spacing';
+
+@include tachyons-responsive(mtn1) {
+  margin-top: -$spacing-extra-small;
+}
+
+@include tachyons-responsive(mtn2) {
+  margin-top: -$spacing-small;
+}
+
+@include tachyons-responsive(mtn3) {
+  margin-top: -$spacing-medium;
+}
+
+@include tachyons-responsive(mtn4) {
+  margin-top: -$spacing-large;
+}
+
+@include tachyons-responsive(mtn5) {
+  margin-top: -$spacing-extra-large;
+}
+
+@include tachyons-responsive(mtn6) {
+  margin-top: -$spacing-extra-extra-large;
+}
+
+@include tachyons-responsive(mtn7) {
+  margin-top: -$spacing-extra-extra-extra-large;
+}
+
+@include tachyons-responsive(mvn1) {
+  margin-top: -$spacing-extra-small;
+  margin-bottom: -$spacing-extra-small;
+}
+
+@include tachyons-responsive(mvn2) {
+  margin-top: -$spacing-small;
+  margin-bottom: -$spacing-small;
+}
+
+@include tachyons-responsive(mvn3) {
+  margin-top: -$spacing-medium;
+  margin-bottom: -$spacing-medium;
+}
+
+@include tachyons-responsive(mvn4) {
+  margin-top: -$spacing-large;
+  margin-bottom: -$spacing-large;
+}
+
+@include tachyons-responsive(mvn5) {
+  margin-top: -$spacing-extra-large;
+  margin-bottom: -$spacing-extra-large;
+}
+
+@include tachyons-responsive(mvn6) {
+  margin-top: -$spacing-extra-extra-large;
+  margin-bottom: -$spacing-extra-extra-large;
+}
+
+@include tachyons-responsive(mvn7) {
+  margin-top: -$spacing-extra-extra-extra-large;
+  margin-bottom: -$spacing-extra-extra-extra-large;
+}

@@ -133,7 +133,7 @@ function watch(
     };
 
     unsubscribe = () => {
-      ref.off('value', handleSnapshot, handleError);
+      ref.off('value', handleSnapshot);
       clearTimeout(timeoutId);
     };
 

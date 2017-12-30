@@ -1,69 +1,37 @@
 <template>
   <div>
-    <layout-section padding="less">
-      <layout-container>
-        <type-container trim-bottom>
-          <type-text tag="h3" type="title">
-            Meeting Times
-          </type-text>
-          <type-text tag="p" type="headline" v-if="status === 'DONE'">
-            <span v-if="meetings.length">
-              You have {{ session.result.meetings.length }} possible meeting times.
+    <div class="flex flex-column items-center mb4">
+      <div class="mw8 w-100 pa3">
+        <h3 class="f6 fw5 grey-600 lh-title">
+          Meeting times
+        </h3>
+        <div class="bg-white br2 br--bottom elevate1 mb3 pv1">
+          <schedule-view
+          v-if="meetings.length"
+          :events="events"
+          />
+        </div>
+        <p class="f6 grey-700 lh-copy measure">
+          Only you can see your own calendar events.
+        </p>
+        <div>
+          <button
+            class="f5 bn bg-transparent di lh-copy sans pa0 action grey-900"
+            @click="search()"
+          >
+            <span class="f4 material-icons" style="transform: translate(-5%, 25%)">
+              update
             </span>
-            <span v-else>
-              No meeting times found.
+            <span class="bb">
+              Update meeting times
             </span>
-          </type-text>
-        </type-container>
-      </layout-container>
-    </layout-section>
-    <schedule-view
-      v-if="meetings.length"
-      :events="events"
-    />
-    <layout-section tag="div" padding="none" v-if="events">
-      <layout-container padding="less">
-        <type-container style="text-align: center">
-          <type-text tag="p" type="body2">
-            Only you can see your own calendar events.
-          </type-text>
-        </type-container>
-      </layout-container>
-    </layout-section>
-    <layout-container padding="min">
-      <mdc-list actionable :multiline="done && stale">
-        <template v-if="!meetings.length">
-          <router-link :to="{ name: calendarsRoute.name, query: { callback: $route.path } }">
-            <mdc-list-item ripple>
-              <span class="material-icons" slot="start-detail">
-                event_note
-              </span>
-              <span>
-                Select your calendars
-              </span>
-            </mdc-list-item>
-          </router-link>
-          <mdc-list-item ripple @click="$emit('change-tab', 'parameters')">
-            <span class="material-icons" slot="start-detail">
-              tune
-            </span>
-            <span>
-              Change parameters
-            </span>
-          </mdc-list-item>
-        </template>
-        <mdc-list-item separator />
-        <mdc-list-item ripple @click="search()">
-          <span slot="start-detail" class="material-icons">
-            update
-          </span>
-          Update meeting times
-          <span slot="secondary-text" v-if="done && stale">
+          </button>
+          <p class="f6 grey-600 lh-copy measure mt" v-if="done && stale">
             Parameters have changed since you last refreshed meeting times.
-          </span>
-        </mdc-list-item>
-      </mdc-list>
-    </layout-container>
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -78,10 +46,8 @@ import {
   CURRENT_PLANNER_EVENTS,
   CALENDARS,
 } from '@/store/getters';
-import {
-  List as MdcList,
-  ListItem as MdcListItem,
-} from '@/components/Material/List';
+import MdcList from '@/components/Material/List';
+import MdcListItem from '@/components/Material/List/Item';
 import MdcLinearProgress from '@/components/Material/LinearProgress';
 import addSeconds from 'date-fns/add_seconds';
 import getDistanceInWordsStrict from 'date-fns/distance_in_words_strict';

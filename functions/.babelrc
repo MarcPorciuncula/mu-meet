@@ -1,13 +1,16 @@
 {
   "presets": [
-    ["env", {
-      "targets": {
-        "node": 6
+    [
+      "env",
+      {
+        "targets": {
+          "node": 6
       },
       "modules": false
     }],
     "flow"
   ],
+  "plugins": ["preval"],
   "env": {
     "development": {
       "plugins": ["external-helpers"]
@@ -17,12 +20,15 @@
     },
     "test": {
       "presets": [
-        ["env", {
-          "targets": {
-            "node": "current",
-            "modules": true
+        [
+          "env",
+          {
+            "targets": {
+              "node": "current",
+              "modules": true
+            }
           }
-        }],
+        ],
         "flow",
         "@ava/transform-test-files"
       ],

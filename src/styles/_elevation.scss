@@ -1,0 +1,14 @@
+@import '@material/elevation/mdc-elevation';
+
+@for $i from 1 through 24 {
+  .elevate#{$i},
+  .elevate#{$i}-hover:hover {
+    @include mdc-elevation($i);
+  }
+}
+
+@for $i from 1 through 5 {
+  .elevate-transition {
+    @include mdc-elevation-transition($i * 50ms);
+  }
+}

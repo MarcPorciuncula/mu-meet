@@ -9,9 +9,9 @@
       v-for="event in events"
       :key="event.id || event.start.toString() + event.end.toString()"
     >
-      <calendar-dot slot="start-detail" :color="event.color"/>
+      <calendar-dot slot="graphic" :color="event.color"/>
       {{ event.summary }}
-      <span slot="secondary-text">
+      <span slot="secondary">
         {{ event.start.getHour() }}:{{ event.start.getMinute() | padStart(2, '0') }}{{ event.start.getHalf() }}
         {{' - '}}
         {{ event.end.getHour() }}:{{ event.end.getMinute() | padStart(2, '0') }}{{ event.end.getHalf() }}
@@ -23,10 +23,8 @@
 <script>
 import VueTypes from 'vue-types';
 import { TypeText, TypeContainer } from '@/components/Material/Typography';
-import {
-  List as MdcList,
-  ListItem as MdcListItem,
-} from '@/components/Material/List';
+import MdcList from '@/components/Material/List';
+import MdcListItem from '@/components/Material/List/Item';
 import CalendarDot from '@/components/CalendarDot';
 import Time from '@/util/Time';
 
@@ -60,6 +58,5 @@ export default {
 .mdc-list-item {
   border-left: solid 1px rgba(0, 0, 0, 0.12);
   border-right: solid 1px rgba(0, 0, 0, 0.12);
-  background-color: #FAFAFA;
 }
 </style>
