@@ -52,7 +52,8 @@ class OAuthManager {
     // It may take some time for the server to populate tokens if this
     // is the user's first login, we'll watch the ref until a value
     // is present.
-    let tokens = await watch(tokensRef);
+    await waitForValue(tokensRef.child('redirect_uri'));
+    const tokens = await tokensRef.once('value').then(s => s.val());
 
     assert(
       this._credentials.web.redirect_uris.includes(tokens.redirect_uri),
@@ -112,39 +113,67 @@ export default new OAuthManager(googleClientCredentials);
  * Watch a database value until the predicate is satisfied and return it.
  * Rejects after timeout is reached
  */
-function watch(
-  ref,
-  { predicate = identity, timeout = 5000 } = {},
-): Promise<any> {
-  return new Promise((resolve, reject) => {
-    let timeoutId;
-    let unsubscribe;
+// function watch(
+//   ref,
+//   { predicate = identity, timeout = 5000 } = {},
+// ): Promise<any> {
+//   return new Promise((resolve, reject) => {
+//     let timeoutId;
+//     let unsubscribe;
+//
+//     const handleSnapshot = snapshot => {
+//       const value = snapshot.val();
+//       if (!predicate(value)) return;
+//       unsubscribe();
+//       resolve(value);
+//     };
+//
+//     const handleError = err => {
+//       reject(err);
+//       unsubscribe();
+//     };
+//
+//     unsubscribe = () => {
+//       ref.off('value', handleSnapshot);
+//       clearTimeout(timeoutId);
+//     };
+//
+//     ref.on('value', handleSnapshot, handleError);
+//
+//     timeoutId = setTimeout(() => {
+//       handleError(
+//         new WatchTimeoutError(
+//           `Watch on ref ${ref.toString()} timed out after ${timeout}ms.`,
+//         ),
+//       );
+//     }, timeout);
+//   });
+// }
 
+/**
+ * Wait for a ref to be written a non null value.
+ * Times out after a certain amount of time
+ */
+function waitForValue(ref, { timeout = 5e3 } = {}) {
+  return new Promise((resolve, reject) => {
+    let timeoutHandle;
+
+    const handleError = reject;
     const handleSnapshot = snapshot => {
       const value = snapshot.val();
-      if (!predicate(value)) return;
-      unsubscribe();
+      if (value === null) return;
       resolve(value);
-    };
-
-    const handleError = err => {
-      reject(err);
-      unsubscribe();
-    };
-
-    unsubscribe = () => {
+      clearTimeout(timeoutHandle);
       ref.off('value', handleSnapshot);
-      clearTimeout(timeoutId);
     };
-
-    ref.on('value', handleSnapshot, handleError);
-
-    timeoutId = setTimeout(() => {
-      handleError(
+    timeoutHandle = setTimeout(() => {
+      reject(
         new WatchTimeoutError(
-          `Watch on ref ${ref.toString()} timed out after ${timeout}ms.`,
+          'Timed out while watiting for value on ref ' + ref.toString(),
         ),
       );
+      ref.off('value', handleSnapshot);
     }, timeout);
+    ref.on('value', handleSnapshot, handleError);
   });
 }

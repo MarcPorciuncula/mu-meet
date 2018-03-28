@@ -1,3 +1,7 @@
+## 0.0.13 (Mar 28, 2018)
+
+* Fix a bug breaking sign ups
+
 ## 0.0.12 (Dec 25, 2017)
 
 * Design refresh
